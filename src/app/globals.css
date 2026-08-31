@@ -482,6 +482,20 @@
     line-height: 1.14;
   }
 
+  /* The hero's own line masks (`data-hero-line`, HomeHero.tsx) are a bespoke
+     reveal outside the word-mask system above, and have the same clipping
+     risk: text-display's line-height (0.86) is tighter still than the
+     leading referenced above, and the "g" in "Design" sits low enough to be
+     cut by the mask's own overflow. Padding-bottom gives the descender room
+     inside the clip box; the equal negative margin-bottom cancels it back
+     out so the mask still contributes exactly its content height to the
+     layout. Neither touches the inner span GSAP animates, so the reveal
+     itself is unaffected. */
+  [data-hero-line] {
+    padding-bottom: 0.2em;
+    margin-bottom: -0.2em;
+  }
+
   /* Promoted only while the heading is still waiting to animate. */
   .js-motion [data-reveal-words]:not([data-revealed]) [data-word] {
     will-change: transform;
