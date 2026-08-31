@@ -1,0 +1,492 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   UTHAN DESIGN STUDIO — TOKEN LAYER
+   This is the single source of truth for every design value in the project.
+   A literal colour, size, duration or easing anywhere else is a review failure.
+   See design.md for the reasoning behind each value.
+   ========================================================================== */
+
+@theme {
+  /* --- Colour -------------------------------------------------------------
+     Tailwind's default palette is cleared on purpose. `bg-blue-500` should not
+     compile. The only colours that exist are the ones in the brand contract.
+     Accent flips with surface: pistachio on dark, olive on light.
+     ---------------------------------------------------------------------- */
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-inherit: inherit;
+
+  --color-ink: #0a0a0a; /* Architectural Black — primary dark surface */
+  --color-ink-soft: #111111; /* Soft Black — secondary dark surface     */
+  --color-ink-raised: #171716; /* Raised dark surface — overlay, hover row */
+  --color-paper: #f3f1e8; /* Warm Architectural White — light surface */
+  --color-paper-dim: #eae8de; /* Secondary Warm White — recessed          */
+
+  --color-pistachio: #b7d77a; /* Accent, DARK surfaces only  — 12.3:1 on ink   */
+  --color-olive: #4e5d2a; /* Accent, LIGHT surfaces only — 6.4:1 on paper  */
+
+  --color-mute: #8a8a82; /* Secondary text on dark  — 5.7:1 on ink    */
+  --color-mute-deep: #6e6e68; /* Secondary text on light — 4.5:1 on paper  */
+
+  --color-line: #2a2a28; /* Hairline on dark — decorative only  */
+  --color-line-light: #d3d0c2; /* Hairline on light — decorative only */
+
+  /* Surface-aware semantic colours.
+     A component writes `text-accent` once and is correct on both surfaces —
+     this is the mechanism that makes an illegal pairing hard to write.
+
+     These MUST be redeclared directly by `.surface-light` / `.surface-dark`,
+     not aliased through a second variable. A custom property whose value
+     contains `var()` is substituted where it is DECLARED, not where it is used:
+     defining `--color-accent: var(--accent)` here and overriding only
+     `--accent` further down the tree leaves `--color-accent` frozen at the
+     :root value, and pistachio lands on warm white at 1.4:1. */
+  --color-accent: var(--color-pistachio);
+  --color-accent-hover: #a3c566; /* 10.1:1 on ink */
+  --color-on-accent: var(--color-ink);
+  --color-secondary: var(--color-mute);
+  --color-hairline: var(--color-line);
+
+  /* --- Typography ---------------------------------------------------------
+     Two families. Archivo (variable weight + width) carries structure;
+     Newsreader (variable optical size) carries editorial register.
+     ---------------------------------------------------------------------- */
+  --font-*: initial;
+  --font-sans:
+    var(--font-archivo), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+
+  --text-display: clamp(3.25rem, 11vw, 11rem);
+  --text-display--line-height: 0.86;
+  --text-display--letter-spacing: -0.04em;
+  --text-display--font-weight: 500;
+
+  --text-h1: clamp(2.25rem, 6vw, 5.25rem);
+  --text-h1--line-height: 0.92;
+  --text-h1--letter-spacing: -0.035em;
+  --text-h1--font-weight: 500;
+
+  --text-h2: clamp(1.75rem, 3.6vw, 3.25rem);
+  --text-h2--line-height: 1;
+  --text-h2--letter-spacing: -0.03em;
+  --text-h2--font-weight: 500;
+
+  --text-h3: clamp(1.25rem, 2vw, 1.75rem);
+  --text-h3--line-height: 1.15;
+  --text-h3--letter-spacing: -0.02em;
+  --text-h3--font-weight: 500;
+
+  --text-statement: clamp(1.375rem, 2.9vw, 2.5rem);
+  --text-statement--line-height: 1.3;
+  --text-statement--letter-spacing: -0.015em;
+  --text-statement--font-weight: 300;
+
+  --text-lead: clamp(1.0625rem, 1.3vw, 1.3125rem);
+  --text-lead--line-height: 1.6;
+  --text-lead--font-weight: 400;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+
+  --text-body-serif: 1.0625rem;
+  --text-body-serif--line-height: 1.7;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.55;
+
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.5;
+  --text-caption--letter-spacing: 0.005em;
+
+  --text-meta: 0.6875rem;
+  --text-meta--line-height: 1.4;
+  --text-meta--letter-spacing: 0.14em;
+  --text-meta--font-weight: 500;
+
+  --text-nav: 0.8125rem;
+  --text-nav--line-height: 1;
+  --text-nav--letter-spacing: 0.02em;
+  --text-nav--font-weight: 500;
+
+  /* --- Layout -------------------------------------------------------------
+     The default 0.25rem spacing step is kept: p-4 = 16px, p-32 = 128px, and
+     the whole documented scale falls out of it natively.
+     ---------------------------------------------------------------------- */
+  --breakpoint-xs: 30rem; /*  480 */
+  --breakpoint-3xl: 90rem; /* 1440 */
+  --breakpoint-4xl: 120rem; /* 1920 */
+
+  --container-wide: 105rem; /* 1680 — default page container */
+  --container-text: 47.5rem; /*  760 — long-form narrative    */
+  --container-narrow: 35rem; /*  560 — forms, single column   */
+
+  /* --- Geometry -----------------------------------------------------------
+     Radius is 0. The one exception is form controls, so a focus ring reads as
+     belonging to the field. There are deliberately no shadow tokens.
+     ---------------------------------------------------------------------- */
+  --radius-*: initial;
+  --radius-none: 0px;
+  --radius-field: 2px;
+  --radius-full: 9999px; /* circular media masks only */
+
+  /* --- Motion -------------------------------------------------------------
+     ease-in is never used on an entrance. Nothing overshoots.
+     ---------------------------------------------------------------------- */
+  --ease-*: initial;
+  --ease-linear: linear;
+  /* Built-in easings are too weak to read as deliberate. These are the
+     canonical strong curves — a soft ease-out for anything entering, a strong
+     ease-in-out for anything moving on screen, and expo-out for the long
+     cinematic reveals. `ease-in` is never used on an entrance. */
+  --ease-out-soft: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-soft: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-architectural: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Durations live outside @theme because Tailwind has no duration namespace.
+   Consumed as duration-[var(--dur-base)] or from the component layer. */
+:root {
+  --dur-fast: 160ms;
+  --dur-base: 240ms;
+  --dur-slow: 400ms;
+  --dur-cinematic: 550ms;
+  --dur-reveal: 900ms;
+
+  /* Fluid page gutter, used by the Container primitive. */
+  --gutter: clamp(1.25rem, 4vw, 4.5rem);
+  /* Fluid grid gutter. */
+  --grid-gap: clamp(1rem, 1.6vw, 1.75rem);
+
+}
+
+/* The surface contract.
+   A section declares its surface once and every descendant inherits the legal
+   accent, secondary text and hairline for that ground.
+
+   Light surface: the accent darkens to olive, because pistachio measures 1.4:1
+   on warm white and is prohibited there. Secondary text darkens too, because
+   muted gray only reaches 3.1:1 on warm white. */
+.surface-light {
+  --color-accent: var(--color-olive); /* 6.4:1 on paper */
+  --color-accent-hover: #3f4b22; /* 8.3:1 on paper */
+  --color-on-accent: var(--color-paper);
+  --color-secondary: var(--color-mute-deep); /* 4.5:1 on paper */
+  --color-hairline: var(--color-line-light);
+}
+
+.surface-dark {
+  --color-accent: var(--color-pistachio); /* 12.3:1 on ink */
+  --color-accent-hover: #a3c566; /* 10.1:1 on ink */
+  --color-on-accent: var(--color-ink);
+  --color-secondary: var(--color-mute); /* 5.7:1 on ink */
+  --color-hairline: var(--color-line);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    min-width: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: auto; /* Lenis owns scrolling; never fight it */
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.65;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-wrap: balance;
+    font-weight: 500;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Media never contributes to layout shift. */
+  img,
+  video,
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Tabular numerals wherever a number is the content. */
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Focus: always visible, surface-aware, never removed. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  /* Reduced motion: render the final state, do not merely animate faster. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Image hover.
+     Gated behind a fine pointer so a tap on a touch device does not leave the
+     image stuck in its hovered state, and promoted to its own layer only while
+     the pointer is actually over it — a permanent `will-change` on every image
+     in a grid costs memory for a state most of them never enter. */
+  .hover-zoom {
+    transition: transform var(--dur-base) var(--ease-out-soft);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .group:hover .hover-zoom,
+    .group:focus-visible .hover-zoom {
+      transform: scale(1.03);
+      will-change: transform;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hover-zoom {
+      transition: none;
+    }
+    .group:hover .hover-zoom,
+    .group:focus-visible .hover-zoom {
+      transform: none;
+      will-change: auto;
+    }
+  }
+
+  /* A crossfading stack where only the visible layer is painted.
+     `opacity: 0` still composites a layer per image; the expertise panel holds
+     nine, so the inactive ones are taken out of the paint tree with
+     `visibility` instead. The zero-duration visibility transition is delayed by
+     the fade on the way out and immediate on the way in, so the crossfade still
+     reads as a crossfade. */
+  .fade-layer {
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      opacity var(--dur-slow) var(--ease-out-soft),
+      visibility 0s linear var(--dur-slow);
+  }
+
+  .fade-layer[data-active] {
+    visibility: visible;
+    opacity: 1;
+    transition:
+      opacity var(--dur-slow) var(--ease-out-soft),
+      visibility 0s linear 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fade-layer {
+      transition: none;
+    }
+  }
+
+  /* The site header.
+     Driven by data attributes written from a rAF-throttled scroll listener
+     rather than by React state, so scrolling causes no re-render. The scrolled
+     state deliberately has no `backdrop-filter`: blurring a full-width fixed
+     bar costs a compositor pass on every scrolled frame, and a flat ink veil is
+     truer to the language anyway. */
+  .site-header {
+    background-color: transparent;
+    border-bottom: 1px solid transparent;
+    will-change: transform;
+    transition:
+      transform var(--dur-slow) var(--ease-out-soft),
+      background-color var(--dur-slow) var(--ease-out-soft),
+      border-color var(--dur-slow) var(--ease-out-soft),
+      opacity var(--dur-base) var(--ease-out-soft);
+  }
+
+  .site-header[data-scrolled] {
+    background-color: color-mix(in srgb, var(--color-ink) 94%, transparent);
+    border-bottom-color: var(--color-line);
+  }
+
+  .site-header[data-hidden] {
+    transform: translate3d(0, -100%, 0);
+  }
+
+  /* While the dialog is open it renders its own top row in this exact
+     position, so the header steps aside rather than sitting behind it. */
+  .site-header[data-open] {
+    opacity: 0;
+    pointer-events: none;
+    background-color: transparent;
+    border-bottom-color: transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header {
+      transition: none;
+      will-change: auto;
+    }
+  }
+
+  /* The skip link — first focusable element on every page. */
+  .skip-link {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    transform: translateY(-110%);
+    background-color: var(--color-pistachio);
+    color: var(--color-ink);
+    padding: 0.75rem 1.25rem;
+    font-size: var(--text-meta);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: transform var(--dur-base) var(--ease-out-soft);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
+  /* ---------------------------------------------------------------------
+     THE REVEAL CONTRACT
+     Markup renders in its FINAL state. The hidden start below applies only
+     under `html.js-motion` — a class the boot script adds if and only if
+     JavaScript is running AND reduced motion is off. So:
+       no JS            → content visible
+       reduced motion   → content visible
+       JS + motion      → content armed, then animated in
+     This is what stops a scroll-reveal system from blanking the page when
+     anything goes wrong.
+     --------------------------------------------------------------------- */
+  .js-motion [data-reveal]:not([data-revealed]),
+  .js-motion [data-reveal-children]:not([data-revealed]) > * {
+    opacity: 0;
+  }
+
+  /* The curtain is a mask made of two transforms moving at different rates.
+     The frame starts 120% down and the content 20% up inside it, so the pair
+     nets to a full 100% offset — entirely below the clip window — and resolves
+     to 0. The 20% difference is what makes the photograph lag the frame and
+     read as depth rather than as a panel sliding.
+
+     Note the offsets must NOT be equal and opposite: that cancels out and
+     leaves the content sitting in its final position, visible from the start,
+     with nothing to reveal. Animating `clip-path` instead is visually correct
+     but repaints a viewport-sized image every frame. */
+  [data-reveal-curtain] {
+    overflow: hidden;
+  }
+
+  .js-motion [data-reveal-curtain]:not([data-revealed]) > [data-curtain-inner] {
+    transform: translate3d(0, 120%, 0);
+  }
+
+  .js-motion
+    [data-reveal-curtain]:not([data-revealed])
+    > [data-curtain-inner]
+    > * {
+    transform: translate3d(0, -20%, 0);
+  }
+
+  .js-motion [data-reveal-rule]:not([data-revealed]) {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  .js-motion [data-reveal-words]:not([data-revealed]) [data-word] {
+    transform: translateY(110%);
+  }
+
+  /* The failsafe. If an animation never finishes — a script error, a dead
+     ticker, a tab throttled so hard the tween stalls — MotionFailsafe stamps
+     `data-revealed` on anything still armed and on screen, and these rules
+     hand the content back. The site must never be able to hide its own
+     content behind a broken animation (ruler.md §1).
+
+     `!important` is deliberate and is the only use of it in the project: a
+     stalled GSAP tween keeps rewriting its inline transform on every tick it
+     does get, and an inline style outranks any normal rule. This is the
+     last-resort override those exist for. */
+  .js-motion [data-revealed],
+  .js-motion [data-revealed] > *,
+  .js-motion [data-revealed] > [data-curtain-inner] > *,
+  .js-motion [data-revealed] [data-word],
+  .js-motion [data-revealed] [data-reveal-media] {
+    opacity: 1 !important;
+    clip-path: none !important;
+    transform: none !important;
+  }
+
+  /* Word masks.
+     The mask must be tall enough to contain the glyph, or a tight display
+     leading (h1 sits at 0.92) slices the descenders off. The inner span
+     therefore carries its own generous line-height, and the negative block
+     margin removes that extra height from the line box again, so the heading
+     keeps the leading the type scale asked for. */
+  .word-mask {
+    display: inline-flex;
+    overflow: hidden;
+    vertical-align: baseline;
+    margin-block: -0.12em;
+  }
+
+  .word-mask > [data-word] {
+    display: inline-block;
+    line-height: 1.14;
+  }
+
+  /* Promoted only while the heading is still waiting to animate. */
+  .js-motion [data-reveal-words]:not([data-revealed]) [data-word] {
+    will-change: transform;
+  }
+
+  /* The intro overlay only exists for a first visit with motion enabled.
+     Default is `display: none`, so a no-JS or reduced-motion visitor never
+     sees it and there is no hydration flash. */
+  .uds-intro {
+    display: none;
+  }
+
+  .js-intro .uds-intro {
+    display: grid;
+  }
+}

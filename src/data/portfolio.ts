@@ -1,0 +1,134 @@
+/* =============================================================================
+   DEMO CONTENT
+   Fictional placeholder work, written to exercise the filtered index at a
+   realistic length. None of it is Uthan Design Studio's work.
+   ============================================================================= */
+
+import type { PortfolioItem, ProjectCategory } from "@/types/content";
+
+import { img } from "./media";
+
+export const portfolio: PortfolioItem[] = [
+  {
+    id: "f1", slug: "courtyard-house", isDemo: true, projectSlug: "courtyard-house",
+    title: "Courtyard House", category: "residential", year: "2024",
+    location: "Coastal escarpment", areaSize: "410 m²",
+    summary: "A closed perimeter with a room of open air cut through its centre.",
+    image: img("project", 0, "Board-marked concrete mass seen from below"),
+  },
+  {
+    id: "f2", slug: "warehouse-conversion", isDemo: true, projectSlug: "warehouse-conversion",
+    title: "Warehouse Conversion", category: "commercial", year: "2023",
+    location: "Former dock district", areaSize: "2,840 m²",
+    summary: "Two vertical cuts through a timber-framed goods store: one stair, one purely light.",
+    image: img("project", 1, "White rendered elevation of a converted industrial building"),
+  },
+  {
+    id: "f3", slug: "hillside-pavilions", isDemo: true, projectSlug: "hillside-pavilions",
+    title: "Hillside Pavilions", category: "hospitality", year: "2025",
+    location: "Upland valley", areaSize: "1,120 m²",
+    summary: "Nine pavilions on a contour, each rotated so no two share a view.",
+    image: img("project", 2, "Long low building against water at dusk"),
+  },
+  {
+    id: "f4", slug: "civic-reading-rooms", isDemo: true, projectSlug: "civic-reading-rooms",
+    title: "Civic Reading Rooms", category: "institutional", year: "2023",
+    location: "City centre", areaSize: "1,760 m²",
+    summary: "A library planned as five rooms of graded acoustic character.",
+    image: img("project", 3, "Top-lit public interior under a glazed roof"),
+  },
+  {
+    id: "f5", slug: "market-canopy", isDemo: true, projectSlug: "market-canopy",
+    title: "Market Canopy", category: "urban", year: "2022",
+    location: "Riverside quarter", areaSize: "2,200 m²",
+    summary: "A roof and nothing else, designed from the shade it casts.",
+    image: img("project", 4, "Masonry arch over an open public floor"),
+  },
+  {
+    id: "f6", slug: "apartment-in-section", isDemo: true, projectSlug: "apartment-in-section",
+    title: "Apartment in Section", category: "interior", year: "2024",
+    location: "Nineteenth-century terrace", areaSize: "168 m²",
+    summary: "One opening cut in a floor, doing the work of a whole replan.",
+    image: img("project", 5, "Double-height interior lit from above"),
+  },
+  {
+    id: "f7", slug: "brick-workshop", isDemo: true,
+    title: "Brick Workshop", category: "commercial", year: "2022",
+    location: "Industrial edge", areaSize: "640 m²",
+    summary: "A maker's workshop in load-bearing brick, top-lit along its full length.",
+    image: img("detail", 0, "Rubble stone wall with a timber lintel"),
+  },
+  {
+    id: "f8", slug: "garden-studio", isDemo: true,
+    title: "Garden Studio", category: "residential", year: "2023",
+    location: "Suburban garden", areaSize: "34 m²",
+    summary: "A single-room timber studio, built in nine days from a shop-fabricated kit.",
+    image: img("sustain", 0, "Glazed structure with planting inside"),
+  },
+  {
+    id: "f9", slug: "restaurant-fit-out", isDemo: true,
+    title: "Restaurant Fit-out", category: "hospitality", year: "2024",
+    location: "Market street", areaSize: "220 m²",
+    summary: "Sixty covers arranged around an open kitchen and one long shared table.",
+    image: img("interior", 2, "Public foyer with an open stair"),
+  },
+  {
+    id: "f10", slug: "terrace-extension", isDemo: true,
+    title: "Terrace Extension", category: "residential", year: "2022",
+    location: "Victorian terrace", areaSize: "56 m²",
+    summary: "A rear extension detailed so the join to the existing house is invisible from inside.",
+    image: img("detail", 1, "Weathered timber door set into a rendered wall"),
+  },
+  {
+    id: "f11", slug: "office-headquarters", isDemo: true,
+    title: "Office Headquarters", category: "commercial", year: "2025",
+    location: "Business district", areaSize: "5,400 m²",
+    summary: "A deep-plan office broken by three full-height atria on a diagonal.",
+    image: img("urban", 2, "Glass entrance hall onto a public forecourt"),
+  },
+  {
+    id: "f12", slug: "chapel-restoration", isDemo: true,
+    title: "Chapel Restoration", category: "other", year: "2021",
+    location: "Rural parish", areaSize: "310 m²",
+    summary: "Fabric repair and a new stone floor, with the nineteenth-century roof left exposed.",
+    image: img("interior", 3, "Rock-cut concourse with exposed strata"),
+  },
+];
+
+/** Filter set for the portfolio index. `all` is not stored; it is the absence of a filter. */
+export const portfolioFilters: { value: ProjectCategory | "all"; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "residential", label: "Residential" },
+  { value: "commercial", label: "Commercial" },
+  { value: "hospitality", label: "Hospitality" },
+  { value: "interior", label: "Interior" },
+  { value: "other", label: "Other" },
+];
+
+/**
+ * Categories outside the visible filter set (urban, institutional, landscape)
+ * are collected under "Other", so no item is ever unreachable by filtering.
+ */
+const VISIBLE: ProjectCategory[] = [
+  "residential",
+  "commercial",
+  "hospitality",
+  "interior",
+];
+
+export function getPortfolio(): PortfolioItem[] {
+  return portfolio;
+}
+
+export function filterPortfolio(
+  items: PortfolioItem[],
+  filter: ProjectCategory | "all",
+): PortfolioItem[] {
+  if (filter === "all") return items;
+  if (filter === "other") return items.filter((i) => !VISIBLE.includes(i.category));
+  return items.filter((i) => i.category === filter);
+}
+
+export function countPortfolio(filter: ProjectCategory | "all"): number {
+  return filterPortfolio(portfolio, filter).length;
+}

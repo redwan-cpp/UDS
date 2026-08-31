@@ -1,0 +1,294 @@
+/**
+ * CONTENT CONTRACT — UTHAN DESIGN STUDIO
+ *
+ * These types are the interface between the site and its content source.
+ * In Phase 1 they are satisfied by the typed mock data in `src/data`.
+ * In Phase 2 they must be satisfied by the CMS, unchanged.
+ *
+ * Rule: components consume these types. Components never consume `src/data`
+ * directly — only routes do. See architecture.md §2.4.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* Media                                                                       */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Mirrors the metadata the future media library will store, so no migration is
+ * needed when the CMS lands. `width`/`height` are required because they are
+ * what structurally prevents layout shift.
+ */
+export interface MediaAsset {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption?: string;
+  credit?: string;
+  source?: string;
+  licence?: string;
+  /** Focal point for art-directed crops, 0–1 in each axis. Defaults to centre. */
+  focal?: { x: number; y: number };
+}
+
+export interface VideoAsset {
+  src: string;
+  poster: MediaAsset;
+  /** Described for assistive technology; decorative background video has none. */
+  description?: string;
+  credit?: string;
+  source?: string;
+  licence?: string;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Shared                                                                      */
+/* -------------------------------------------------------------------------- */
+
+export interface Seo {
+  title?: string;
+  description?: string;
+  image?: MediaAsset;
+  noIndex?: boolean;
+}
+
+/** Every content entity carries these. `isDemo` is how demo content is kept honest. */
+export interface ContentBase {
+  id: string;
+  slug: string;
+  isDemo: boolean;
+  seo?: Seo;
+}
+
+export type ProjectCategory =
+  | "residential"
+  | "commercial"
+  | "hospitality"
+  | "interior"
+  | "institutional"
+  | "urban"
+  | "landscape"
+  | "other";
+
+export type ProjectStatus = "completed" | "in-progress" | "concept";
+
+/* -------------------------------------------------------------------------- */
+/* Projects                                                                    */
+/* -------------------------------------------------------------------------- */
+
+/** A key/value row in the project information table. Order is meaningful. */
+export interface ProjectFact {
+  label: string;
+  value: string;
+}
+
+/**
+ * Major Projects — the publication-grade case study.
+ * Optional narrative sections may be absent; the layout must not assume them.
+ */
+export interface Project extends ContentBase {
+  title: string;
+  location: string;
+  category: ProjectCategory;
+  year: string;
+  status: ProjectStatus;
+  /** One line. Used on cards and in the index. */
+  summary: string;
+  /** Long-form. Paragraphs, rendered as separate <p> elements. */
+  description: string[];
+  /** "What makes this project unique" — optional. */
+  uniqueness?: string[];
+  /** "Our concept" — optional. */
+  concept?: string[];
+  area?: string;
+  client?: string;
+  services?: string[];
+  facts: ProjectFact[];
+  hero: MediaAsset;
+  gallery: MediaAsset[];
+  /** Rough work / behind the scenes: sketches, drawings, site photography. */
+  process?: MediaAsset[];
+  featured: boolean;
+  /** Controls order in the featured showcase. Lower sorts first. */
+  order: number;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Portfolio                                                                   */
+/* -------------------------------------------------------------------------- */
+
+/** Lighter than a Project. The index of everything the studio has built. */
+export interface PortfolioItem extends ContentBase {
+  title: string;
+  summary: string;
+  location: string;
+  areaSize: string;
+  category: ProjectCategory;
+  year: string;
+  image: MediaAsset;
+  /** Set when this item also exists as a full Project case study. */
+  projectSlug?: string;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Products                                                                    */
+/* -------------------------------------------------------------------------- */
+
+export interface ProductSpec {
+  label: string;
+  value: string;
+}
+
+export interface Product extends ContentBase {
+  title: string;
+  /** One line, sits under the title. */
+  summary: string;
+  description: string[];
+  materials: string[];
+  applications: string[];
+  specs: ProductSpec[];
+  hero: MediaAsset;
+  gallery: MediaAsset[];
+  order: number;
+}
+
+/* -------------------------------------------------------------------------- */
+/* News & collaboration                                                        */
+/* -------------------------------------------------------------------------- */
+
+export type NewsKind =
+  | "collaboration"
+  | "event"
+  | "mou"
+  | "announcement"
+  | "award"
+  | "publication";
+
+export interface NewsItem extends ContentBase {
+  title: string;
+  kind: NewsKind;
+  /** ISO 8601. Rendered through <time datetime>. */
+  date: string;
+  organisation?: string;
+  location?: string;
+  summary: string;
+  body: string[];
+  image: MediaAsset;
+  gallery?: MediaAsset[];
+  /** MoU or supporting documentation. */
+  documents?: { label: string; href: string; kind: "pdf" | "link" }[];
+  featured: boolean;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Studio                                                                      */
+/* -------------------------------------------------------------------------- */
+
+export interface TeamMember extends ContentBase {
+  name: string;
+  role: string;
+  /** Optional short biography, one paragraph. */
+  bio?: string;
+  portrait: MediaAsset;
+  order: number;
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+  /** Optional — omitted where no honest logo asset exists. Name is then set in type. */
+  logo?: MediaAsset;
+  relationship: string;
+  isDemo: boolean;
+}
+
+export interface ExpertiseArea {
+  id: string;
+  /** Two-digit index shown in the UI, e.g. "01". */
+  index: string;
+  title: string;
+  description: string;
+  image: MediaAsset;
+  isDemo: boolean;
+}
+
+export interface Statistic {
+  id: string;
+  value: number;
+  /** Rendered after the animated numeral, e.g. "+" or "%". */
+  suffix?: string;
+  prefix?: string;
+  label: string;
+  isDemo: boolean;
+}
+
+export interface SustainabilityPrinciple {
+  id: string;
+  index: string;
+  title: string;
+  description: string;
+  /** Concrete measures. Empty until the studio supplies verified practice. */
+  measures: string[];
+  image?: MediaAsset;
+  isDemo: boolean;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Studio profile                                                              */
+/* -------------------------------------------------------------------------- */
+
+export interface StudioProfile {
+  name: string;
+  /** The hero setting. Kept short — it is display type, not a paragraph. */
+  tagline: string;
+  disciplines: string[];
+  /** The editorial About statement. Set in the serif. */
+  statement: string[];
+  /** Supporting paragraphs below the statement. */
+  approach: string[];
+  contact: {
+    email: string;
+    phone: string;
+    addressLines: string[];
+    hours?: string;
+  };
+  /** `href` is absent until the studio supplies a real profile URL.
+   *  Components render an unlinked label rather than a dead `#` anchor. */
+  social: { label: string; href?: string }[];
+  legal: { label: string; href: string }[];
+}
+
+/* -------------------------------------------------------------------------- */
+/* Navigation                                                                  */
+/* -------------------------------------------------------------------------- */
+
+export interface NavItem {
+  index: string;
+  label: string;
+  href: string;
+  /** Shown in the desktop menu overlay on hover. */
+  image?: MediaAsset;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Contact flow (UI only in Phase 1)                                           */
+/* -------------------------------------------------------------------------- */
+
+export interface ContactOption {
+  value: string;
+  label: string;
+  description?: string;
+}
+
+export type ContactStepKind = "choice" | "text" | "longtext" | "details" | "review";
+
+export interface ContactStep {
+  id: string;
+  index: string;
+  kind: ContactStepKind;
+  question: string;
+  helper?: string;
+  optional?: boolean;
+  options?: ContactOption[];
+  placeholder?: string;
+}

@@ -1,0 +1,251 @@
+# PROJECT MEMORY — UTHAN DESIGN STUDIO
+
+```
+CURRENT PHASE:
+PHASE 1 — UI/UX
+```
+
+Durable decisions only. Not a log, not a changelog. If a line here stops being true, change
+it deliberately and say why — reversing something in this file is a decision, not a tweak.
+
+---
+
+## Client
+
+- **Uthan Design Studio** — architecture and design practice.
+- **Every business fact is unsupplied.** Legal name, address, founding year, principals, team,
+  regions, real projects, real statistics, real clients, real sustainability practice: all
+  `PLACEHOLDER`. Nothing about the studio may be invented to fill a layout.
+- Products arm confirmed in brief: **Custom Doors**, **Fabricated Sheet Work**.
+- Homepage section order is client-specified: Hero → About → Numbers → Expertise → Major
+  Projects → Management Team → Brands → Latest News → Footer.
+
+---
+
+## Brand decisions
+
+- Visual thesis: **"Space described in sequence."** The interface is a frame; the work is the
+  subject; the scroll is the walk between framed views.
+- Palette is black + pistachio + warm architectural white, as briefed.
+- **The accent flips with the surface.** Pistachio `#B7D77A` on dark; Olive `#4E5D2A` on
+  light. Pistachio measures 1.4:1 on warm white and is therefore *prohibited* as text, icon
+  or meaningful line on light surfaces. This is the single most-broken rule in the palette.
+- **Radius is `0`.** One exception: `2px` on form controls. Rounded cards are out of language.
+- **No shadow tokens exist**, deliberately. Depth comes from surface tone and overlap.
+- One accent only. No second accent colour will be introduced.
+- Structure is expressed with hairlines and interval, not with containers.
+- **A component that paints a surface colour declares that surface.** The accent flip is
+  inherited through the DOM, not from what is visually behind an element, so an ink block
+  inside a light section needs `surface-dark` or it renders olive-on-ink at 2.6:1.
+- `.surface-*` redeclares `--color-accent` / `--color-secondary` / `--color-hairline`
+  **directly**. Aliasing through an intermediate variable does not work: a custom property
+  containing `var()` is substituted where it is declared, not where it is used. This shipped
+  pistachio onto warm white before it was caught.
+
+---
+
+## Typography decisions
+
+- Two families, no more: **Archivo** (variable weight + width) for display, headings, UI and
+  metadata; **Newsreader** (variable optical size) for editorial statements and long-form.
+- Self-hosted via `next/font`. No external font request — this is also what keeps a strict
+  CSP achievable in Phase 4.
+- Metadata is Archivo uppercase and tracked. **A mono family was rejected** — it would have
+  been a third typeface doing a job tracking already does.
+- Fluid `clamp()` scale; type does not step at breakpoints.
+
+---
+
+## Architecture decisions
+
+- **Next.js 16 App Router · TypeScript strict · Tailwind v4 (CSS-first `@theme` tokens)**.
+- **Five runtime dependencies**: `next`, `react`, `react-dom`, `gsap`, `lenis`. A sixth needs
+  a written justification.
+- **Only routes read `src/data/**`.** Sections and components receive typed props. This one
+  rule is what makes the Phase 2 CMS swap a change to one layer instead of a rewrite.
+- `MediaAsset` carries `alt`, `caption`, `credit`, `source`, `licence`, `width`, `height` from
+  day one, matching the future media library, so no migration is needed later.
+- Server components by default. `"use client"` only for: menu overlay, portfolio filter,
+  contact flow, motion primitives.
+- Portfolio filter state lives in the URL, not component state — linkable and shareable.
+
+---
+
+## Layout decisions
+
+- **A grid row never `stretch`es a shorter item to match a taller sibling.** CSS Grid's
+  default cross-axis alignment does this automatically for any two column-span items that
+  land in the same auto-placed row. Text stretches invisibly; a fixed-aspect image cannot
+  grow past its own ratio, so it sits at natural height inside the taller box and the
+  difference becomes bare ground beneath it. Every row pairing media with text of different
+  natural height carries `items-start` (or per-item `self-*`). Two real defects shipped from
+  this before it became a rule: `AboutStatement`'s photo column (fixed with a single flowing
+  column instead of a fought-over row), and the project gallery's landscape/portrait pairing
+  (fixed with a flex row that gives each image its own natural height instead of two grid
+  items whose spans happened to sum to 12).
+
+---
+
+## Motion decisions
+
+- **GSAP + ScrollTrigger** is the animation system.
+- **Lenis is the only smooth-scroll engine.** Locomotive Scroll was evaluated and rejected:
+  Lenis is smaller, does not take over layout, and bridges to the GSAP ticker cleanly.
+  **Locomotive must never be installed alongside it.**
+- Motion language: curtain transform-mask reveals, counter-scale on masked images, word
+  stagger on headings, rule draw for hairlines, capped `8%` parallax on background media only.
+- **A reveal that spans more than one paragraph, or a list mapped with `stagger`, gives every
+  item its own scroll trigger — never one trigger for the whole group.** A single trigger on
+  a tall block resolves to full opacity long before a normally-scrolling reader has seen most
+  of the content, so everything past the first screenful arrives already fully formed. That
+  mismatch is the actual mechanism behind content reading as "popping in from nothing" — it
+  is not the same bug as the stagger-wrapper fix below, and fixing one does not fix the other.
+  `Prose` reveals each paragraph independently for this reason.
+- **The `stagger` prop's wrapper element must never itself carry `data-reveal`.** Marking
+  both `data-reveal` and `data-reveal-children` held the wrapper at `opacity: 0` for the
+  entire staggered animation, since nothing ever animated the wrapper's own opacity — only
+  its children were tweened. The group was invisible until the wrapper's `data-revealed`
+  landed on completion, at which point CSS-driven opacity snapped from 0 to 1 in one frame:
+  every child appearing at once, already in place, regardless of the stagger interval. Fixed
+  in `Reveal.tsx` by marking staggered wrappers with `data-reveal-children` only.
+- Loading sequence: max **1.6s**, once per session, skippable, shortens when assets are
+  ready early, does not run at all under reduced motion.
+- Under `prefers-reduced-motion: reduce`, Lenis is never constructed and timelines are never
+  created — final states render immediately rather than animating faster.
+- Armed (hidden) start states are CSS-only under `html.js-motion`, set by a synchronous boot
+  script. No JS or reduced motion means nothing is ever hidden.
+- **`MotionFailsafe`** releases any element still armed and on screen after 4s, covering
+  script errors, a dead ticker, or a throttled tab. It is the only `!important` in the
+  project — a stalled tween keeps rewriting its inline transform, which outranks normal CSS.
+- Z-order: `60` menu overlay · `70` header · `80` page transition · `90` intro. The header
+  sits above the overlay; the overlay is `aria-modal` and therefore carries its own close
+  control, because a control outside the dialog is unreachable by keyboard.
+- **Everything composites.** Every animation moves `transform` or `opacity` only. The
+  curtain reveal, the intro, the page transition and the menu wipe were all originally
+  `clip-path` and were rebuilt as transform masks — `clip-path` is paint-level and repaints
+  a viewport-sized element every frame.
+- The curtain mask offsets are `+120%` frame / `−20%` content, netting to 100% at the start
+  and 0 at the end. **Equal-and-opposite offsets cancel and reveal nothing** — that bug
+  shipped briefly and was caught by measuring the armed geometry, not by looking.
+- Scroll handlers write data attributes inside a rAF throttle; they never call `setState`.
+- `will-change` is applied only while an element is moving and cleared on completion.
+- Images: AVIF then WebP, derivatives capped at 2048 (sources are 2400px, widest container
+  1680px). Halves the bytes decoded per scroll on photography.
+- **Rejected:** cursor followers, magnetic buttons, tilt effects, scroll-jacked full-page
+  sections, overshoot easing, `ease-in` on entrances, `backdrop-filter` on the header.
+
+---
+
+## Explicitly rejected
+
+| Rejected | Why |
+|---|---|
+| **Three.js / WebGL hero** | The art direction is photographic and typographic. A shader would be ornamental depth over the real subject, plus a bundle, a DPR budget, a context-loss path and a poster fallback — for nothing the photography does not already do |
+| Locomotive Scroll | Lenis chosen; two smooth-scroll engines is a defect |
+| Framer Motion | Would duplicate GSAP's role |
+| UI component libraries (MUI, Chakra, shadcn) | The entire point is that this must not look like a library |
+| CSS-in-JS runtime | Runtime cost for no benefit against a token layer |
+| A mono typeface | Third family doing a job tracking already does |
+| Rounded cards, shadows, glass, gradient meshes | Outside the architectural language |
+| A second accent colour | Dilutes the one signal the accent carries |
+| Building a custom CMS | Explicit client constraint; no compelling architectural reason |
+| Third-party analytics / tag managers | Privacy, CSP, and performance |
+
+---
+
+## CMS decision — PROVISIONAL, NOT ADOPTED
+
+**Provisional recommendation: Payload CMS.** MIT-licensed, free self-hosted, runs inside the
+same Next.js app (one deploy target), TypeScript-native so the `src/types/content.ts`
+contract can be shared, and ships drafts, versions, roles, media and SEO fields without a
+paid tier. Risk: couples CMS availability to the web app. Fallback if the studio wants a
+fully decoupled service: **Directus**.
+
+**Status: not confirmed. No CMS code may be written until Phase 2 is approved and this line
+is updated to say ADOPTED.**
+
+---
+
+## SEO decisions
+
+- Phase 1 builds the structure only: semantic landmarks, one `<h1>` per page, ordered
+  headings, crawlable `<a href>`, descriptive slugs, real text in the HTML, `alt` strategy,
+  internal linking. `generateStaticParams` on every `[slug]` route.
+- Metadata, canonicals, Open Graph, JSON-LD, sitemap and robots are **Phase 5**. Structured
+  data will only ever describe visible content.
+
+---
+
+## Security decisions
+
+- Phase 1 obligations already in force: no secrets in the repo, no third-party scripts, no
+  unsanitised external SVG, no `dangerouslySetInnerHTML` on unvetted content.
+- No public authentication surface will exist on the marketing site — this removes an entire
+  attack class by design.
+- Fooocus, when built, sits behind a backend service layer. Credentials and internal
+  endpoints never reach the browser, and the public site must function with Fooocus offline.
+
+---
+
+## Content status
+
+- All Phase 1 content is **demo content**, marked `isDemo: true` and banner-commented in
+  every data file. Demo projects are never presented as real Uthan work, and the projects,
+  portfolio, news, products and sustainability pages each carry a visible demo notice.
+- **Demo media: Wikimedia Commons**, CC0 / public domain / attributed Creative Commons,
+  provenance per file in `public/media/CREDITS.json` and surfaced in figure captions.
+  Openverse was tried first and rate-limits anonymous clients to a handful of requests.
+- **Curation is manual.** 74 assets were downloaded, reviewed on generated contact sheets,
+  and 48 deleted. 26 remain: 16 photographs, 10 architectural drawings. Assignment of
+  asset-to-role lives in `src/data/media.curation.ts`.
+- Commons' peer-reviewed Featured/Quality tiers skew to heritage and postcard imagery and
+  contain miscategorised files. It is a documentation archive, not a contemporary
+  architecture library. **The demo library is the weakest part of Phase 1 and is resolved by
+  the studio supplying real photography — no design change is required.**
+- **No portraits.** Attaching a real, identifiable person's photograph to an invented name
+  and role misrepresents that person regardless of licence. The team grid ships a designed
+  portrait-pending state instead, which is also the honest production state for a new hire.
+- **No logo wall.** Collaborators are set in type. A real company's mark would be false
+  proof of a relationship; an invented mark would be worthless.
+- **No dead links.** Unsupplied social profiles and unavailable documents render as text
+  with their state stated, never as `href="#"`.
+- Expertise categories, statistics and sustainability principles are placeholders pending
+  client confirmation.
+
+---
+
+## Outstanding decisions
+
+1. CMS confirmation (Phase 2 gate).
+2. Wordmark: typographic, or a drawn mark.
+3. Real expertise categories — the nine in use are placeholders.
+4. Real statistics.
+5. Real sustainability practice.
+6. Photography art direction for production.
+7. Whether project detail pages get a shared-element page transition.
+8. Deployment target.
+9. Domain.
+
+---
+
+## Verification performed (Phase 1)
+
+- Production build, typecheck and lint: clean.
+- Automated in-browser audit across all 13 routes: **zero HIGH findings** — no contrast
+  failure, no missing `alt`, no control without an accessible name, one `<h1>` per page, no
+  skipped heading levels, landmarks present.
+- Horizontal overflow: **80 page/width combinations** (10 routes × 320/375/390/768/1024/
+  1280/1440/1920) — zero overflow.
+- Link integrity: zero dead anchors; all 27 distinct internal links resolve.
+- No-JS / reduced-motion equivalence: with `js-motion` removed, zero reveal targets remain
+  hidden and the intro overlay stays `display: none`. Server HTML carries 2.1k–6.3k
+  characters of real text per route.
+- Menu dialog keyboard cycle: focus trapped, `Esc` closes, focus restored to the trigger,
+  body scroll released.
+
+## Approved
+
+**Pages:** — *awaiting review; Phase 1 complete and submitted.*
+**Components:** — *awaiting review; Phase 1 complete and submitted.*
+
+Nothing is approved until the Phase 1 completion report is reviewed and signed off.
