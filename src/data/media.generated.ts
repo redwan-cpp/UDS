@@ -29,6 +29,14 @@ export const LIBRARY = {
     "licence": "CC0",
     "source": "https://commons.wikimedia.org/wiki/File:Amsterdam_photo_2018,_free_download;_interior_of_concert_hall_Muziekgebouw_ground_floor,_with_staircase_and_bar._Fons_Heijnsbroek,_photography_of_The_Netherlands_in_high_resolution;_free_image_CC0.tif"
   },
+  "about-stair": {
+    "src": "/media/about-stair.jpg",
+    "width": 1920,
+    "height": 1440,
+    "credit": "Martin Kopta",
+    "licence": "CC BY 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Spiral_Staircase_(227905273).jpeg"
+  },
   "detail-01": {
     "src": "/media/detail-01.jpg",
     "width": 2400,

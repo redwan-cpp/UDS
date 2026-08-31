@@ -88,6 +88,18 @@ it deliberately and say why — reversing something in this file is a decision, 
 
 ## Motion decisions
 
+- **The hero has a video now — reversing the Phase 1 "no video" call.** The completion
+  report (`phase-1-report.md`) recorded no hero video because no openly-licensed footage
+  of sufficient quality had been found; that was a sourcing gap, not a design rejection.
+  The studio supplied a clip directly. It is a static-camera CGI/rendered loop (only the
+  light animates), not photography of a real building — worth knowing since the brief
+  leans toward photographic realism, but it was supplied with an explicit instruction to
+  use it, so it shipped as given rather than second-guessed. Re-encoded via
+  `scripts/transcode-hero.mjs`: 33MB HEVC source → ~1.9MB WebM + ~2.2MB MP4, muted, no
+  quality loss visible since nothing in frame moves but the light. The poster is the
+  video's own first frame (not a separate photograph), so the static-to-video handoff on
+  autoplay is seamless. `VideoAsset.src` became `VideoAsset.sources: {src,type}[]` to
+  carry both encodes — the one type change this required.
 - **GSAP + ScrollTrigger** is the animation system.
 - **Lenis is the only smooth-scroll engine.** Locomotive Scroll was evaluated and rejected:
   Lenis is smaller, does not take over layout, and bridges to the GSAP ticker cleanly.
@@ -131,6 +143,21 @@ it deliberately and say why — reversing something in this file is a decision, 
 - `will-change` is applied only while an element is moving and cleared on completion.
 - Images: AVIF then WebP, derivatives capped at 2048 (sources are 2400px, widest container
   1680px). Halves the bytes decoded per scroll on photography.
+- **A lazy image fades in on its own `load`, independent of the scroll-reveal system.**
+  A curtain or text reveal fires on viewport position; a lazy image's bytes arrive on
+  network time. Those two clocks have nothing to do with each other, so without this an
+  image could pop into an already-open, already-settled frame well after its surrounding
+  text had finished animating in — content that visibly loaded at two different speeds.
+  `Media` stamps a non-priority `<img>` with `data-media-loading` until it resolves; CSS
+  hides it only under `.js-motion`, the same no-JS/reduced-motion gate the reveal contract
+  uses, so nothing here can hide content that JS never runs for. `priority` images are
+  exempt — they are fetched eagerly to be ready before they're seen, so gating them behind
+  post-hydration state only risks hiding them during the paint they exist for.
+  React's `onLoad` alone was not reliable enough to ship: testing found a fully-loaded,
+  fully-decoded image (`img.complete === true`) that never fired a `load` event a handler
+  caught, leaving it stuck invisible. `Media` now also polls `.complete` directly and gives
+  up waiting outright after 4s — the same guarantee `MotionFailsafe` makes for the reveal
+  system, applied to image loading specifically.
 - **Rejected:** cursor followers, magnetic buttons, tilt effects, scroll-jacked full-page
   sections, overshoot easing, `ease-in` on entrances, `backdrop-filter` on the header.
 

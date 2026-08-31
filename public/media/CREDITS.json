@@ -684,5 +684,14 @@
     "bytes": 219147,
     "query": "architectural detail",
     "optimised": true
+  },
+  "about-stair.jpg": {
+    "title": "Spiral Staircase (227905273).jpeg",
+    "creator": "Martin Kopta",
+    "licence": "CC BY 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Spiral_Staircase_(227905273).jpeg",
+    "provider": "Wikimedia Commons",
+    "optimised": true
   }
 }

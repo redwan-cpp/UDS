@@ -408,6 +408,14 @@ Media reserves its aspect ratio before loading, so nothing shifts. There are no 
 shimmers — an ink block at the correct ratio, resolving to the image, is quieter and
 matches the language. Empty states are a single line of `--text-meta` on a hairline rule.
 
+That resolve is now a deliberate cross-fade, not a hard cut. A scroll-triggered reveal and
+a lazy image's network fetch are unrelated clocks; without decoupling them, an image can
+pop into an already-open, already-settled frame well after its surrounding text has
+finished animating in. `Media` fades a non-priority `<img>` in on its own `load` (armed
+under `.js-motion` like every other hidden start state, so it can never hide content with
+no JS), and gives up waiting after 4s on the same guarantee `MotionFailsafe` makes for the
+reveal system — see `memory.md`'s Motion decisions.
+
 ### Reduced motion
 
 Under `prefers-reduced-motion: reduce`: Lenis is not constructed, ScrollTrigger timelines

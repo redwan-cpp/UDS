@@ -26,8 +26,14 @@ export const SETS = {
    *  viewport: raking light, strong geometry, near-monochrome. */
   hero: ["hero-01"],
 
-  /** The About band — an interior with depth and a strong curve or rise. */
-  about: ["interior-03", "interior-02", "about-03"],
+  /** The About band — an interior with depth and a strong curve or rise.
+   *  Index 1 (the homepage About image) was a bright white museum ramp that
+   *  read as a mismatch against the hero's raw concrete — swapped for a
+   *  stone spiral stair, shot straight down its own void. CC BY 3.0, credit
+   *  rendered on-page via <Figure> rather than the bare <Media> the rest of
+   *  this set uses, since attribution is a term of the licence, not optional
+   *  decoration — see AboutStatement.tsx. */
+  about: ["interior-03", "about-stair", "about-03"],
 
   /** Nine expertise areas. Deliberately varied so the hover panel changes
    *  materially between rows rather than shuffling near-identical frames. */

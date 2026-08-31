@@ -31,13 +31,11 @@ export default function HomePage() {
 
   return (
     <>
+      {/* The poster is the video's own first frame, not a separate photograph —
+          otherwise the static fallback shows one scene and autoplay swaps to a
+          completely different one the moment it starts. */}
       <HomeHero
-        poster={img(
-          "hero",
-          0,
-          "Concrete building facade in raking afternoon light",
-          { focal: { x: 0.5, y: 0.45 } },
-        )}
+        poster={heroVideo.poster}
         video={heroVideo}
         disciplines={studio.disciplines}
         tagline={studio.tagline}
@@ -46,7 +44,11 @@ export default function HomePage() {
       <AboutStatement
         statement={studio.statement}
         approach={studio.approach}
-        image={img("about", 1, "Cast concrete stair rising through a top-lit void")}
+        image={img(
+          "about",
+          1,
+          "A stone spiral staircase, viewed straight down through the full height of its cylindrical void",
+        )}
       />
 
       <Numbers statistics={statistics} />

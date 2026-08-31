@@ -30,7 +30,12 @@ Media tooling (development only, never shipped):
 node scripts/fetch-curated.mjs    # source demo media from Wikimedia Commons
 node scripts/process-media.mjs    # optimise + regenerate src/data/media.generated.ts
 node scripts/contact-sheet.mjs    # contact sheets in .review/ for curation review
+node scripts/transcode-hero.mjs   # re-encode a supplied hero video (WebM+MP4+poster)
 ```
+
+Raw video masters go in the gitignored `media-source/` directory, never in `public/` —
+anything under `public/` is publicly downloadable as-is, which defeats transcoding a
+30MB+ camera export down to the ~2MB derivative the site actually serves.
 
 `scripts/audit.js` is pasted into the browser console to check contrast, heading order,
 accessible names, target sizes and horizontal overflow. It must report zero HIGH findings.

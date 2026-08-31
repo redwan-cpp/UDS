@@ -216,6 +216,17 @@ Images render through `next/image` with explicit `width`/`height` from `MediaAss
 hero poster and first project image are `priority`. Video ships with a poster, is muted,
 `playsinline`, looping, and pauses when offscreen or when the document is hidden.
 
+**Video never ships as delivered.** A camera or phone export arrives as HEVC in a
+QuickTime container — 30MB+ for a few seconds, with an audio track the muted hero never
+plays, and patchy browser decode support outside Safari. `scripts/transcode-hero.mjs`
+re-encodes it into what `BackgroundVideo` actually serves: WebM (VP9) as the primary
+source, MP4 (H.264) as the compatibility fallback, both muted and scaled to 1920px, plus
+a poster JPEG extracted from the video's own first frame — so the static fallback and
+the video's real opening frame are the same image, not two different photographs handed
+off mid-page-load. `VideoAsset.sources` is an ordered array for exactly this reason: the
+browser plays the first `type` it can decode. Raw masters live in the gitignored
+`media-source/` directory, never in `public/` (see CLAUDE.md).
+
 ### 2.10 Responsive architecture
 
 Breakpoint tokens live with the other tokens. Layout is composed from a shared 12-column

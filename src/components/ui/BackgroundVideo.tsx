@@ -87,7 +87,9 @@ export function BackgroundVideo({
           aria-label={video.description}
           className="absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
         >
-          <source src={video.src} type="video/webm" />
+          {video.sources.map((source) => (
+            <source key={source.src} src={source.src} type={source.type} />
+          ))}
         </video>
       )}
     </div>

@@ -32,7 +32,12 @@ export interface MediaAsset {
 }
 
 export interface VideoAsset {
-  src: string;
+  /**
+   * Ordered by preference — the browser plays the first `type` it can decode.
+   * WebM (VP9) first: smaller for the same visual quality. MP4 (H.264) as the
+   * broad-compatibility fallback (older Safari in particular).
+   */
+  sources: { src: string; type: string }[];
   poster: MediaAsset;
   /** Described for assistive technology; decorative background video has none. */
   description?: string;

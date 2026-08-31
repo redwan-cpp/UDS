@@ -402,6 +402,14 @@
     opacity: 0;
   }
 
+  /* A lazy image's own load state, independent of the reveal system above.
+     `Media` stamps this while a non-priority image hasn't finished loading;
+     same safety as the reveal contract, so a JS failure or reduced motion
+     leaves the image visible immediately rather than stuck at opacity 0. */
+  .js-motion [data-media-loading] {
+    opacity: 0;
+  }
+
   /* The curtain is a mask made of two transforms moving at different rates.
      The frame starts 120% down and the content 20% up inside it, so the pair
      nets to a full 100% offset — entirely below the clip window — and resolves

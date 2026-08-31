@@ -42,3 +42,9 @@ next-env.d.ts
 
 # Review artefacts (contact sheets etc.) — not part of the site
 .review/
+
+# Raw media masters (camera/export originals). Never served — anything in
+# public/ is publicly downloadable as-is, which defeats transcoding a 30MB+
+# source down to a web-safe derivative. Transcode via scripts/transcode-*.mjs
+# and commit only the output in public/media/.
+/media-source/

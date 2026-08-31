@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 import type { MediaAsset } from "@/types/content";
@@ -47,9 +50,60 @@ export function Media({
     ? `${asset.focal.x * 100}% ${asset.focal.y * 100}%`
     : "center";
 
+  // A scroll-triggered reveal fires on viewport position; a lazy image loads
+  // on network time. Those two clocks have nothing to do with each other, so
+  // without this an image can pop into an already-open, already-settled
+  // frame well after its surrounding text has finished animating in — the
+  // "images look slower than the text" bug. A `priority` image is exempt: it
+  // is fetched eagerly specifically so it is ready before it needs to be
+  // seen, and gating it behind post-hydration state would only risk hiding
+  // it during that critical first paint for nothing.
+  const [loaded, setLoaded] = useState(priority);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    if (priority) return;
+    const img = imgRef.current;
+    if (!img) return;
+
+    let settled = false;
+    const markLoaded = () => {
+      if (settled) return;
+      settled = true;
+      setLoaded(true);
+    };
+
+    if (img.complete) {
+      markLoaded();
+      return;
+    }
+
+    // A native listener, not the `onLoad` prop: a cache-warm image can finish
+    // decoding before React has attached anything, and by observation the
+    // `load` event doesn't reliably reach a handler added after the fact
+    // either. An image must never be able to stay invisible forever — the
+    // same guarantee MotionFailsafe makes for the scroll-reveal system — so
+    // this also polls `.complete` directly and gives up waiting outright
+    // after a few seconds.
+    img.addEventListener("load", markLoaded);
+    img.addEventListener("error", markLoaded);
+    const poll = window.setInterval(() => {
+      if (img.complete) markLoaded();
+    }, 150);
+    const giveUp = window.setTimeout(markLoaded, 4000);
+
+    return () => {
+      img.removeEventListener("load", markLoaded);
+      img.removeEventListener("error", markLoaded);
+      window.clearInterval(poll);
+      window.clearTimeout(giveUp);
+    };
+  }, [priority]);
+
   return (
     <div className={`relative overflow-hidden bg-ink-soft ${RATIOS[ratio]} ${className}`}>
       <Image
+        ref={imgRef}
         src={asset.src}
         alt={asset.alt}
         width={asset.width}
@@ -59,8 +113,9 @@ export function Media({
         loading={priority ? undefined : "lazy"}
         style={{ objectPosition: focal }}
         {...(revealMedia ? { "data-reveal-media": "" } : {})}
+        {...(!priority && !loaded ? { "data-media-loading": "" } : {})}
         className={[
-          "h-full w-full object-cover",
+          "h-full w-full object-cover transition-opacity duration-[var(--dur-slow)] ease-out-soft motion-reduce:transition-none",
           // `.hover-zoom` gates the effect behind a fine pointer, promotes the
           // layer only while hovering, and drops back to `will-change: auto`
           // the moment the pointer leaves.
@@ -81,10 +136,19 @@ export function Figure({
   priority,
   sizes,
   className = "",
+  hoverScale,
+  revealMedia,
 }: MediaProps) {
   return (
     <figure className={className}>
-      <Media asset={asset} ratio={ratio} priority={priority} sizes={sizes} />
+      <Media
+        asset={asset}
+        ratio={ratio}
+        priority={priority}
+        sizes={sizes}
+        hoverScale={hoverScale}
+        revealMedia={revealMedia}
+      />
       {(asset.caption || asset.credit) && (
         <figcaption className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-caption text-secondary">
           {asset.caption && <span>{asset.caption}</span>}

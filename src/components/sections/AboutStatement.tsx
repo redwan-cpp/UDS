@@ -1,6 +1,6 @@
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
-import { Media } from "@/components/ui/Media";
+import { Figure } from "@/components/ui/Media";
 import { ButtonLink, Arrow } from "@/components/ui/Button";
 import { Eyebrow, Statement } from "@/components/typography";
 import { Reveal } from "@/components/motion/Reveal";
@@ -93,12 +93,19 @@ export function AboutStatement({
           {/* The photograph breaks the container to the right — the one grid
               break this section is allowed. `mt-16` is purely decorative
               offset; nothing in the other column counteracts it, so it can
-              never reopen this bug. */}
+              never reopen this bug.
+
+              Rendered via Figure, not the bare Media used elsewhere in this
+              set: this particular frame is CC BY, and attribution is a term
+              of the licence, not optional decoration. The caption carries it
+              in the same quiet register as a caption anywhere else on the
+              site — see media.curation.ts. */}
           <div className="lg:col-span-5 lg:col-start-8 lg:-mr-(--gutter) lg:mt-16">
             <Reveal variant="curtain">
-              <Media
+              <Figure
                 asset={image}
                 ratio="tall"
+                priority
                 revealMedia
                 sizes="(min-width: 1024px) 40vw, 100vw"
               />

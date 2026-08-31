@@ -97,16 +97,24 @@ export function HomeHero({ poster, video, disciplines, tagline }: HomeHeroProps)
       </div>
 
       {/* Legibility scrims, in two bands rather than one flat wash.
-          Text sits at the top and bottom of this viewport and the photograph
-          is bright concrete, so each band is darkened enough to carry type
-          while the middle of the image stays close to untouched. */}
+          Text sits at the top and bottom of this viewport; the middle of the
+          image stays close to untouched so the video still reads as the
+          subject, not as a backdrop drowned in a flat wash.
+
+          The bottom band was originally h-1/2 fading to fully transparent at
+          its own top edge — but the heading sits in the UPPER half of that
+          band, exactly where the fade was weakest, and this video's bright
+          window fills a large fraction of the frame right behind it. The band
+          is now taller and holds real darkness (82%) through most of its own
+          height rather than fading out early, via explicit stop positions
+          (from-0%/via-60%) rather than Tailwind's default 50% via-stop. */}
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-ink/85 via-ink/45 to-transparent"
+        className="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-ink/90 from-0% via-ink/60 via-60% to-transparent"
       />
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/92 via-ink/55 to-transparent"
+        className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-ink/95 from-0% via-ink/82 via-60% to-transparent"
       />
 
       {/* The drawing grid. Purely structural, and very quiet. */}
@@ -162,7 +170,12 @@ export function HomeHero({ poster, video, disciplines, tagline }: HomeHeroProps)
                 <span className="block">Uthan</span>
               </span>
               <span data-hero-line className="block overflow-hidden">
-                <span className="block text-paper/70">Design Studio</span>
+                {/* Was text-paper/70 — fragile against a video backdrop whose
+                    brightness varies as it loops, unlike the single still photo
+                    this was originally tuned against. Full opacity is what
+                    actually holds up; the hierarchy against "Uthan" now comes
+                    from position and the rule above it, not from transparency. */}
+                <span className="block text-paper">Design Studio</span>
               </span>
             </span>
           </h1>
