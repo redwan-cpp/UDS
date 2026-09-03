@@ -3,26 +3,40 @@
 import { useEffect, useRef } from "react";
 
 /**
+ * Elements the pickbox "snaps" to. Kept as one list rather than duplicated
+ * between here and the CSS `cursor: pointer` override below, so the two
+ * cannot silently drift apart — a target the CSS treats as clickable but this
+ * selector misses would keep the crosshair in "measuring" mode over something
+ * that is actually interactive.
+ */
+const SNAP_SELECTOR =
+  'a[href], button, input, select, textarea, summary, [role="button"], [tabindex]:not([tabindex="-1"])';
+
+/**
  * The drawing-board cursor.
  *
  * A CAD crosshair: two full-bleed hairlines and a small centre pickbox, the
- * reticle you stand in front of all day in AutoCAD. The reference is deliberate
- * — the studio's own tool, used as the interface's pointer.
+ * reticle you stand in front of all day in AutoCAD — now carrying two more
+ * pieces of that reference, both real conventions from that software rather
+ * than invented decoration:
  *
- * `memory.md` previously rejected cursor followers outright, and most of the
- * reasons still hold: they are usually a lag-y div chasing the pointer, they
- * cost a frame of jank on every move, and they replace a system cursor that
- * was already communicating something. This one is built to avoid all three:
+ * - **A coordinate readout.** AutoCAD's dynamic input shows the cursor's
+ *   position in drawing units as it moves; this shows it in screen pixels,
+ *   zero-padded to read as data rather than as prose, in the same tabular
+ *   numeral register the site's indices and statistics already use.
+ * - **A snap state.** Passing over anything interactive fills the pickbox
+ *   solid and swaps the readout for a short label — the same "object snap
+ *   acquired" feedback CAD gives when the cursor finds an endpoint or a
+ *   midpoint to lock onto, repurposed here for "there is something to click."
  *
- * - Position is written straight to a CSS custom property inside a rAF, and
- *   the element is moved with `translate3d` only. Nothing lays out, nothing
- *   paints beyond the compositor.
- * - The native cursor is NOT hidden globally. It is hidden only where the
- *   crosshair is genuinely a better pointer (the page surface), and left alone
- *   over anything interactive, where the system cursor still carries the
- *   affordance — a hand over a link says "clickable" better than a reticle.
- * - It never renders for coarse pointers or under reduced motion, and it is
- *   removed entirely (not just hidden) when either is true.
+ * `memory.md` previously rejected cursor followers outright; this reverses
+ * that, at the studio's request, with the objections it raised still
+ * answered: position and the readout's text are written directly to the DOM
+ * inside a single rAF-throttled handler — never through React state, so none
+ * of this costs a re-render — and the system cursor is only hidden over the
+ * page surface. Anything in `SNAP_SELECTOR` keeps its own cursor **and**
+ * drives the crosshair's snap state, so the affordance is reinforced rather
+ * than replaced. Never mounted for coarse pointers or reduced motion.
  */
 export function CrosshairCursor() {
   const ref = useRef<HTMLDivElement>(null);
@@ -31,43 +45,77 @@ export function CrosshairCursor() {
     const el = ref.current;
     if (!el) return;
 
-    // A touch device has no cursor to improve on, and a reader who asked for
-    // reduced motion did not ask for a reticle tracking their hand.
     const fine = window.matchMedia("(pointer: fine)");
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!fine.matches || reduced.matches) return;
 
+    const coords = el.querySelector<HTMLElement>("[data-crosshair-coords]");
+
     let frame = 0;
     let x = 0;
     let y = 0;
+    let snapped = false;
 
     const apply = () => {
       frame = 0;
       el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      if (coords && !snapped) {
+        // Zero-padded to a fixed width, the way the site's own numeric
+        // registers (project years, statistics) never reflow as digits
+        // change — a readout that jitters sideways defeats the purpose of it
+        // reading as an instrument rather than as passing commentary.
+        coords.textContent = `X ${String(Math.round(x)).padStart(4, "0")}  Y ${String(Math.round(y)).padStart(4, "0")}`;
+      }
     };
 
     const onMove = (event: PointerEvent) => {
       x = event.clientX;
       y = event.clientY;
-      // The reticle is only worth showing once the pointer has actually moved;
-      // before that it would sit at 0,0 in the corner.
       if (!el.hasAttribute("data-active")) el.setAttribute("data-active", "");
       if (!frame) frame = window.requestAnimationFrame(apply);
     };
 
-    // Leaving the window should take the crosshair with it, or it strands in
-    // the last position over a page the pointer is no longer on.
+    // Snap state: real hit-testing on the element underneath, driven by
+    // native bubbling `pointerover`/`pointerout` rather than a second
+    // per-frame poll — this only runs when the hovered element actually
+    // changes, not sixty times a second.
+    const onOver = (event: PointerEvent) => {
+      const target = event.target as Element | null;
+      if (!target?.closest(SNAP_SELECTOR)) return;
+      snapped = true;
+      el.setAttribute("data-snap", "");
+      if (coords) coords.textContent = "SELECT";
+    };
+
+    const onOut = (event: PointerEvent) => {
+      const target = event.target as Element | null;
+      if (!target?.closest(SNAP_SELECTOR)) return;
+      // `relatedTarget` is where the pointer is going — if it is still inside
+      // the same interactive element (moving between its own children), this
+      // is not a real exit and must not drop the snap state.
+      const related = event.relatedTarget as Element | null;
+      if (related?.closest(SNAP_SELECTOR) === target.closest(SNAP_SELECTOR)) {
+        return;
+      }
+      snapped = false;
+      el.removeAttribute("data-snap");
+    };
+
     const onLeave = () => el.removeAttribute("data-active");
     const onEnter = () => el.setAttribute("data-active", "");
 
     document.documentElement.setAttribute("data-crosshair", "");
     window.addEventListener("pointermove", onMove, { passive: true });
+    document.addEventListener("pointerover", onOver, { passive: true });
+    document.addEventListener("pointerout", onOut, { passive: true });
     document.addEventListener("pointerleave", onLeave);
     document.addEventListener("pointerenter", onEnter);
 
     return () => {
       document.documentElement.removeAttribute("data-crosshair");
       window.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerover", onOver);
+      document.removeEventListener("pointerout", onOut);
       document.removeEventListener("pointerleave", onLeave);
       document.removeEventListener("pointerenter", onEnter);
       if (frame) window.cancelAnimationFrame(frame);
@@ -79,6 +127,11 @@ export function CrosshairCursor() {
       <span className="uds-crosshair__h" />
       <span className="uds-crosshair__v" />
       <span className="uds-crosshair__box" />
+      <span
+        data-crosshair-coords
+        data-numeric
+        className="uds-crosshair__coords"
+      />
     </div>
   );
 }

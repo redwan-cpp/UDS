@@ -178,6 +178,13 @@ it deliberately and say why — reversing something in this file is a decision, 
   hidden over the page surface — links, buttons and fields keep their own, because a hand
   over a link is a better affordance than a reticle. Never mounted for coarse pointers or
   reduced motion.
+  - **Carries a coordinate readout and a snap state**, both real AutoCAD conventions rather
+    than invented decoration: a zero-padded X/Y readout (dynamic input) in the site's own
+    tabular-numeral register, and a pickbox that fills solid and swaps the readout for
+    "SELECT" over anything interactive (object-snap acquisition). The snap hit-test is a
+    single shared `SNAP_SELECTOR` constant, reused for the crosshair's own logic — kept as
+    one list rather than duplicated against the CSS `cursor: pointer` override, so the two
+    cannot silently drift apart.
 - **The header is glass.** `backdrop-filter` on the header was previously rejected as an
   expensive way to reproduce what a 94% ink fill already did; over the hero *video* the two
   no longer look alike, so the studio asked for the blur and it now earns its cost. Applied

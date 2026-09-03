@@ -823,7 +823,9 @@
     width: 1px;
   }
 
-  /* The pickbox. Transparent centre, so it frames what it is over. */
+  /* The pickbox. Transparent centre, so it frames what it is over — until it
+     snaps (below), the same distinction a CAD pickbox draws between "just
+     measuring" and "found something to grab". */
   .uds-crosshair__box {
     top: -5px;
     left: -5px;
@@ -832,6 +834,46 @@
     background: transparent;
     border: 1px solid currentColor;
     opacity: 0.9;
+    transition:
+      background-color var(--dur-fast) var(--ease-out-soft),
+      opacity var(--dur-fast) var(--ease-out-soft);
+  }
+
+  /* Snap state: solid fill, the "object snap acquired" read CAD gives when
+     the cursor locks onto something. The readout swaps to a label instead of
+     coordinates at the same moment — see CrosshairCursor.tsx. */
+  .uds-crosshair[data-snap] .uds-crosshair__box {
+    background: currentColor;
+    opacity: 1;
+  }
+
+  /* The coordinate readout. Offset down-right of the pickbox, in the same
+     tabular-numeral register as the site's project years and statistics
+     (`[data-numeric]`), so it reads as an instrument rather than as a label
+     stuck to the pointer. */
+  .uds-crosshair__coords {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    white-space: nowrap;
+    font-size: var(--text-meta);
+    letter-spacing: var(--text-meta--letter-spacing);
+    font-weight: var(--text-meta--font-weight);
+    opacity: 0.6;
+  }
+
+  .uds-crosshair[data-snap] .uds-crosshair__coords {
+    opacity: 0.85;
+  }
+
+  /* A narrow desktop window (the only case this matters — touch devices
+     never get the crosshair at all) is close enough quarters that a running
+     coordinate readout starts to feel like clutter rather than an instrument;
+     the hairlines and pickbox alone still read as the tool at that width. */
+  @media (max-width: 47.99rem) {
+    .uds-crosshair__coords {
+      display: none;
+    }
   }
 
   /* Hide the system cursor over the page surface only. Anything interactive
