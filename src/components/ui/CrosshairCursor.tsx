@@ -15,10 +15,11 @@ const SNAP_SELECTOR =
 /**
  * The drawing-board cursor.
  *
- * A CAD crosshair: two full-bleed hairlines and a small centre pickbox, the
- * reticle you stand in front of all day in AutoCAD — now carrying two more
- * pieces of that reference, both real conventions from that software rather
- * than invented decoration:
+ * A CAD crosshair: two short hairlines and a small centre pickbox, the
+ * reticle you stand in front of all day in AutoCAD — sized to read as an
+ * instrument near the pointer, not a pair of lines drawn across whatever the
+ * visitor is trying to look at — carrying two more pieces of that reference,
+ * both real conventions from that software rather than invented decoration:
  *
  * - **A coordinate readout.** AutoCAD's dynamic input shows the cursor's
  *   position in drawing units as it moves; this shows it in screen pixels,
@@ -29,14 +30,22 @@ const SNAP_SELECTOR =
  *   acquired" feedback CAD gives when the cursor finds an endpoint or a
  *   midpoint to lock onto, repurposed here for "there is something to click."
  *
+ * **The colour flips with the surface it is over**, the same rule every
+ * section on the page already follows for its own accent: pistachio on dark,
+ * olive on light. A `data-surface` attribute, set from a hit-test against the
+ * nearest `.surface-dark` / `.surface-light` ancestor of whatever is under
+ * the pointer, drives which token `--color-accent`-equivalent CSS applies —
+ * not a colour-blend trick standing in for the real rule.
+ *
  * `memory.md` previously rejected cursor followers outright; this reverses
  * that, at the studio's request, with the objections it raised still
- * answered: position and the readout's text are written directly to the DOM
- * inside a single rAF-throttled handler — never through React state, so none
- * of this costs a re-render — and the system cursor is only hidden over the
- * page surface. Anything in `SNAP_SELECTOR` keeps its own cursor **and**
- * drives the crosshair's snap state, so the affordance is reinforced rather
- * than replaced. Never mounted for coarse pointers or reduced motion.
+ * answered: position, the readout's text and the surface hit-test are all
+ * written directly to the DOM inside a single rAF-throttled handler — never
+ * through React state, so none of this costs a re-render — and the system
+ * cursor is only hidden over the page surface. Anything in `SNAP_SELECTOR`
+ * keeps its own cursor **and** drives the crosshair's snap state, so the
+ * affordance is reinforced rather than replaced. Never mounted for coarse
+ * pointers or reduced motion.
  */
 export function CrosshairCursor() {
   const ref = useRef<HTMLDivElement>(null);
@@ -55,6 +64,7 @@ export function CrosshairCursor() {
     let x = 0;
     let y = 0;
     let snapped = false;
+    let surface: "dark" | "light" | null = null;
 
     const apply = () => {
       frame = 0;
@@ -65,6 +75,21 @@ export function CrosshairCursor() {
         // change — a readout that jitters sideways defeats the purpose of it
         // reading as an instrument rather than as passing commentary.
         coords.textContent = `X ${String(Math.round(x)).padStart(4, "0")}  Y ${String(Math.round(y)).padStart(4, "0")}`;
+      }
+
+      // The cursor is `pointer-events: none` (inherited by every child), so
+      // this hit-test lands on whatever is actually underneath it, never on
+      // the crosshair itself. Walking to the nearest `.surface-dark` /
+      // `.surface-light` ancestor reuses the exact rule every section on the
+      // page already follows for its own accent — the cursor gets the same
+      // pistachio-on-dark / olive-on-light flip everything else does,
+      // instead of a colour blend standing in for it.
+      const under = document.elementFromPoint(x, y);
+      const surfaceEl = under?.closest(".surface-dark, .surface-light");
+      const next = surfaceEl?.classList.contains("surface-light") ? "light" : "dark";
+      if (next !== surface) {
+        surface = next;
+        el.setAttribute("data-surface", surface);
       }
     };
 

@@ -328,19 +328,21 @@ it deliberately and say why — reversing something in this file is a decision, 
     (matches `ease-in-out-soft`'s role, "anything that leaves and returns") — GSAP's `ease`
     property does not read a CSS custom property, so these are the same two curves already
     documented above, spelled in GSAP's own built-in vocabulary instead of raw cubic-bezier.
-- **The crosshair cursor is a small local reticle now, not a full-viewport CAD line**, and
-  its colour is `mix-blend-mode: difference` against a fixed `--color-paper` value instead
-  of the surface-aware `--color-accent` token. Two real defects, both from the same root
-  cause: the crosshair is mounted once at the document root, outside any `.surface-dark` /
-  `.surface-light` ancestor, so `--color-accent` never flipped for it — it resolved to
-  pistachio everywhere, including over paper, where pistachio measures 1.4:1 and is
-  prohibited as a meaningful line (the colour contract in design.md). `mix-blend-mode`
-  sidesteps the surface question entirely: differenced against ink it reads near-white,
-  differenced against paper it reads black, and it needs no scroll-linked "which surface am
-  I over" tracking to do it. The second defect: `mix-blend-mode` does not cascade to
-  children, so it has to sit on each painted mark (`__h`/`__v`/`__box`/`__coords`)
-  individually — setting it only on the non-painting wrapper `div` compiles but does
-  nothing, since that element never puts a pixel on screen itself.
+- **The crosshair cursor is a mid-sized local reticle (72px arms), not a full-viewport CAD
+  line, and its colour genuinely flips with the surface it is over** — pistachio on dark,
+  olive on light, the same rule every section's own accent already follows — rather than a
+  fixed value stood in for it. The crosshair is mounted once at the document root, outside
+  any `.surface-dark` / `.surface-light` ancestor, so `--color-accent` never flips for it on
+  its own; `CrosshairCursor.tsx` now does the hit-test itself, inside the same rAF-throttled
+  handler that already writes position and the coordinate readout: `document.elementFromPoint`
+  on the pointer's own coordinates (safe because the crosshair and every child inherits
+  `pointer-events: none`, so it can never hit-test itself), then `.closest(".surface-dark,
+  .surface-light")`, then a `data-surface` attribute CSS reads. A `mix-blend-mode: difference`
+  version shipped first and was replaced — it solved contrast generically but not the actual
+  ask, which was the site's own two real tokens, not a computed invert. Worth remembering
+  from building the blend-mode version even though it is gone: `mix-blend-mode` does not
+  cascade to children, so it has to sit on each painted mark individually, never on a
+  non-painting wrapper.
 - **Rejected:** magnetic buttons, tilt effects, scroll-jacked full-page sections, overshoot
   easing, `ease-in` on entrances.
 

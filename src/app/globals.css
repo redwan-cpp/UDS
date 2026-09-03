@@ -791,53 +791,48 @@
     z-index: 95;
     display: none;
     pointer-events: none;
-    /* A fixed light value, not the surface-aware accent token: this element
-       is mounted once at the document root, outside any `.surface-dark` /
-       `.surface-light` ancestor, so `--color-accent` never flips for it —
-       it would have resolved to pistachio everywhere, including over paper,
-       where pistachio measures 1.4:1 and is prohibited as a meaningful line
-       (design.md's colour contract). `mix-blend-mode: difference` inverts
-       this value against whatever is underneath instead: paper-on-ink reads
-       near-white, the same paper value differenced against paper itself
-       reads black, and anything in between resolves to *something* visibly
-       distinct from its background — one value that is legible on every
-       surface the site has, rather than a colour that has to be told which
-       surface it is currently over. */
-    color: var(--color-paper);
+    /* Defaults to the dark-surface accent — the hero underneath the header,
+       where a visitor's pointer usually starts, is ink. `data-surface`,
+       written from a hit-test in CrosshairCursor.tsx against the nearest
+       `.surface-dark` / `.surface-light` ancestor of whatever is actually
+       under the pointer, flips this the same way every section's own accent
+       already flips: pistachio on dark, olive on light — the site's real
+       colour contract, not a blend-mode invert standing in for it. */
+    color: var(--color-pistachio);
     will-change: transform;
+  }
+
+  .uds-crosshair[data-surface="light"] {
+    color: var(--color-olive);
   }
 
   .uds-crosshair[data-active] {
     display: block;
   }
 
-  /* `mix-blend-mode` does not cascade to children — it governs how the
-     element carrying it composites with what is behind it, not how its
-     descendants do. Each painted mark gets its own, rather than relying on
-     it from the wrapper above, which paints nothing itself. */
   .uds-crosshair__h,
   .uds-crosshair__v,
   .uds-crosshair__box {
     position: absolute;
     background: currentColor;
-    opacity: 0.75;
-    mix-blend-mode: difference;
+    opacity: 0.85;
   }
 
-  /* A small reticle centred on the pointer, not a full-viewport CAD line —
-     legible as "this is a drawing tool" at a glance without the hairlines
-     drawing a line across whatever the visitor is actually trying to read. */
+  /* A mid-sized reticle, scaled to read as a real AutoCAD crosshair up
+     close rather than a full-viewport line drawn across whatever the
+     visitor is trying to look at, or a tick mark too small to register as
+     one at all. */
   .uds-crosshair__h {
-    left: -11px;
+    left: -36px;
     top: 0;
-    width: 22px;
+    width: 72px;
     height: 1px;
   }
 
   .uds-crosshair__v {
-    top: -11px;
+    top: -36px;
     left: 0;
-    height: 22px;
+    height: 72px;
     width: 1px;
   }
 
@@ -845,13 +840,13 @@
      snaps (below), the same distinction a CAD pickbox draws between "just
      measuring" and "found something to grab". */
   .uds-crosshair__box {
-    top: -5px;
-    left: -5px;
-    width: 10px;
-    height: 10px;
+    top: -6px;
+    left: -6px;
+    width: 12px;
+    height: 12px;
     background: transparent;
     border: 1px solid currentColor;
-    opacity: 0.9;
+    opacity: 1;
     transition:
       background-color var(--dur-fast) var(--ease-out-soft),
       opacity var(--dur-fast) var(--ease-out-soft);
@@ -871,14 +866,13 @@
      stuck to the pointer. */
   .uds-crosshair__coords {
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: 44px;
+    left: 44px;
     white-space: nowrap;
     font-size: var(--text-meta);
     letter-spacing: var(--text-meta--letter-spacing);
     font-weight: var(--text-meta--font-weight);
-    opacity: 0.75;
-    mix-blend-mode: difference;
+    opacity: 0.8;
   }
 
   .uds-crosshair[data-snap] .uds-crosshair__coords {
