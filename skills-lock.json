@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "skill-finder": {
+      "source": "ckorhonen/claude-skills",
+      "sourceType": "github",
+      "skillPath": "skills/skill-finder/SKILL.md",
+      "computedHash": "9e68229faf63e8bdb60d784d865fec70fe862d3788aea75079823af7f93c8016"
+    }
+  }
+}
