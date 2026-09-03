@@ -184,6 +184,33 @@ it deliberately and say why — reversing something in this file is a decision, 
   as a Tailwind `data-[scrolled]:backdrop-blur-*` utility, **not** as a hand-written
   `backdrop-filter` in `globals.css` — the CSS transformer strips that declaration silently,
   which is how this first shipped looking like a flat veil.
+- **The mark lights up, on the first-visit intro and on every route change** (`NeonMark`).
+  Two stacked copies of `UthanMark` — a dim unlit one always present, a bright pistachio one
+  revealed bottom-to-top via `clip-path` — with a double `drop-shadow` (tight, then wide) for
+  the glow. "Neon" is deliberately not a new colour: the palette takes one accent and no
+  second is introduced, so the glow is pistachio at higher intensity, not an invented hue.
+  This and the header's glass are the two reversals of the "no glow, no glass" anti-brief —
+  see design.md's Anti-brief note.
+  - The **first-visit intro** (`LoadingSequence`) drives the fill with GSAP, chained against
+    the same timeline as the rule-draw and letter reveal it already had; lengthened from a
+    1.6s ceiling to 2.4s at the studio's request; still skippable, still never runs under
+    reduced motion or no JS (armed only under `.js-motion`, default fully lit).
+  - **Every route change** (`PageTransition`) shows the mark too, briefly — but is **not**
+    built on a GSAP timeline, and this was not a stylistic choice. It fires on every
+    navigation rather than once per session, and testing surfaced a GSAP timeline getting
+    *stuck fully covering the page* twice under that frequency: once from React 18 Strict
+    Mode double-invoking the mount effect in development (a `useRef(true)` "is this the
+    first render" flag reads as already-flipped on the second simulated mount, since Strict
+    Mode's mount→cleanup→mount replay reuses the same ref — fixed everywhere in this file by
+    seeding a **second `useState`** with the initial prop value and comparing during render,
+    not a ref, both because a ref survives the replay and because this project's lint rules
+    forbid reading `ref.current` during render outright), and again from the timeline's own
+    `setTimeout` rescue not reliably firing a second time. Rebuilt on plain React state (a
+    `data-phase` attribute) and CSS transitions instead: the panel's position becomes a pure
+    function of state with no mid-flight tween state to strand, and the transform is
+    compositor-driven rather than dependent on a JS frame callback. Confirmed empirically,
+    not just in theory — the CSS-driven version showed genuine smooth mid-transition values
+    where the GSAP version had shown none.
 - **Rejected:** magnetic buttons, tilt effects, scroll-jacked full-page sections, overshoot
   easing, `ease-in` on entrances.
 

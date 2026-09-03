@@ -626,6 +626,71 @@
     content: "";
   }
 
+  /* --- The neon mark --------------------------------------------------------
+     `[data-neon-fill]` is clipped to nothing from the bottom edge; whatever
+     GSAP timeline is driving it animates `clip-path` open. The double
+     drop-shadow — tight, then wide — is the standard construction for a CSS
+     glow: one pass reads as the tube itself lit, the second as light bleeding
+     into the surrounding dark.
+
+     Same armed/failsafe pattern as the reveal contract above: the unanimated
+     default is fully revealed (`inset(0)`), and only `.js-motion` clips it
+     down to nothing to be filled back in. No JS or reduced motion means the
+     mark is simply shown lit, never a dim shape nothing will ever fill. */
+  .uds-neon-mark__fill {
+    clip-path: inset(0% 0 0 0);
+    filter:
+      drop-shadow(0 0 6px var(--color-pistachio))
+      drop-shadow(0 0 22px color-mix(in srgb, var(--color-pistachio) 65%, transparent));
+  }
+
+  .js-motion .uds-neon-mark__fill {
+    clip-path: inset(100% 0 0 0);
+  }
+
+  /* The controlled path: `data-lit` on the wrapper, toggled by React state
+     rather than by an external tween — see NeonMark's `lit` prop. A plain CSS
+     transition is what `PageTransition` relies on for this, deliberately
+     instead of a GSAP timeline: it fires on every navigation rather than once
+     per session, and a CSS transition is driven by the compositor rather than
+     by a JavaScript frame callback, so it cannot stall mid-flight the way a
+     multi-step timeline can. Scoped to `.js-motion` for the same reason as
+     everywhere else in this file: no JS or reduced motion means no transition
+     is ever attached, so `data-lit` — if it is ever even set under those
+     conditions — just changes the value outright. */
+  .js-motion [data-lit] .uds-neon-mark__fill {
+    transition: clip-path var(--dur-slow) var(--ease-out-soft);
+  }
+
+  .js-motion [data-lit="true"] .uds-neon-mark__fill {
+    clip-path: inset(0% 0 0 0);
+  }
+
+  /* --- The route-transition panel -------------------------------------------
+     Three states, driven by a `data-phase` attribute set from React state —
+     not from a GSAP timeline (see PageTransition.tsx for why). `covering` has
+     no transition: the panel has to snap over the outgoing page in a single
+     frame, the same instant jump the old `tl.set()` step did, before easing
+     back off on `wiping`. */
+  .uds-transition-panel {
+    transform: translate3d(0, 100%, 0);
+  }
+
+  .uds-transition-panel[data-phase="covering"] {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .uds-transition-panel[data-phase="wiping"] {
+    transform: translate3d(0, -100%, 0);
+    transition: transform var(--dur-cinematic) var(--ease-in-out-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .uds-transition-panel[data-phase="wiping"] {
+      transition: none;
+    }
+  }
+
   /* --- The location map ----------------------------------------------------
      Google's stock palette (blue roads, mint parks, white ground) is the one
      thing on the contact page not drawn in the site's language. Greyscale was

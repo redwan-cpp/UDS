@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 import { gsap } from "@/lib/gsap";
-import { UthanMark } from "@/components/brand/UthanMark";
+import { NeonMark } from "@/components/motion/NeonMark";
 
 /**
  * First-visit reveal.
@@ -13,8 +13,10 @@ import { UthanMark } from "@/components/brand/UthanMark";
  *   is never a hydration flash of an overlay that should not be there.
  * - Never runs under `prefers-reduced-motion` or without JavaScript — the CSS
  *   keeps it hidden unless the boot script explicitly enabled it.
- * - Never exceeds 1.6s, and shortens when fonts and the hero poster are ready
- *   sooner. It covers ready content; it does not delay it.
+ * - Never exceeds 2.4s (lengthened from an earlier 1.6s at the studio's
+ *   request — the mark now has to visibly fill rather than just drop in, and
+ *   the old ceiling cut that motion short), and shortens when fonts and the
+ *   hero poster are ready sooner. It covers ready content; it does not delay it.
  * - Skippable with any key or click.
  * - `aria-hidden`, so a screen reader goes straight to the page.
  *
@@ -48,73 +50,71 @@ export function LoadingSequence() {
 
     const tl = gsap.timeline({ onComplete: finish });
 
-    // The mark builds before the name arrives: each plate drops onto the one
-    // below it, bottom-up, the way the building the mark describes goes up.
-    // Transform and opacity only — the whole intro stays on the compositor.
-    //
-    // Scoped to the intro element, NOT a bare "[data-plate]" selector: the
-    // same mark is in the header, and a global selector animated that copy
-    // too — leaving the header's logo sitting at opacity 0 after the intro
-    // had finished and been unmounted.
+    // The mark lights up before the name arrives — see NeonMark for the
+    // construction. `clip-path` is on `CSSPlugin`'s default tween list, so
+    // this is a plain numeric interpolation between two `inset()` calls with
+    // the same argument shape; nothing beyond core GSAP is needed for it.
     tl.fromTo(
-      el.querySelectorAll("[data-plate]"),
-      { yPercent: -26, opacity: 0 },
-      {
-        yPercent: 0,
-        opacity: 1,
-        duration: 0.42,
-        ease: "power3.out",
-        stagger: { each: 0.09, from: "end" },
-      },
+      el.querySelector("[data-neon-fill]"),
+      { clipPath: "inset(100% 0 0 0)" },
+      { clipPath: "inset(0% 0 0 0)", duration: 0.75, ease: "power2.out" },
     )
       .to("[data-intro-word]", {
         yPercent: 0,
-        duration: 0.55,
+        duration: 0.7,
         ease: "power3.out",
-        stagger: 0.04,
-      }, 0.28)
+        stagger: 0.055,
+      }, 0.35)
       .fromTo(
         "[data-intro-rule]",
         { scaleX: 0 },
         {
           scaleX: 1,
-          duration: 0.5,
+          duration: 0.7,
           ease: "power2.inOut",
-          stagger: 0.08,
+          stagger: 0.1,
           transformOrigin: "left center",
         },
-        0.3,
+        0.4,
       )
       .fromTo(
         "[data-intro-accent]",
         { scaleY: 0 },
         {
           scaleY: 1,
-          duration: 0.3,
+          duration: 0.4,
           ease: "power2.inOut",
           transformOrigin: "top center",
         },
-        0.7,
+        0.95,
       )
       // The panel lifts while its content moves down by the same amount, so the
       // wordmark stays put as the surface leaves. Two transforms rather than a
-      // clip-path repaint of the whole viewport.
+      // clip-path repaint of the whole viewport — this is the one place a
+      // viewport-sized element is in motion, which is exactly the case the
+      // reveal contract avoids clip-path for.
       .to(
         el,
-        { yPercent: -100, duration: 0.55, ease: "power3.inOut" },
-        1.0,
+        { yPercent: -100, duration: 0.7, ease: "power3.inOut" },
+        1.4,
       )
       .to(
         "[data-intro-inner]",
-        { yPercent: 100, duration: 0.55, ease: "power3.inOut" },
-        1.0,
+        { yPercent: 100, duration: 0.7, ease: "power3.inOut" },
+        1.4,
       );
 
     // Hard ceiling. If anything stalls, the page is handed over regardless.
     const ceiling = window.setTimeout(() => {
+      // `tl.progress(1)` is asked to render the end state, but this does not
+      // wait to confirm it landed — `finish()` hides the whole container via
+      // `js-intro` regardless (`.uds-intro` is `display: none` without it), so
+      // nothing here is ever visible whether or not the forced render
+      // succeeded. Matches `MotionFailsafe`'s own approach elsewhere: force
+      // the outcome directly rather than trust a stalled tween to render it.
       tl.progress(1);
       finish();
-    }, 1600);
+    }, 2400);
 
     // Skippable.
     const skip = () => {
@@ -148,7 +148,7 @@ export function LoadingSequence() {
 
           <div className="flex items-end justify-between gap-6">
             <span className="flex items-end gap-5">
-              <UthanMark className="h-14 w-auto shrink-0 text-accent sm:h-20" />
+              <NeonMark className="h-14 w-auto shrink-0 sm:h-20" />
               <span className="flex overflow-hidden text-h1 leading-none">
                 {"UTHAN".split("").map((letter, i) => (
                   <span key={i} className="overflow-hidden">

@@ -35,9 +35,15 @@ Minimal · architectural · editorial · cinematic · sophisticated · calm · p
 
 ### Anti-brief
 
-Not corporate. Not an agency template. Not SaaS. No gradient meshes, no glass, no glow, no
-ambient blobs, no rounded card grids, no emoji, no stock handshake photography, no
-second accent colour.
+Not corporate. Not an agency template. Not SaaS. No gradient meshes, no ambient blobs, no
+rounded card grids, no emoji, no stock handshake photography, no second accent colour.
+
+Two items originally on this list — **glass** and **glow** — were reversed at the studio's
+explicit request; see the Brand decisions note on `.uds-glass` and the Motion decisions
+note on `NeonMark` in `memory.md`. Both survive here as a record of the default, not as a
+live rule: the header, the site index and the loading/transition screens use them
+deliberately, and nothing else should reach for either without the same kind of ask behind
+it.
 
 ---
 
