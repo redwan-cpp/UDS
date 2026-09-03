@@ -26,14 +26,20 @@ export const SETS = {
    *  viewport: raking light, strong geometry, near-monochrome. */
   hero: ["hero-01"],
 
-  /** The About band — an interior with depth and a strong curve or rise.
-   *  Index 1 (the homepage About image) was a bright white museum ramp that
-   *  read as a mismatch against the hero's raw concrete — swapped for a
-   *  stone spiral stair, shot straight down its own void. CC BY 3.0, credit
-   *  rendered on-page via <Figure> rather than the bare <Media> the rest of
-   *  this set uses, since attribution is a term of the licence, not optional
-   *  decoration — see AboutStatement.tsx. */
-  about: ["interior-03", "about-stair", "about-03"],
+  /**
+   * The About band — an interior with depth and a strong curve or rise.
+   *
+   * Index 1 (the homepage About image) was a bright white museum ramp that
+   * read as a mismatch against the hero's raw concrete — swapped for a stone
+   * spiral stair, shot straight down its own void. CC BY 3.0, credit rendered
+   * on-page via <Figure> rather than the bare <Media> the rest of this set
+   * uses, since attribution is a term of the licence, not optional decoration
+   * — see AboutStatement.tsx.
+   *
+   * Index 0 (the sustainability plate) was the Guggenheim, which was both a
+   * recognisable landmark and a poor match for the alt text describing it.
+   */
+  about: ["pool/int-17", "about-stair", "about-03"],
 
   /** Nine expertise areas. Deliberately varied so the hover panel changes
    *  materially between rows rather than shuffling near-identical frames. */
@@ -77,14 +83,22 @@ export const SETS = {
     "about-stair",
   ],
 
-  /** Interior plates for project galleries. */
+  /**
+   * Interior plates for project galleries.
+   *
+   * `interior-02` and `interior-03` are both the Guggenheim. They were pulled
+   * from the project cards for being a landmark people recognise — which makes
+   * them read as a borrowed credential — and the same objection applies here:
+   * a case-study gallery is exactly where a reader is looking closely enough
+   * to notice whose building it is.
+   */
   interior: [
     "pool/int-02",
-    "interior-03",
+    "pool/int-13",
     "about-03",
     "pool/int-03",
     "pool/int-17",
-    "expertise-04",
+    "pool/int-12",
   ],
 
   /** Material and texture at close range. */

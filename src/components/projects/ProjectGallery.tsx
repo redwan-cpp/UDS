@@ -139,27 +139,56 @@ function groupIntoRows(
  * documents, not finished plates, and presenting them at the same scale would
  * claim more for them than they are.
  */
+/**
+ * Rough work — sketches, drawings and site photography.
+ *
+ * A horizontal strip rather than a grid, because that is what this material
+ * is: a run of working documents you scan along, not a set of finished plates
+ * you study one at a time. A grid gives every sheet the same weight and the
+ * same finish as the photography above it, which flatters it wrongly — these
+ * are notes.
+ *
+ * It is a real scroll container, not a JS carousel: it works with a trackpad,
+ * a shift-wheel, a touch drag, and the keyboard (the strip is focusable and
+ * scrolls with arrow keys) without shipping a line of script. The plates snap
+ * so the strip always settles somewhere deliberate, and the last one carries
+ * trailing space so it can reach the left edge like the others.
+ */
 export function ProcessGallery({ images }: { images: MediaAsset[] }) {
   if (images.length === 0) return null;
 
   return (
-    <Reveal
-      as="ul"
-      stagger={0.08}
-      className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-10 sm:grid-cols-2 lg:grid-cols-3"
-    >
-      {images.map((image, i) => (
-        <li key={image.src + i}>
-          <Media
-            asset={image}
-            ratio="landscape"
-            sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 100vw"
-          />
-          {image.alt && (
-            <p className="mt-3 text-caption text-secondary">{image.alt}</p>
-          )}
-        </li>
-      ))}
-    </Reveal>
+    <div>
+      <ul
+        tabIndex={0}
+        // A focusable scroll container needs a name, or it is announced as an
+        // unlabelled group that happens to be tabbable.
+        aria-label="Rough work, scrolls horizontally"
+        className="-mx-(--gutter) flex snap-x snap-mandatory gap-6 overflow-x-auto px-(--gutter) pb-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+      >
+        {images.map((image, i) => (
+          <li
+            key={image.src + i}
+            className="w-[78%] shrink-0 snap-start sm:w-[46%] lg:w-[31%]"
+          >
+            <Media
+              asset={image}
+              ratio="landscape"
+              sizes="(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 78vw"
+            />
+            <p className="mt-3 flex gap-3 text-caption text-secondary">
+              <span data-numeric className="shrink-0 text-accent">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              {image.alt}
+            </p>
+          </li>
+        ))}
+      </ul>
+
+      <p className="text-meta uppercase text-secondary">
+        <span data-numeric>{images.length}</span> sheets · scroll sideways
+      </p>
+    </div>
   );
 }

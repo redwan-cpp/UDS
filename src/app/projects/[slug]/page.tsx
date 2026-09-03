@@ -3,10 +3,12 @@ import { notFound } from "next/navigation";
 
 import { ProjectHero } from "@/components/projects/ProjectHero";
 import { ProjectFacts } from "@/components/projects/ProjectFacts";
-import { ProjectGallery, ProcessGallery } from "@/components/projects/ProjectGallery";
+import { ProcessGallery } from "@/components/projects/ProjectGallery";
+import { ProjectSlideshow } from "@/components/projects/ProjectSlideshow";
 import { RelatedProjects } from "@/components/projects/RelatedProjects";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
+import { ViewMore } from "@/components/ui/ViewMore";
 import { Reveal } from "@/components/motion/Reveal";
 import { Eyebrow, Prose, Statement } from "@/components/typography";
 import { DemoNotice } from "@/components/hero/PageHero";
@@ -119,31 +121,47 @@ export default async function ProjectPage({
         </Container>
       </Section>
 
+      {/* The writing and the information table sit behind one disclosure. The
+          hero already answers "what is this" — the long form is for the reader
+          who wants it, and putting it behind a control keeps the page's spine
+          the work itself rather than a wall of type. It is a native <details>,
+          so the text is still in the DOM for search and for find-in-page. */}
       <Section surface="light" spacing="standard">
         <Container>
-          <div className="flex flex-col gap-20 md:gap-28">
-            <Narrative
-              eyebrow="Description"
-              heading="The project"
-              paragraphs={project.description}
-              lead
-            />
-            <Narrative
-              eyebrow="Uniqueness"
-              heading="What makes it particular"
-              paragraphs={project.uniqueness}
-            />
-            <Narrative
-              eyebrow="Our concept"
-              heading="Where it started"
-              paragraphs={project.concept}
-            />
-          </div>
+          <ViewMore label="View more" openLabel="View less">
+            <div className="flex flex-col gap-20 md:gap-28">
+              <Narrative
+                eyebrow="Description"
+                heading="The project"
+                paragraphs={project.description}
+                lead
+              />
+              <Narrative
+                eyebrow="Uniqueness"
+                heading="What makes it particular"
+                paragraphs={project.uniqueness}
+              />
+              <Narrative
+                eyebrow="Our concept"
+                heading="Where it started"
+                paragraphs={project.concept}
+              />
+
+              <div className="border-t border-hairline pt-12">
+                <ProjectFacts facts={project.facts} title="Project information" />
+              </div>
+            </div>
+          </ViewMore>
         </Container>
       </Section>
 
-      <Section surface="dark" spacing="none" className="py-8">
-        <ProjectGallery images={project.gallery} title={`${project.title} gallery`} />
+      <Section surface="dark" spacing="standard">
+        <Container>
+          <ProjectSlideshow
+            images={project.gallery}
+            title={`${project.title} — gallery`}
+          />
+        </Container>
       </Section>
 
       {project.process && project.process.length > 0 && (
@@ -169,11 +187,9 @@ export default async function ProjectPage({
         </Section>
       )}
 
-      <Section surface="light" spacing="standard">
-        <Container width="text" className="mx-0 lg:mx-auto">
-          <ProjectFacts facts={project.facts} title="Project information" />
-        </Container>
-      </Section>
+      {/* The information table moved up into the disclosure above, beside the
+          writing it belongs with, rather than repeating the same facts a third
+          time at the foot of the page. */}
 
       <RelatedProjects projects={related} />
     </article>

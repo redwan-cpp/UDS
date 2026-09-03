@@ -68,7 +68,7 @@ export const sustainability: SustainabilityPrinciple[] = [
     description:
       "The most sustainable structure is usually the one already standing. Existing fabric is surveyed and tested for reuse before demolition is considered.",
     measures: [],
-    image: img("about", 0, "Retained industrial structure inside a converted building"),
+    image: img("about", 0, "Retained masonry vaulting inside a converted building"),
     isDemo: true,
   },
   {

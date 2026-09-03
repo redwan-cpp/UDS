@@ -524,6 +524,14 @@
     will-change: transform;
   }
 
+  /* Disclosure. Removes the default marker in every engine — `list-none`
+     alone does not do it in WebKit, which uses its own pseudo-element. */
+  .uds-disclosure > summary::-webkit-details-marker,
+  .uds-disclosure > summary::marker {
+    display: none;
+    content: "";
+  }
+
   /* --- The location map ----------------------------------------------------
      Google's stock palette (blue roads, mint parks, white ground) is the one
      thing on the contact page not drawn in the site's language. Greyscale was
