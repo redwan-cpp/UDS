@@ -109,6 +109,8 @@ export interface Project extends ContentBase {
   client?: string;
   services?: string[];
   facts: ProjectFact[];
+  /** The project's own mark, uploaded per project in the CMS. */
+  symbol?: ProjectSymbol;
   hero: MediaAsset;
   gallery: MediaAsset[];
   /** Rough work / behind the scenes: sketches, drawings, site photography. */
@@ -133,6 +135,27 @@ export interface PortfolioItem extends ContentBase {
   image: MediaAsset;
   /** Set when this item also exists as a full Project case study. */
   projectSlug?: string;
+  /** The project's own mark. See `ProjectSymbol` below. */
+  symbol?: ProjectSymbol;
+}
+
+/**
+ * A project's own mark — the small drawn symbol that stands for the design
+ * idea, in the way practices letter a scheme on a drawing sheet.
+ *
+ * Uploaded per project by an editor in the CMS (Phase 2), which is why it is
+ * in the content contract now rather than being derived in a component: the
+ * shape of this field is what the CMS has to satisfy later.
+ *
+ * Optional on purpose. A project that has not been given a mark yet renders a
+ * drawn fallback rather than a gap, so the grid never depends on an editor
+ * having got round to it.
+ */
+export interface ProjectSymbol {
+  /** The uploaded artwork. SVG preferred so it scales and takes currentColor. */
+  asset: MediaAsset;
+  /** What the mark depicts, for assistive technology. */
+  label: string;
 }
 
 /* -------------------------------------------------------------------------- */

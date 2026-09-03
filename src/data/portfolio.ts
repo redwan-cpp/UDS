@@ -15,6 +15,18 @@ export const portfolio: PortfolioItem[] = [
     location: "Coastal escarpment", areaSize: "410 m²",
     summary: "A closed perimeter with a room of open air cut through its centre.",
     image: img("project", 0, "Board-marked concrete mass seen from below"),
+    // One worked example of an editor-uploaded mark, so the CMS path is
+    // exercised rather than only typed. Every other project falls back to the
+    // drawn section mark until someone uploads one.
+    symbol: {
+      asset: {
+        src: "/brand/projects/courtyard-house.svg",
+        alt: "",
+        width: 24,
+        height: 24,
+      },
+      label: "Courtyard House mark: a room of open air inside a closed perimeter",
+    },
   },
   {
     id: "f2", slug: "warehouse-conversion", isDemo: true, projectSlug: "warehouse-conversion",

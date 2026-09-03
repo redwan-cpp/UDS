@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Media } from "@/components/ui/Media";
 import { Reveal } from "@/components/motion/Reveal";
+import { ProjectSymbol } from "@/components/projects/ProjectSymbol";
 import { categoryLabels } from "@/lib/labels";
 import type { PortfolioItem } from "@/types/content";
 
@@ -28,13 +29,16 @@ function PortfolioEntry({ item }: { item: PortfolioItem }) {
           sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 100vw"
         />
 
-        {/* Only the documented work gets the corner arrow, because only that
-            work goes anywhere. An arrow on a card that does not link is a
-            promise the card cannot keep. */}
+        {/* The arrow is a hover affordance, not a badge. Shown at rest it
+            appeared on some cards and not others, which read as an
+            inconsistency rather than as meaning — so at rest every card in the
+            grid is now identical, and the arrow arrives on hover only where
+            there is somewhere to go. An arrow on a card that does not link
+            would be a promise the card cannot keep. */}
         {documented && (
           <span
             aria-hidden="true"
-            className="absolute top-4 right-4 block size-4 overflow-hidden text-paper"
+            className="absolute top-4 right-4 block size-4 overflow-hidden text-paper opacity-0 transition-opacity duration-[var(--dur-base)] ease-out-soft group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
           >
             <svg
               viewBox="0 0 16 16"
@@ -64,15 +68,14 @@ function PortfolioEntry({ item }: { item: PortfolioItem }) {
         )}
       </div>
 
-      <div className="mt-5 flex items-baseline justify-between gap-4">
+      <div className="mt-5 flex items-start justify-between gap-4">
         <h3 className="text-h3 transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-1.5 motion-reduce:transform-none motion-reduce:transition-none">
           {item.title}
         </h3>
-        {documented && (
-          <span className="shrink-0 text-meta uppercase text-accent">
-            Case study
-          </span>
-        )}
+        <ProjectSymbol
+          symbol={item.symbol}
+          className="mt-1 shrink-0 text-secondary transition-colors duration-[var(--dur-base)] group-hover:text-accent"
+        />
       </div>
 
       <p className="mt-3 max-w-[42ch] text-small text-secondary">{item.summary}</p>

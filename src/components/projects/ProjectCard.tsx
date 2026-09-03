@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Media } from "@/components/ui/Media";
+import { ProjectSymbol } from "./ProjectSymbol";
 import { categoryLabels } from "@/lib/labels";
 import type { Project } from "@/types/content";
 
@@ -49,9 +50,11 @@ export function ProjectCard({
           {/* The arrow travels up and to the right and a second one follows it
               in, so the corner reads as "this opens" rather than as a static
               glyph. Both are one element's worth of transform. */}
+          {/* Hover affordance, matching the index grid: at rest every card in
+              a row is identical, and the arrow arrives on hover. */}
           <span
             aria-hidden="true"
-            className="relative block size-4 overflow-hidden text-accent"
+            className="relative block size-4 overflow-hidden text-accent opacity-0 transition-opacity duration-[var(--dur-base)] ease-out-soft group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
           >
             <svg
               viewBox="0 0 16 16"
@@ -100,9 +103,15 @@ export function ProjectCard({
           </div>
         </div>
 
-        <h2 className="mt-6 text-h3 transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-1.5 motion-reduce:transform-none motion-reduce:transition-none">
-          {project.title}
-        </h2>
+        <div className="mt-6 flex items-start justify-between gap-4">
+          <h2 className="text-h3 transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-1.5 motion-reduce:transform-none motion-reduce:transition-none">
+            {project.title}
+          </h2>
+          <ProjectSymbol
+            symbol={project.symbol}
+            className="mt-1 shrink-0 text-secondary transition-colors duration-[var(--dur-base)] group-hover:text-accent"
+          />
+        </div>
 
         <dl className="mt-4 flex flex-wrap gap-x-8 gap-y-3 border-t border-hairline pt-4">
           <div>
