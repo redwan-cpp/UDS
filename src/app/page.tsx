@@ -4,6 +4,7 @@ import { Numbers } from "@/components/sections/Numbers";
 import { ExpertiseIndex } from "@/components/sections/ExpertiseIndex";
 import { FeaturedProjects } from "@/components/sections/FeaturedProjects";
 import { LatestNews } from "@/components/sections/LatestNews";
+import { ClosingCTA } from "@/components/sections/ClosingCTA";
 
 import { studio } from "@/data/studio";
 import { statistics } from "@/data/statistics";
@@ -62,6 +63,8 @@ export default function HomePage() {
           memory.md; this reverses the original homepage order deliberately. */}
 
       <LatestNews items={latestNews} />
+
+      <ClosingCTA closing={studio.closing} />
     </>
   );
 }

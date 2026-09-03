@@ -114,7 +114,7 @@ export function SiteFooter({
         </div>
 
         {IS_DEMO_BUILD && (
-          <p className="mt-12 border-t border-line pt-6 text-caption text-secondary">
+          <p className="mt-12 max-w-[68ch] border-t border-line pt-6 text-caption text-secondary">
             <span className="text-accent">Demo build.</span> Projects, statistics,
             team, partners and contact details on this site are placeholder
             content for design review — they are not Uthan Design Studio&rsquo;s

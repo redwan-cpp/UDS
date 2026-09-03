@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Media } from "@/components/ui/Media";
+import { Arrow } from "@/components/ui/Button";
 import { SectionHead } from "@/components/typography";
 import { Reveal } from "@/components/motion/Reveal";
 import type { ExpertiseArea } from "@/types/content";
@@ -24,10 +25,24 @@ import type { ExpertiseArea } from "@/types/content";
  *             and no room for a companion panel. The desktop panel is
  *             `display: none` there, so its images are never fetched.
  */
+/**
+ * How many rows show on a narrow viewport before "Show all" is needed.
+ *
+ * Below `lg` every row carries its own inline image (there is no room for the
+ * desktop's sticky companion), which makes the full list a long stretch of
+ * scroll before a mobile visitor reaches any actual project photography —
+ * the strongest persuasive thing on the homepage. Capping the initial list
+ * keeps the rest one tap away instead of removing it.
+ */
+const MOBILE_PREVIEW_COUNT = 4;
+
 export function ExpertiseIndex({ areas }: { areas: ExpertiseArea[] }) {
   const [active, setActive] = useState(0);
+  const [expanded, setExpanded] = useState(false);
 
   if (areas.length === 0) return null;
+
+  const hiddenCount = Math.max(areas.length - MOBILE_PREVIEW_COUNT, 0);
 
   return (
     <Section
@@ -55,7 +70,12 @@ export function ExpertiseIndex({ areas }: { areas: ExpertiseArea[] }) {
         <div className="grid grid-cols-1 gap-x-(--grid-gap) pt-12 lg:grid-cols-12 lg:pt-16">
           <ul className="lg:col-span-7">
             {areas.map((area, i) => (
-              <li key={area.id} className="border-t border-hairline last:border-b">
+              <li
+                key={area.id}
+                className={`border-t border-hairline last:border-b ${
+                  i >= MOBILE_PREVIEW_COUNT && !expanded ? "hidden lg:block" : ""
+                }`}
+              >
                 {/* Not focusable: the row is not a control, and adding a tab
                     stop that only swaps a decorative image is a keyboard trap
                     with no payoff. Everything here is already text. */}
@@ -91,6 +111,17 @@ export function ExpertiseIndex({ areas }: { areas: ExpertiseArea[] }) {
               </li>
             ))}
           </ul>
+
+          {hiddenCount > 0 && !expanded && (
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="group flex min-h-11 items-center gap-3 border-b border-hairline py-6 text-meta uppercase text-secondary transition-colors duration-[var(--dur-fast)] hover:text-accent lg:hidden"
+            >
+              Show all {areas.length} areas
+              <Arrow className="transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-1 motion-reduce:transition-none" />
+            </button>
+          )}
 
           {/* Desktop-only sticky companion. Decorative: every row already
               carries its title and description in text. */}

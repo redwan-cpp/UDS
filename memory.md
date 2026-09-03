@@ -18,11 +18,42 @@ it deliberately and say why — reversing something in this file is a decision, 
   `PLACEHOLDER`. Nothing about the studio may be invented to fill a layout.
 - Products arm confirmed in brief: **Custom Doors**, **Fabricated Sheet Work**.
 - Homepage section order is client-specified. **Revised by the studio:** Hero → About →
-  Numbers (+ collaborator marquee) → Expertise → Major Projects → Latest News → Footer.
-  The Management Team and Brands bands were removed from the homepage and now live only on
-  About (`/studio`), which already carried fuller versions of both — the homepage was
-  showing a truncated second copy of each. The collaborator names survive on the homepage
-  as the marquee under the figures.
+  Numbers (+ collaborator marquee) → Expertise → Major Projects → Latest News → Closing CTA
+  → Footer. The Management Team and Brands bands were removed from the homepage and now
+  live only on About (`/studio`), which already carried fuller versions of both — the
+  homepage was showing a truncated second copy of each. The collaborator names survive on
+  the homepage as the marquee under the figures.
+- **A `/impeccable critique` design review** (dual-agent: an unanchored design-director
+  pass plus the skill's own detector/browser-injection pass) scored the homepage 25/32 on
+  Nielsen's heuristics — snapshot at `.impeccable/critique/2026-09-03T16-02-35Z__src-app-page-tsx.md`.
+  Confirmed the site reads as authored for an architecture practice rather than a generic
+  template (`ProjectSymbol`'s real section-mark convention, the CAD crosshair cursor, and
+  the "index"/"figures" vocabulary were named as the specific evidence for that verdict),
+  and surfaced three real defects, now fixed:
+  - **No closing CTA.** The homepage's persuasive arc ran Projects → News → Footer, so a
+    convinced visitor had nowhere to act on it — the footer treats "Contact" as one of four
+    equal-weight columns under a display-scale "Uthan" wordmark, not an invitation. Fixed
+    with `ClosingCTA.tsx`, index `08`, the last section before the footer: a serif statement
+    (`studio.closing`) plus a primary "Start a conversation" button to `/contact`. Composed
+    like `AboutStatement` — numbered index, eyebrow, hairline rule, left-aligned column —
+    deliberately not centred: this site's rule is asymmetry with a reason, and a CTA is not
+    an exception to it.
+  - **The menu overlay's hover-image had never once fired.** design.md documents "hovering
+    an item reveals its paired image in the right half at desktop" as a flagship
+    interaction, but no `NavItem` in `navigation.ts` set `image`, so the preview panel was a
+    permanently empty `bg-ink` box on every route. Fixed by giving each of the six nav items
+    an `image` drawn from the same curated set its destination page already uses (`about`,
+    `project`, `product`, `sustain`, `news`, `urban` for Contact) via the existing `img()`
+    accessor — no new media, no literal path, same provenance discipline as everywhere else
+    in `src/data`.
+  - **Two P3 polish items**: the footer's demo-build disclaimer had no `max-w`, rendering at
+    ~179 characters per line — capped at `max-w-[68ch]`, the project's own documented Barlow
+    body-copy measure. And on mobile, `ExpertiseIndex`'s nine rows (each carrying its own
+    inline image, since there's no room for the desktop sticky companion) sat entirely ahead
+    of the homepage's first project photograph — the strongest persuasive asset on the page.
+    Capped the mobile list at 4 rows behind a "Show all 9 areas" toggle
+    (`MOBILE_PREVIEW_COUNT` in `ExpertiseIndex.tsx`); all nine stay in the DOM and reachable,
+    just not the reason a fast-scrolling visitor bounces before reaching any actual work.
 
 ---
 

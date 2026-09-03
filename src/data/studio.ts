@@ -31,6 +31,9 @@ export const studio: StudioProfile = {
     "We build slowly and detail closely. Projects are developed through physical models and full-size mock-ups as much as through drawings, and we stay on site through construction.",
   ],
 
+  closing:
+    "Every project starts with a conversation about the site, not a brief.",
+
   contact: {
     email: "studio@uthan.example", // PLACEHOLDER — .example is IANA-reserved for exactly this
     // PLACEHOLDER — the 555-0100–555-0199 range is reserved by the North

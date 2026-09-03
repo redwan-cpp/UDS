@@ -291,6 +291,14 @@ export interface StudioProfile {
   statement: string[];
   /** Supporting paragraphs below the statement. */
   approach: string[];
+  /**
+   * The homepage's closing line, immediately before the footer — the one
+   * beat that asks for something after everything before it has made the
+   * case. Kept separate from `statement`/`approach` because it belongs to a
+   * different section with a different job: those introduce the studio,
+   * this closes the page.
+   */
+  closing: string;
   contact: {
     email: string;
     phone: string;
