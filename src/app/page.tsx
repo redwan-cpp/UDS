@@ -9,7 +9,7 @@ import { studio } from "@/data/studio";
 import { statistics } from "@/data/statistics";
 import { expertise } from "@/data/expertise";
 import { brands } from "@/data/brands";
-import { getFeaturedProjects } from "@/data/projects";
+import { getProjects } from "@/data/projects";
 import { getFeaturedNews } from "@/data/news";
 import { img } from "@/data/media";
 import { heroVideo } from "@/data/hero";
@@ -23,7 +23,10 @@ import { heroVideo } from "@/data/hero";
  * the tree changes.
  */
 export default function HomePage() {
-  const featuredProjects = getFeaturedProjects(4);
+  // All of the major projects, not a selection of four: the homepage grid
+  // is the studio's body of work, and the full index (which also carries the
+  // work without a case study) is one click away.
+  const featuredProjects = getProjects();
   const latestNews = getFeaturedNews(3);
 
   return (
