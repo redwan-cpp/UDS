@@ -4,6 +4,7 @@ import { Counter } from "@/components/motion/Counter";
 import { Reveal } from "@/components/motion/Reveal";
 import { Eyebrow } from "@/components/typography";
 import { LogoMarquee } from "@/components/brands/LogoMarquee";
+import { TerraceMotif } from "@/components/ui/TerraceMotif";
 import type { Brand, Statistic } from "@/types/content";
 
 /**
@@ -25,6 +26,12 @@ export function Numbers({
 
   return (
     <Section surface="dark" spacing="standard" label="The studio in figures">
+      {/* Full-bleed, behind everything, decorative only — a texture on the
+          "held pause" this band already is, not a second thing to read. */}
+      <div aria-hidden="true" className="absolute inset-0 overflow-hidden opacity-20">
+        <TerraceMotif />
+      </div>
+
       <Container>
         <Reveal variant="rule">
           <div className="h-px w-full bg-hairline" />

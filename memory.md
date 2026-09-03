@@ -241,6 +241,14 @@ it deliberately and say why — reversing something in this file is a decision, 
     background, invisible. Every existing dark surface in the codebase already writes
     `surface-dark` and `text-paper` together (see `Section.tsx`'s `SURFACE` map); this is not
     a new rule, just a reminder that the two are a pair, not one flipping the other.
+- **A stepped-terrace silhouette sits behind the figures band** (`TerraceMotif`, used in
+  `Numbers.tsx`), the one plain dark "held pause" section in the homepage scroll that had no
+  imagery of its own. Geometry sourced from haikei.app's "Layered Steps" generator, read
+  straight off its live DOM (no download, no generated file to track) and stripped of its
+  own default violet fills — every path is `currentColor` at `text-hairline`, the token
+  already reserved "decorative only," at `opacity-20` on its wrapper. One placement, not a
+  site-wide treatment: a texture earns its place once, spread everywhere it reads as
+  wallpaper instead of restraint.
 - **Rejected:** magnetic buttons, tilt effects, scroll-jacked full-page sections, overshoot
   easing, `ease-in` on entrances.
 
