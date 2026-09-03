@@ -1,36 +1,30 @@
 /**
  * The studio mark — three stacked plates.
  *
- * IMPORTANT: this is a geometric reconstruction of the supplied logo, not the
- * studio's own artwork. It was rebuilt as SVG because the logo arrived as a
- * raster preview rather than as a file. Before launch, replace the geometry in
- * `MarkGeometry` below with the real vector — everything else in the codebase
- * (header, loader, favicon) draws through this component, so that is a
- * one-file swap and nothing downstream changes.
+ * This is the studio's own artwork (`public/brand/uthan-mark.svg`), not a
+ * reconstruction: the geometry below is the supplied vector, unchanged. The
+ * earlier placeholder drew three diamonds, which was the right family of shape
+ * and the wrong drawing.
  *
- * Drawn with `currentColor` rather than a fixed fill, so the same mark works on
- * ink and on paper and picks up the accent on hover without a second asset.
- * The supplied light/dark lockups are therefore one component here, not two
- * files — which is also why there is no colour hard-coded anywhere below.
+ * Two deliberate changes from the supplied file, both about theming:
  *
- * `data-plate` is on each plate so the loader can animate them independently
- * without knowing anything about the geometry.
+ * - The three plates are filled `currentColor` instead of the supplied
+ *   `rgb(22,31,33)`. That single ink value cannot work on both surfaces — the
+ *   header sits on ink over the hero and on paper further down — so the mark
+ *   inherits its colour and the light and dark lockups become one component
+ *   rather than two files that can drift apart.
+ *
+ * - The two connector slivers, supplied at `rgb(146,156,158)`, are
+ *   `currentColor` at 45% instead. They are what makes the plates read as
+ *   overlapping rather than as three separate shapes, so they cannot simply be
+ *   folded into the main fill — but a fixed grey would break the same way a
+ *   fixed ink does. The ratio between the two tones is what carries the depth,
+ *   and that survives at any colour.
+ *
+ * `data-plate` marks each of the three plates so the loading sequence can
+ * animate them independently without knowing anything about the geometry.
+ * The slivers are excluded: they belong to the joins, not to a single plate.
  */
-
-/** One plate: a sheared band, high on the left, descending to the right. */
-function Plate({ y }: { y: number }) {
-  return (
-    <g data-plate transform={`translate(0 ${y})`}>
-      <path
-        d="M0 44 L104 0 L208 44 L104 88 Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="26"
-        strokeLinejoin="miter"
-      />
-    </g>
-  );
-}
 
 export function UthanMark({
   className = "",
@@ -42,16 +36,40 @@ export function UthanMark({
 }) {
   return (
     <svg
-      viewBox="-13 -13 234 254"
+      viewBox="0 0 404 467"
       fill="none"
       className={className}
       role={title ? "img" : undefined}
       aria-label={title}
       aria-hidden={title ? undefined : true}
     >
-      <Plate y={0} />
-      <Plate y={70} />
-      <Plate y={140} />
+      <path
+        data-plate
+        fill="currentColor"
+        d="M201.5,0L203.5,0C203.786,0.299 203.462,0.918 203.748,1.216C204.088,1.571 204.367,1.05 209.284,3.868C212.736,5.846 250.158,27.291 252.348,28.727C254.743,30.299 252.69,31.172 244.243,36.056C233.444,42.299 110.218,113.54 109.237,114.075C104.84,116.472 108.425,117.594 112.756,120.058C138.125,134.489 199.981,170.768 201.579,171.135C204.082,171.711 347.99,86.511 350.442,86.182C353.568,85.763 397.725,114.2 403.999,115.5L403.999,117.5C400.067,118.373 400.338,118.913 398.274,120.095C377.817,131.803 205.17,231.832 203.576,232.657C200.616,234.188 190.737,226.047 153.501,205.497C152.844,204.688 152.764,204.868 152.279,203.991C152.025,203.532 151.776,203.822 151.545,203.405C151.361,203.287 149.939,202.374 149.222,201.974C104.186,176.827 104.833,175.404 100.438,174.55C52.699,146.101 52.002,147.515 4.213,118.998C0.235,116.624 1.25,115.745 1.533,115.539C2.734,114.663 120.428,46.934 130.774,40.98C193.436,4.92 193.098,4.336 198.875,1.867C199.626,1.547 200.504,1.485 201.169,1.012C201.458,0.806 201.211,0.206 201.5,0Z"
+      />
+      <path
+        data-plate
+        fill="currentColor"
+        d="M403.999,232.5L403.999,234.5C401.613,234.96 401.726,235.292 365.253,256.078C337.026,272.164 203.799,349.647 202.564,349.831C199.696,350.26 159.977,324.805 153.444,322.774C152.827,321.961 152.21,321.148 151.593,320.335C149.485,319.104 128.78,307.008 125.215,304.982C102.578,292.117 102.725,291.654 99.627,291.427C88.394,284.149 1.857,234.761 1.525,234.472C-0.295,232.886 1.764,232.393 26.759,217.943C89.915,181.434 93.479,179.466 99.342,176.23C100.436,176.723 100.721,176.051 105.651,179.219C124.15,191.106 125.041,189.494 143.644,201.234C144.139,201.547 149.635,205.015 150.044,204.793C150.642,204.467 150.946,203.73 151.545,203.405C151.776,203.822 152.025,203.532 152.279,203.991C152.764,204.868 152.844,204.688 153.501,205.497C149.815,207.564 112.325,228.583 107.674,231.745C105.327,233.34 107.884,234.121 135.271,249.901C201.081,287.82 201.058,288.259 202.434,288.082C204.245,287.848 348.701,203.349 350.434,203.122C353.578,202.71 397.802,231.08 403.999,232.5Z"
+      />
+      <path
+        data-plate
+        fill="currentColor"
+        d="M403.999,349.5L403.999,351.5C400.144,352.125 400.253,352.441 361.348,375.237C358.908,376.667 358.917,376.611 330.716,392.887C320.628,398.71 204.849,465.534 204.652,465.728C204.347,466.027 204.805,466.7 204.5,466.999L200.5,466.999C199.506,466.069 199.786,465.892 198.64,465.258C176.913,453.24 26.614,365.872 11.679,357.19C7.947,355.021 8.095,354.964 4.288,352.86C1.976,351.582 0.766,351.982 1.441,349.436C1.596,348.852 86.774,300.251 94.213,296.006C96.736,294.567 96.659,294.576 99.253,293.132C102.511,294.603 106.942,296.604 138.265,314.912C139.266,315.498 139.212,315.404 140.198,315.976C143.984,318.174 143.918,318.121 147.579,320.37C149.898,321.795 149.878,321.795 150.111,321.793C151.309,321.783 150.427,320.345 151.593,320.335C152.21,321.148 152.827,321.961 153.444,322.774C144.901,326.723 107.149,348.951 106.862,349.587C106.318,350.79 107.237,350.523 114.363,354.735C114.963,355.09 199.347,403.946 200.485,404.53C203.211,405.93 210.363,400.581 235.767,385.952C349.811,320.277 349.791,320.183 350.423,320.062C353.471,319.48 393.443,345.5 403.999,349.5Z"
+      />
+
+      {/* The joins. See the note above on why these keep a separate tone. */}
+      <path
+        fill="currentColor"
+        fillOpacity="0.45"
+        d="M99.627,291.427C102.725,291.654 102.578,292.117 125.215,304.982C128.78,307.008 149.485,319.104 151.593,320.335C150.427,320.345 151.309,321.783 150.111,321.793C149.878,321.795 149.898,321.795 147.579,320.37C143.918,318.121 143.984,318.174 140.198,315.976C139.212,315.404 139.266,315.498 138.265,314.912C106.942,296.604 102.511,294.603 99.253,293.132C99.378,292.564 99.502,291.995 99.627,291.427Z"
+      />
+      <path
+        fill="currentColor"
+        fillOpacity="0.45"
+        d="M100.438,174.55C104.833,175.404 104.186,176.827 149.222,201.974C149.939,202.374 151.361,203.287 151.545,203.405C150.946,203.73 150.642,204.467 150.044,204.793C149.635,205.015 144.139,201.547 143.644,201.234C125.041,189.494 124.15,191.106 105.651,179.219C100.721,176.051 100.436,176.723 99.342,176.23L100.438,174.55Z"
+      />
     </svg>
   );
 }

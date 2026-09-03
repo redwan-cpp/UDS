@@ -470,7 +470,7 @@ hover; every hover behaviour has a tap or focus equivalent.
 
 Recorded here so they are not silently defaulted:
 
-- **Wordmark.** Currently typographic (Barlow, tracked). A drawn mark is a client decision.
+- **Wordmark.** The studio's drawn mark (three stacked plates) set beside the name in Barlow. Source vectors in `public/brand/`; rendered through `UthanMark`, which recolours them to `currentColor` so one component serves every surface.
 - **Photography direction.** Phase 1 uses labelled demo imagery. Real art direction — lens,
   time of day, whether people appear in the frames — is set with the studio.
 - **Demo library size.** The demo library is 26 assets after curation: 16 photographs and

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
+import { UthanMark } from "@/components/brand/UthanMark";
 import { Eyebrow } from "@/components/typography";
 import { IS_DEMO_BUILD } from "@/data/studio";
 import type { NavItem, StudioProfile } from "@/types/content";
@@ -25,10 +26,15 @@ export function SiteFooter({
   return (
     <footer className="surface-dark border-t border-line bg-ink">
       <Container className="pt-20 pb-10 md:pt-28">
-        {/* The name, at scale, as the closing statement. */}
-        <p className="text-display leading-[0.86] tracking-[-0.04em] text-paper">
-          Uthan
-        </p>
+        {/* The name, at scale, as the closing statement — with the mark set
+            to the cap height beside it, which is how the supplied lockup is
+            composed. */}
+        <div className="flex items-center gap-6 md:gap-8">
+          <UthanMark className="h-[0.78em] w-auto shrink-0 text-display leading-none text-paper" />
+          <p className="text-display leading-[0.86] tracking-[-0.04em] text-paper">
+            Uthan
+          </p>
+        </div>
 
         <div className="mt-12 grid gap-12 border-t border-line pt-12 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           <nav aria-label="Footer">

@@ -34,6 +34,15 @@ it deliberately and say why — reversing something in this file is a decision, 
 - **The accent flips with the surface.** Pistachio `#B7D77A` on dark; Olive `#4E5D2A` on
   light. Pistachio measures 1.4:1 on warm white and is therefore *prohibited* as text, icon
   or meaningful line on light surfaces. This is the single most-broken rule in the palette.
+- **The studio's mark is three stacked plates**, supplied as vector by the studio and kept
+  verbatim in `public/brand/` as the source of truth. It is rendered through `UthanMark`,
+  which makes exactly two changes to the supplied file, both about theming: the plates take
+  `currentColor` instead of the supplied `rgb(22,31,33)`, and the two connector slivers take
+  `currentColor` at 45% instead of a fixed grey. That grey is not decoration — it is what
+  makes the plates read as overlapping rather than as three loose shapes — so it is kept as
+  a *ratio* between two tones, which survives at any colour, rather than as a fixed value
+  that breaks the moment the mark sits on paper instead of ink. One component therefore
+  serves the light and the dark lockup, and they cannot drift apart.
 - **Radius is `0`.** One exception: `2px` on form controls. Rounded cards are out of language.
 - **No shadow tokens exist**, deliberately. Depth comes from surface tone and overlap.
 - One accent only. No second accent colour will be introduced.
@@ -261,7 +270,7 @@ is updated to say ADOPTED.**
 ## Outstanding decisions
 
 1. CMS confirmation (Phase 2 gate).
-2. Wordmark: typographic, or a drawn mark.
+2. Wordmark: RESOLVED — the studio supplied a drawn mark. See the Brand decisions note on `UthanMark`.
 3. Real expertise categories — the nine in use are placeholders.
 4. Real statistics.
 5. Real sustainability practice.
