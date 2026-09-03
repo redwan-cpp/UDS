@@ -134,32 +134,35 @@ export default async function ProjectPage({
           who wants it, and putting it behind a control keeps the page's spine
           the work itself rather than a wall of type. It is a native <details>,
           so the text is still in the DOM for search and for find-in-page. */}
+      {/* The information table is open on the page, above the disclosure —
+          these are the facts a visitor scans for and should not have to open
+          anything to reach. Only the long-form writing sits behind View more. */}
       <Section surface="light" spacing="standard">
         <Container>
-          <ViewMore label="View more" openLabel="View less">
-            <div className="flex flex-col gap-20 md:gap-28">
-              <Narrative
-                eyebrow="Description"
-                heading="The project"
-                paragraphs={project.description}
-                lead
-              />
-              <Narrative
-                eyebrow="Uniqueness"
-                heading="What makes it particular"
-                paragraphs={project.uniqueness}
-              />
-              <Narrative
-                eyebrow="Our concept"
-                heading="Where it started"
-                paragraphs={project.concept}
-              />
+          <ProjectFacts facts={project.facts} title="Project information" />
 
-              <div className="border-t border-hairline pt-12">
-                <ProjectFacts facts={project.facts} title="Project information" />
+          <div className="pt-16 md:pt-20">
+            <ViewMore label="View more" openLabel="View less">
+              <div className="flex flex-col gap-20 md:gap-28">
+                <Narrative
+                  eyebrow="Description"
+                  heading="The project"
+                  paragraphs={project.description}
+                  lead
+                />
+                <Narrative
+                  eyebrow="Uniqueness"
+                  heading="What makes it particular"
+                  paragraphs={project.uniqueness}
+                />
+                <Narrative
+                  eyebrow="Our concept"
+                  heading="Where it started"
+                  paragraphs={project.concept}
+                />
               </div>
-            </div>
-          </ViewMore>
+            </ViewMore>
+          </div>
         </Container>
       </Section>
 

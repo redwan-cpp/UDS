@@ -5,7 +5,15 @@ import Image from "next/image";
 
 import type { MediaAsset } from "@/types/content";
 
-type Ratio = "square" | "portrait" | "tall" | "landscape" | "wide" | "cinema" | "auto";
+type Ratio =
+  | "square"
+  | "portrait"
+  | "tall"
+  | "landscape"
+  | "wide"
+  | "cinema"
+  | "banner"
+  | "auto";
 
 const RATIOS: Record<Ratio, string> = {
   square: "aspect-square",
@@ -14,6 +22,12 @@ const RATIOS: Record<Ratio, string> = {
   landscape: "aspect-[4/3]",
   wide: "aspect-[16/9]",
   cinema: "aspect-[2/1]",
+  // The project banner. The only ratio that changes across breakpoints, and
+  // for a reason: a fixed 3:1 is a banner on a laptop and a letterbox slot on
+  // a phone, where it would be about 125px tall. It widens as the viewport
+  // does, so the image stays a picture at every size while still leaving the
+  // title and the facts visible beneath it on a desktop without scrolling.
+  banner: "aspect-[4/3] sm:aspect-[16/9] lg:aspect-[5/2] 2xl:aspect-[3/1]",
   auto: "",
 };
 
