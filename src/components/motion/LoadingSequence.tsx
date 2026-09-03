@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 
 import { gsap } from "@/lib/gsap";
+import { UthanMark } from "@/components/brand/UthanMark";
 
 /**
  * First-visit reveal.
@@ -47,12 +48,31 @@ export function LoadingSequence() {
 
     const tl = gsap.timeline({ onComplete: finish });
 
-    tl.to("[data-intro-word]", {
-      yPercent: 0,
-      duration: 0.55,
-      ease: "power3.out",
-      stagger: 0.04,
-    })
+    // The mark builds before the name arrives: each plate drops onto the one
+    // below it, bottom-up, the way the building the mark describes goes up.
+    // Transform and opacity only — the whole intro stays on the compositor.
+    //
+    // Scoped to the intro element, NOT a bare "[data-plate]" selector: the
+    // same mark is in the header, and a global selector animated that copy
+    // too — leaving the header's logo sitting at opacity 0 after the intro
+    // had finished and been unmounted.
+    tl.fromTo(
+      el.querySelectorAll("[data-plate]"),
+      { yPercent: -26, opacity: 0 },
+      {
+        yPercent: 0,
+        opacity: 1,
+        duration: 0.42,
+        ease: "power3.out",
+        stagger: { each: 0.09, from: "end" },
+      },
+    )
+      .to("[data-intro-word]", {
+        yPercent: 0,
+        duration: 0.55,
+        ease: "power3.out",
+        stagger: 0.04,
+      }, 0.28)
       .fromTo(
         "[data-intro-rule]",
         { scaleX: 0 },
@@ -127,14 +147,17 @@ export function LoadingSequence() {
           />
 
           <div className="flex items-end justify-between gap-6">
-            <span className="flex overflow-hidden text-h1 leading-none">
-              {"UTHAN".split("").map((letter, i) => (
-                <span key={i} className="overflow-hidden">
-                  <span data-intro-word className="block translate-y-full">
-                    {letter}
+            <span className="flex items-end gap-5">
+              <UthanMark className="h-14 w-auto shrink-0 text-accent sm:h-20" />
+              <span className="flex overflow-hidden text-h1 leading-none">
+                {"UTHAN".split("").map((letter, i) => (
+                  <span key={i} className="overflow-hidden">
+                    <span data-intro-word className="block translate-y-full">
+                      {letter}
+                    </span>
                   </span>
-                </span>
-              ))}
+                ))}
+              </span>
             </span>
             <span
               data-intro-accent

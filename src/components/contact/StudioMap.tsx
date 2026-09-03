@@ -56,12 +56,22 @@ export function StudioMap({
   const bbox = [lon - delta, lat - delta, lon + delta, lat + delta].join("%2C");
   const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
 
+  // The written address is still a placeholder while the pin is real, so the
+  // accessible name is built from whichever is actually true rather than
+  // reading out "Studio address to be confirmed" as if it were an address.
+  const hasRealAddress = !addressLines.some((line) =>
+    /to be confirmed|on request|placeholder/i.test(line),
+  );
+  const title = hasRealAddress
+    ? `Map showing the studio location: ${addressLines.join(", ")}`
+    : "Map showing the studio location in Dhaka, Bangladesh";
+
   return (
     <div className="relative aspect-[4/3] w-full overflow-hidden border border-hairline bg-ink-soft lg:aspect-auto lg:h-full lg:min-h-[26rem]">
       <iframe
         // The title is the accessible name — an untitled iframe is announced
         // as "frame" and nothing else.
-        title={`Map showing the studio location: ${addressLines.join(", ")}`}
+        title={title}
         src={src}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"

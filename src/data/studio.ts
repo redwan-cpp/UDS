@@ -44,6 +44,12 @@ export const studio: StudioProfile = {
       "Studio address to be confirmed", // PLACEHOLDER
       "Full details available on request", // PLACEHOLDER
     ],
+    /**
+     * Supplied by the studio. Dhaka, Bangladesh. The map on /contact is live
+     * from these — the written address lines below are still unconfirmed, so
+     * the pin is currently the more accurate of the two.
+     */
+    coordinates: { lat: 23.783405, lon: 90.420582 },
     hours: "Monday–Friday, 09:00–18:00", // PLACEHOLDER
   },
 
