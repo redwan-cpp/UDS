@@ -23,9 +23,16 @@ export function ProductFeature({
   const flip = position % 2 === 0;
 
   return (
+    // `id={product.slug}` is the real anchor target — search results and the
+    // product cards above both link to `/products#${slug}`. It used to point
+    // nowhere: the only id on this section belonged to the heading, used for
+    // `aria-labelledby`, and nothing addressed the section itself. `scroll-mt`
+    // clears the fixed header, which would otherwise sit over the first few
+    // lines of whichever product the link was for.
     <article
-      aria-labelledby={`product-${product.id}`}
-      className="border-t border-hairline pt-10 md:pt-14"
+      id={product.slug}
+      aria-labelledby={`product-heading-${product.slug}`}
+      className="scroll-mt-24 border-t border-hairline pt-10 md:scroll-mt-28 md:pt-14"
     >
       <Container bleed>
         <div className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-10 lg:grid-cols-12">
@@ -50,7 +57,7 @@ export function ProductFeature({
                 <Eyebrow>Product line</Eyebrow>
               </div>
 
-              <h2 id={`product-${product.id}`} className="mt-5 text-h2">
+              <h2 id={`product-heading-${product.slug}`} className="mt-5 text-h2">
                 {product.title}
               </h2>
 
