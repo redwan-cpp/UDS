@@ -105,19 +105,27 @@ export default async function ProjectPage({
     <article>
       <ProjectHero project={project} />
 
+      {project.isDemo && (
+        <Section surface="dark" spacing="none" className="pb-14">
+          <Container>
+            <DemoNotice>
+              This project is placeholder content written for design review. It
+              is not the studio&rsquo;s work, and no site, client or commission
+              described here is real.
+            </DemoNotice>
+          </Container>
+        </Section>
+      )}
+
+      {/* More of the project, before the reading. Someone who wants the images
+          gets them without opening anything; someone who wants the argument
+          opens the disclosure below. */}
       <Section surface="dark" spacing="standard">
         <Container>
-          {project.isDemo && (
-            <div className="pb-12">
-              <DemoNotice>
-                This project is placeholder content written for design review. It
-                is not the studio&rsquo;s work, and no site, client or
-                commission described here is real.
-              </DemoNotice>
-            </div>
-          )}
-
-          <ProjectFacts facts={project.facts} id="facts-top" />
+          <ProjectSlideshow
+            images={project.gallery}
+            title={`${project.title} — gallery`}
+          />
         </Container>
       </Section>
 
@@ -152,15 +160,6 @@ export default async function ProjectPage({
               </div>
             </div>
           </ViewMore>
-        </Container>
-      </Section>
-
-      <Section surface="dark" spacing="standard">
-        <Container>
-          <ProjectSlideshow
-            images={project.gallery}
-            title={`${project.title} — gallery`}
-          />
         </Container>
       </Section>
 

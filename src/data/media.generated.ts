@@ -269,14 +269,6 @@ export const LIBRARY = {
     "licence": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:Benches_at_Oakes_Garden_Theatre,_Niagara_Falls,_Canada.jpg"
   },
-  "pool/int-02": {
-    "src": "/media/pool/int-02.jpg",
-    "width": 2400,
-    "height": 1598,
-    "credit": "Jebulon",
-    "licence": "CC0",
-    "source": "https://commons.wikimedia.org/wiki/File:Escalier_monumental_Neue_Burg_Vienne.jpg"
-  },
   "pool/int-03": {
     "src": "/media/pool/int-03.jpg",
     "width": 2400,

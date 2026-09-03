@@ -93,7 +93,10 @@ export const SETS = {
    * to notice whose building it is.
    */
   interior: [
-    "pool/int-02",
+    // `pool/int-02` was here and is now unused: a gilded palace stair hall is
+    // out of language for this practice wherever it lands, and index 0 is the
+    // opening plate of every case-study slideshow.
+    "pool/arch-18",
     "pool/int-13",
     "about-03",
     "pool/int-03",
