@@ -189,6 +189,22 @@
   --color-hairline: var(--color-line);
 }
 
+/* Glass is a third surface, and it has to live here beside the other two
+   rather than in the components layer: these `.surface-*` rules are unlayered,
+   and unlayered CSS outranks every `@layer` regardless of specificity — an
+   override written in `@layer components` loses to `.surface-dark` silently,
+   which is how this first shipped still resolving to mute.
+
+   Why it needs its own secondary tone at all: glass sits over content it
+   cannot see. Measured against the worst realistic backdrop — the index opened
+   while a paper section fills the screen — `--color-mute` lands at 2.18:1,
+   a straight failure. Raising the tint does not rescue it either; even at 88%
+   it is 3.74. With paper-dim instead, at the 82% tint, the measured pairs are
+   paper 9.4:1, secondary 8.7:1 and accent 6.6:1. */
+.uds-glass {
+  --color-secondary: var(--color-paper-dim);
+}
+
 @layer base {
   *,
   *::before,
@@ -522,6 +538,38 @@
   /* Promoted only while the heading is still waiting to animate. */
   .js-motion [data-reveal-words]:not([data-revealed]) [data-word] {
     will-change: transform;
+  }
+
+  /* Glass. One class so the index overlay and the search panel cannot drift
+     apart, and so the fallback is written once.
+
+     The blur itself is a Tailwind `backdrop-blur-*` utility on the element,
+     NOT a `backdrop-filter` declaration here — the CSS transformer strips a
+     hand-written one from this file before it ever reaches the browser (the
+     header shipped as a flat veil for exactly that reason). What lives here is
+     only the tint the blur sits under. */
+  .uds-glass {
+    background-color: color-mix(in srgb, var(--color-ink-raised) 82%, transparent);
+
+    /* Glass sits over content this class cannot see. The worst realistic case
+       is the index opened while a paper section fills the screen, and measured
+       against that backdrop the ordinary dark-surface secondary tone (mute)
+       lands at 2.18:1 — a straight failure. Raising the tint alone does not
+       rescue it: even at 88% it is 3.74.
+
+       So the secondary tone is redeclared for anything inside glass. At 82%
+       over a paper backdrop that gives paper 9.4:1, this secondary 8.7:1 and
+       the accent 6.6:1, all measured rather than judged. Redeclared directly,
+       not aliased through another context-dependent variable — see the note in
+       memory.md about why that silently fails. */
+  }
+
+  /* Without backdrop-filter the tint is doing all the work alone, so it has to
+     be near-opaque or the text behind shows through the text in front. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .uds-glass {
+      background-color: color-mix(in srgb, var(--color-ink-raised) 97%, transparent);
+    }
   }
 
   /* Disclosure. Removes the default marker in every engine — `list-none`

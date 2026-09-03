@@ -7,16 +7,18 @@ import { usePathname } from "next/navigation";
 import { Media } from "@/components/ui/Media";
 import { Container } from "@/components/ui/Container";
 import { Wordmark } from "./Wordmark";
+import { SiteSearch } from "./SiteSearch";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { gsap, motionSafe } from "@/lib/gsap";
-import type { NavItem, StudioProfile } from "@/types/content";
+import type { NavItem, SearchEntry, StudioProfile } from "@/types/content";
 
 interface MenuOverlayProps {
   open: boolean;
   onClose: () => void;
   items: NavItem[];
   studio: StudioProfile;
+  searchIndex: SearchEntry[];
 }
 
 /**
@@ -29,7 +31,13 @@ interface MenuOverlayProps {
  * focus restored to the trigger on close. The paired hover imagery is purely
  * decorative and never the only way to understand a link.
  */
-export function MenuOverlay({ open, onClose, items, studio }: MenuOverlayProps) {
+export function MenuOverlay({
+  open,
+  onClose,
+  items,
+  studio,
+  searchIndex,
+}: MenuOverlayProps) {
   const panel = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<string | null>(null);
   const pathname = usePathname();
@@ -97,14 +105,19 @@ export function MenuOverlay({ open, onClose, items, studio }: MenuOverlayProps) 
       aria-label="Site menu"
       tabIndex={-1}
       hidden={!open}
-      className="surface-dark fixed inset-0 z-60 overflow-hidden bg-ink-raised outline-none"
+      className="uds-glass surface-dark fixed inset-0 z-60 overflow-hidden outline-none backdrop-blur-2xl backdrop-saturate-150"
     >
       <div
         data-menu-inner
         data-lenis-prevent
         className="h-full overflow-y-auto overscroll-contain"
       >
-      <Container className="flex min-h-dvh flex-col justify-between py-5 md:py-6">
+      {/* `min-h-dvh` rather than a fixed height so the panel can still grow and
+          scroll on a short viewport, but the spacing below is tuned so that on
+          an ordinary laptop it does not need to: the index used to overflow and
+          demand a scroll to reach the contact block, which is a poor first
+          impression for a menu whose whole job is orientation. */}
+      <Container className="flex min-h-dvh flex-col py-5 md:py-6">
         {/* The dialog carries its own top row.
             `aria-modal` makes everything outside this element inert to
             assistive technology, so a close control living in the site header
@@ -127,8 +140,10 @@ export function MenuOverlay({ open, onClose, items, studio }: MenuOverlayProps) 
           </button>
         </div>
 
-        <div className="grid gap-12 pt-16 lg:grid-cols-[1fr_auto] lg:gap-16 lg:pt-20">
-          <nav aria-label="Primary">
+        {/* `flex-1` + `min-h-0` lets this middle band absorb whatever height is
+            left rather than pushing the contact block off the bottom. */}
+        <div className="grid min-h-0 flex-1 gap-10 pt-10 lg:grid-cols-[1fr_24rem] lg:gap-16 lg:pt-12">
+          <nav aria-label="Primary" className="flex flex-col">
             <ul className="flex flex-col">
               {items.map((item) => {
                 const current = pathname === item.href;
@@ -139,7 +154,7 @@ export function MenuOverlay({ open, onClose, items, studio }: MenuOverlayProps) 
                       aria-current={current ? "page" : undefined}
                       onMouseEnter={() => setActive(item.href)}
                       onFocus={() => setActive(item.href)}
-                      className="group flex items-baseline gap-5 py-4 transition-colors duration-[var(--dur-fast)] hover:text-accent md:gap-8 md:py-6"
+                      className="group flex items-baseline gap-5 py-3 transition-colors duration-[var(--dur-fast)] hover:text-accent md:gap-8 md:py-4"
                     >
                       <span
                         data-numeric
@@ -167,27 +182,31 @@ export function MenuOverlay({ open, onClose, items, studio }: MenuOverlayProps) 
             </ul>
           </nav>
 
-          {/* Decorative preview. Hidden from assistive technology and from
-              anything without a fine pointer — it duplicates no information. */}
-          <div
-            aria-hidden="true"
-            className="hidden w-[22rem] shrink-0 self-start lg:block"
-          >
-            <div className="aspect-[3/4] w-full bg-ink">
-              {preview && (
-                <Media
-                  key={preview.src}
-                  asset={preview}
-                  ratio="tall"
-                  sizes="22rem"
-                  className="h-full animate-[fade_400ms_ease-out]"
-                />
-              )}
+          {/* The right column: search, and beneath it the decorative preview.
+              The suggestions panel appears in this column as you type, which is
+              why the preview sits under it rather than beside it. */}
+          <div className="flex min-w-0 flex-col gap-6 self-start">
+            <SiteSearch index={searchIndex} onNavigate={onClose} />
+
+            {/* Decorative. Hidden from assistive technology and from anything
+                without the room for it — it duplicates no information. */}
+            <div aria-hidden="true" className="hidden xl:block">
+              <div className="aspect-[4/3] w-full bg-ink">
+                {preview && (
+                  <Media
+                    key={preview.src}
+                    asset={preview}
+                    ratio="landscape"
+                    sizes="24rem"
+                    className="h-full animate-[fade_400ms_ease-out]"
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-16 grid gap-8 border-t border-hairline pt-8 text-small sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 border-t border-hairline pt-6 text-small sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <h2 className="text-meta uppercase text-secondary">Contact</h2>
             <p className="mt-3">

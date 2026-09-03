@@ -360,3 +360,34 @@ export interface JobOpening {
   summary: string;
   requirements: string[];
 }
+
+/* -------------------------------------------------------------------------- */
+
+/** What kind of thing a search result points at. Drives the label on the row. */
+export type SearchKind =
+  | "page"
+  | "project"
+  | "product"
+  | "news"
+  | "expertise"
+  | "role";
+
+/**
+ * One searchable thing.
+ *
+ * Flattened from the typed content at build time rather than fetched: this
+ * site's whole corpus is a few dozen entries, so the "index" is an array and
+ * the "engine" is a substring match. Anything more (a search service, an
+ * inverted index, fuzzy scoring) would be more machinery than the content
+ * justifies, and it would need a backend this phase does not have.
+ */
+export interface SearchEntry {
+  id: string;
+  title: string;
+  kind: SearchKind;
+  href: string;
+  /** One line shown under the title in the results. */
+  summary?: string;
+  /** Extra matchable text that is not displayed — location, category, tags. */
+  keywords?: string[];
+}

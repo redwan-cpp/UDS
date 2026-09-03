@@ -6,11 +6,12 @@ import { Wordmark } from "./Wordmark";
 import { MenuOverlay } from "./MenuOverlay";
 import { Container } from "@/components/ui/Container";
 import { studio } from "@/data/studio";
-import type { NavItem } from "@/types/content";
+import type { NavItem, SearchEntry } from "@/types/content";
 
 interface SiteHeaderProps {
   items: NavItem[];
   studioName: string;
+  searchIndex: SearchEntry[];
 }
 
 /**
@@ -29,7 +30,11 @@ interface SiteHeaderProps {
  * Reading `window.scrollY` rather than Lenis keeps the header correct when Lenis
  * is absent — which it always is under reduced motion.
  */
-export function SiteHeader({ items, studioName }: SiteHeaderProps) {
+export function SiteHeader({
+  items,
+  studioName,
+  searchIndex,
+}: SiteHeaderProps) {
   const [open, setOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const openRef = useRef(false);
@@ -142,6 +147,7 @@ export function SiteHeader({ items, studioName }: SiteHeaderProps) {
         onClose={() => setOpen(false)}
         items={items}
         studio={studio}
+        searchIndex={searchIndex}
       />
     </>
   );

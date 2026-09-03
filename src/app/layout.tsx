@@ -10,6 +10,7 @@ import { MotionFailsafe } from "@/components/motion/MotionFailsafe";
 import { CrosshairCursor } from "@/components/ui/CrosshairCursor";
 import { navigation } from "@/data/navigation";
 import { studio } from "@/data/studio";
+import { getSearchIndex } from "@/data/search";
 
 import "./globals.css";
 
@@ -98,7 +99,11 @@ export default function RootLayout({
         <MotionFailsafe />
         <CrosshairCursor />
 
-        <SiteHeader items={navigation} studioName={studio.name} />
+        <SiteHeader
+          items={navigation}
+          studioName={studio.name}
+          searchIndex={getSearchIndex()}
+        />
 
         <main id="main" tabIndex={-1} className="outline-none">
           <PageTransition>{children}</PageTransition>
