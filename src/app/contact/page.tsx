@@ -4,6 +4,8 @@ import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { ContactFlow } from "@/components/contact/ContactFlow";
+import { StudioMap } from "@/components/contact/StudioMap";
+import { SocialIcon } from "@/components/contact/SocialIcon";
 import { Eyebrow } from "@/components/typography";
 import { studio } from "@/data/studio";
 
@@ -28,11 +30,25 @@ export default function ContactPage() {
         }
       />
 
+      {/* The enquiry on the left, where the studio is on the right. Two things
+          a visitor arrives wanting — "how do I start this" and "where are
+          you" — answered side by side instead of stacked a screen apart.
+          The map column is sticky so it stays with the flow as the questions
+          advance, and collapses under it entirely on narrow screens. */}
       <Section surface="light" spacing="none" labelledBy="enquiry-heading">
         <h2 id="enquiry-heading" className="sr-only">
           Enquiry
         </h2>
-        <ContactFlow email={studio.contact.email} />
+        <div className="grid grid-cols-1 lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <ContactFlow email={studio.contact.email} />
+          </div>
+          <div className="lg:col-span-5">
+            <div className="h-full px-(--gutter) pb-16 lg:sticky lg:top-28 lg:pb-0 lg:pl-0">
+              <StudioMap contact={studio.contact} />
+            </div>
+          </div>
+        </div>
       </Section>
 
       <Section surface="dark" spacing="standard" labelledBy="direct-heading">
@@ -80,9 +96,45 @@ export default function ContactPage() {
             </div>
           </div>
 
+          {/* Channels. Rendered as labels until the studio supplies handles —
+              a social icon linking to `#`, or worse to a guessed profile that
+              belongs to someone else, is a defect, not a placeholder. */}
+          <div className="mt-12 border-t border-hairline pt-8">
+            <Eyebrow as="h3">Social</Eyebrow>
+            <ul className="mt-5 flex flex-wrap gap-x-3 gap-y-3">
+              {studio.social.map((channel) => {
+                const content = (
+                  <>
+                    <SocialIcon label={channel.label} />
+                    {channel.label}
+                  </>
+                );
+
+                return (
+                  <li key={channel.label}>
+                    {channel.href ? (
+                      <a
+                        href={channel.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex min-h-11 items-center gap-2.5 border border-hairline px-4 text-meta uppercase transition-colors duration-[var(--dur-base)] hover:border-accent hover:text-accent"
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      <span className="flex min-h-11 items-center gap-2.5 border border-hairline px-4 text-meta uppercase text-secondary">
+                        {content}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
           <p className="mt-10 text-caption text-secondary">
-            Contact details above are placeholders pending confirmation by the
-            studio.
+            Contact details and social channels above are placeholders pending
+            confirmation by the studio.
           </p>
         </Container>
       </Section>

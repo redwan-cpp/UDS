@@ -25,8 +25,12 @@ export function NewsCard({ item, priority = false }: { item: NewsItem; priority?
           sizes="(min-width: 1024px) 32vw, (min-width: 640px) 48vw, 100vw"
         />
 
-        <div className="mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <span className="text-meta uppercase text-accent">
+        {/* The category is set as a bordered tag rather than as another line
+            of accent text: on a card that already carries a date, a title and
+            a summary, it was reading as a fourth run of prose instead of as
+            the classification it is. */}
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span className="inline-flex items-center border border-accent/50 px-2.5 py-1 text-meta uppercase text-accent transition-colors duration-[var(--dur-base)] group-hover:border-accent">
             {newsKindLabels[item.kind]}
           </span>
           <time

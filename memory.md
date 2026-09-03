@@ -17,8 +17,12 @@ it deliberately and say why — reversing something in this file is a decision, 
   regions, real projects, real statistics, real clients, real sustainability practice: all
   `PLACEHOLDER`. Nothing about the studio may be invented to fill a layout.
 - Products arm confirmed in brief: **Custom Doors**, **Fabricated Sheet Work**.
-- Homepage section order is client-specified: Hero → About → Numbers → Expertise → Major
-  Projects → Management Team → Brands → Latest News → Footer.
+- Homepage section order is client-specified. **Revised by the studio:** Hero → About →
+  Numbers (+ collaborator marquee) → Expertise → Major Projects → Latest News → Footer.
+  The Management Team and Brands bands were removed from the homepage and now live only on
+  About (`/studio`), which already carried fuller versions of both — the homepage was
+  showing a truncated second copy of each. The collaborator names survive on the homepage
+  as the marquee under the figures.
 
 ---
 
@@ -46,11 +50,11 @@ it deliberately and say why — reversing something in this file is a decision, 
 
 ## Typography decisions
 
-- Two families, no more: **Archivo** (variable weight + width) for display, headings, UI and
+- Two families, no more: **Barlow** for display, headings, UI and
   metadata; **Newsreader** (variable optical size) for editorial statements and long-form.
 - Self-hosted via `next/font`. No external font request — this is also what keeps a strict
   CSP achievable in Phase 4.
-- Metadata is Archivo uppercase and tracked. **A mono family was rejected** — it would have
+- Metadata is Barlow uppercase and tracked. **A mono family was rejected** — it would have
   been a third typeface doing a job tracking already does.
 - Fluid `clamp()` scale; type does not step at breakpoints.
 
@@ -158,8 +162,21 @@ it deliberately and say why — reversing something in this file is a decision, 
   caught, leaving it stuck invisible. `Media` now also polls `.complete` directly and gives
   up waiting outright after 4s — the same guarantee `MotionFailsafe` makes for the reveal
   system, applied to image loading specifically.
-- **Rejected:** cursor followers, magnetic buttons, tilt effects, scroll-jacked full-page
-  sections, overshoot easing, `ease-in` on entrances, `backdrop-filter` on the header.
+- **A CAD crosshair replaces the pointer** on fine pointers with motion enabled
+  (`CrosshairCursor`). This reverses the blanket rejection of cursor followers below, at the
+  studio's request. The objections are answered rather than ignored: position is written to
+  a `translate3d` inside a rAF so nothing lays out or paints, and the system cursor is only
+  hidden over the page surface — links, buttons and fields keep their own, because a hand
+  over a link is a better affordance than a reticle. Never mounted for coarse pointers or
+  reduced motion.
+- **The header is glass.** `backdrop-filter` on the header was previously rejected as an
+  expensive way to reproduce what a 94% ink fill already did; over the hero *video* the two
+  no longer look alike, so the studio asked for the blur and it now earns its cost. Applied
+  as a Tailwind `data-[scrolled]:backdrop-blur-*` utility, **not** as a hand-written
+  `backdrop-filter` in `globals.css` — the CSS transformer strips that declaration silently,
+  which is how this first shipped looking like a flat veil.
+- **Rejected:** magnetic buttons, tilt effects, scroll-jacked full-page sections, overshoot
+  easing, `ease-in` on entrances.
 
 ---
 

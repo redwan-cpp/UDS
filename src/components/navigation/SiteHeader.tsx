@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 import { Wordmark } from "./Wordmark";
 import { MenuOverlay } from "./MenuOverlay";
 import { Container } from "@/components/ui/Container";
-import { primaryNavigation } from "@/data/navigation";
 import { studio } from "@/data/studio";
 import type { NavItem } from "@/types/content";
 
@@ -36,7 +33,6 @@ export function SiteHeader({ items, studioName }: SiteHeaderProps) {
   const [open, setOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const openRef = useRef(false);
-  const pathname = usePathname();
 
   // Mirrored into a ref so the scroll listener can read the current value
   // without being torn down and rebuilt every time the menu opens.
@@ -84,53 +80,60 @@ export function SiteHeader({ items, studioName }: SiteHeaderProps) {
       <header
         ref={headerRef}
         data-open={open || undefined}
-        className="site-header surface-dark fixed inset-x-0 top-0 z-70"
+        className="site-header surface-dark fixed inset-x-0 top-0 z-70 data-[scrolled]:backdrop-blur-xl data-[scrolled]:backdrop-saturate-150"
         inert={open || undefined}
       >
+        {/* The centre shortcut row is deliberately gone: the wordmark holds the
+            left, and every route is one click away in the index. That leaves
+            the header a rule with two ends, which is what lets it sit as glass
+            over the hero without competing with the display type under it. */}
         <Container className="flex items-center justify-between gap-8 py-5 md:py-6">
           <Wordmark name={studioName} />
 
-          <nav aria-label="Shortcuts" className="hidden lg:block">
-            <ul className="flex items-center gap-10">
-              {primaryNavigation.map((item) => {
-                const current = pathname.startsWith(item.href);
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      aria-current={current ? "page" : undefined}
-                      className="group/nav relative block py-2 text-nav uppercase transition-colors duration-[var(--dur-fast)] hover:text-accent"
-                    >
-                      {item.label}
-                      <span
-                        aria-hidden="true"
-                        className={[
-                          "absolute bottom-0 left-0 block h-px w-full origin-left bg-accent transition-transform duration-[var(--dur-base)] ease-out-soft motion-reduce:transition-none",
-                          current
-                            ? "scale-x-100"
-                            : "scale-x-0 group-hover/nav:scale-x-100 group-focus-visible/nav:scale-x-100",
-                        ].join(" ")}
-                      />
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
+          <div className="flex items-center gap-6 md:gap-8">
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              aria-controls="site-menu"
+              className="group/search -m-2 flex min-h-11 min-w-11 items-center justify-center p-2 transition-colors duration-[var(--dur-fast)] hover:text-accent"
+            >
+              <span className="sr-only">Search the site index</span>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 20 20"
+                fill="none"
+                className="h-[18px] w-[18px]"
+              >
+                <circle
+                  cx="8.75"
+                  cy="8.75"
+                  r="5.75"
+                  stroke="currentColor"
+                  strokeWidth="1.25"
+                />
+                <path
+                  d="M13 13L17.5 17.5"
+                  stroke="currentColor"
+                  strokeWidth="1.25"
+                  strokeLinecap="square"
+                />
+              </svg>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            aria-expanded={open}
-            aria-controls="site-menu"
-            className="group/menu -mr-2 flex min-h-11 items-center gap-3 px-2 text-nav uppercase transition-colors duration-[var(--dur-fast)] hover:text-accent"
-          >
-            <span>Index</span>
-            <span aria-hidden="true" className="flex w-6 flex-col gap-1.5">
-              <span className="block h-px w-full origin-left bg-current transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/menu:scale-x-75 motion-reduce:transition-none" />
-              <span className="block h-px w-full origin-left scale-x-75 bg-current transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/menu:scale-x-100 motion-reduce:transition-none" />
-            </span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              aria-expanded={open}
+              aria-controls="site-menu"
+              className="group/menu -mr-2 flex min-h-11 items-center gap-3 px-2 text-nav uppercase transition-colors duration-[var(--dur-fast)] hover:text-accent"
+            >
+              <span>Index</span>
+              <span aria-hidden="true" className="flex w-6 flex-col gap-1.5">
+                <span className="block h-px w-full origin-left bg-current transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/menu:scale-x-75 motion-reduce:transition-none" />
+                <span className="block h-px w-full origin-left scale-x-75 bg-current transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/menu:scale-x-100 motion-reduce:transition-none" />
+              </span>
+            </button>
+          </div>
         </Container>
       </header>
 

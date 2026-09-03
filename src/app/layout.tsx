@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Newsreader } from "next/font/google";
+import { Barlow, Newsreader } from "next/font/google";
 
 import { SiteHeader } from "@/components/navigation/SiteHeader";
 import { SiteFooter } from "@/components/footer/SiteFooter";
@@ -7,6 +7,7 @@ import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { LoadingSequence } from "@/components/motion/LoadingSequence";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { MotionFailsafe } from "@/components/motion/MotionFailsafe";
+import { CrosshairCursor } from "@/components/ui/CrosshairCursor";
 import { navigation } from "@/data/navigation";
 import { studio } from "@/data/studio";
 
@@ -15,12 +16,18 @@ import "./globals.css";
 /**
  * Two families only, self-hosted at build time. No external font request keeps
  * a strict CSP achievable in Phase 4 and removes a render-blocking origin.
+ *
+ * Barlow is the primary, as briefed — it replaces Archivo as the structural
+ * family. The brief's second family was Aeonik Pro, which is a commercial
+ * licence (CoType Foundry) and cannot be fetched or bundled here; the studio
+ * confirmed the existing secondary stays, so Newsreader keeps the editorial
+ * register the statement and lead type is built on.
  */
-const archivo = Archivo({
+const barlow = Barlow({
   subsets: ["latin"],
-  axes: ["wdth"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-archivo",
+  variable: "--font-barlow",
 });
 
 const newsreader = Newsreader({
@@ -77,7 +84,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${archivo.variable} ${newsreader.variable}`}
+      className={`${barlow.variable} ${newsreader.variable}`}
     >
       <body className="bg-ink text-paper antialiased">
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />
@@ -89,6 +96,7 @@ export default function RootLayout({
         <LoadingSequence />
         <SmoothScroll />
         <MotionFailsafe />
+        <CrosshairCursor />
 
         <SiteHeader items={navigation} studioName={studio.name} />
 

@@ -195,6 +195,13 @@ export interface TeamMember extends ContentBase {
   /** Optional short biography, one paragraph. */
   bio?: string;
   portrait: MediaAsset;
+  /**
+   * The member's own LinkedIn profile. Absent for demo people — these are
+   * invented names, and a guessed profile URL would either 404 or land on a
+   * real stranger who shares the name. The portrait's "View profile" overlay
+   * renders only when this is set.
+   */
+  linkedin?: string;
   order: number;
 }
 
@@ -247,6 +254,8 @@ export interface StudioProfile {
   /** The hero setting. Kept short — it is display type, not a paragraph. */
   tagline: string;
   disciplines: string[];
+  /** Service lines, set along the hero's baseline rule. */
+  services: string[];
   /** The editorial About statement. Set in the serif. */
   statement: string[];
   /** Supporting paragraphs below the statement. */
@@ -256,6 +265,13 @@ export interface StudioProfile {
     phone: string;
     addressLines: string[];
     hours?: string;
+    /**
+     * Absent until the studio supplies a real address. The map renders a
+     * stated "location pending" panel rather than dropping a pin somewhere
+     * plausible — a map is a factual claim about where a business is, and an
+     * invented one sends people to a real place that is not the studio.
+     */
+    coordinates?: { lat: number; lon: number };
   };
   /** `href` is absent until the studio supplies a real profile URL.
    *  Components render an unlinked label rather than a dead `#` anchor. */
@@ -296,4 +312,17 @@ export interface ContactStep {
   optional?: boolean;
   options?: ContactOption[];
   placeholder?: string;
+}
+
+/* -------------------------------------------------------------------------- */
+
+/** A role on the careers page. */
+export interface JobOpening {
+  index: string;
+  title: string;
+  discipline: string;
+  /** e.g. "Full time" — deliberately not a salary or a closing date. */
+  commitment: string;
+  summary: string;
+  requirements: string[];
 }

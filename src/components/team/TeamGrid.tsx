@@ -1,5 +1,6 @@
 import { Media } from "@/components/ui/Media";
 import { Reveal } from "@/components/motion/Reveal";
+import { SocialIcon } from "@/components/contact/SocialIcon";
 import type { TeamMember } from "@/types/content";
 
 /**
@@ -16,7 +17,7 @@ function TeamMemberCard({ member, position }: { member: TeamMember; position: nu
   const hasPortrait = Boolean(member.portrait.src);
 
   return (
-    <article className="border-t border-hairline pt-5">
+    <article className="group/member border-t border-hairline pt-5">
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-ink-soft">
         {hasPortrait ? (
           <Media
@@ -36,6 +37,27 @@ function TeamMemberCard({ member, position }: { member: TeamMember; position: nu
               Portrait to follow
             </span>
           </div>
+        )}
+
+        {/* "View profile" over the portrait. Rendered only when a real profile
+            URL exists — see TeamMember.linkedin. It is a real link, not a
+            hover-only affordance: it stays reachable by keyboard, and on a
+            coarse pointer (no hover to trigger) it is simply always visible. */}
+        {member.linkedin && (
+          <a
+            href={member.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="surface-dark absolute inset-0 flex items-end bg-ink/70 p-5 opacity-100 transition-opacity duration-[var(--dur-slow)] ease-out-soft motion-reduce:transition-none md:opacity-0 md:group-hover/member:opacity-100 md:focus-visible:opacity-100"
+          >
+            <span className="inline-flex items-center gap-2.5 text-meta uppercase text-paper">
+              View profile
+              <SocialIcon label="LinkedIn" />
+            </span>
+            <span className="sr-only">
+              {member.name} on LinkedIn (opens in a new tab)
+            </span>
+          </a>
         )}
       </div>
 

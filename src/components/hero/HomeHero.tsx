@@ -10,8 +10,7 @@ import type { MediaAsset, VideoAsset } from "@/types/content";
 interface HomeHeroProps {
   poster: MediaAsset;
   video?: VideoAsset;
-  disciplines: string[];
-  tagline: string;
+  services: string[];
 }
 
 /**
@@ -27,7 +26,7 @@ interface HomeHeroProps {
  * signals `uds:ready`, and the hero waits for it so the two moves read as one
  * continuous sequence instead of competing.
  */
-export function HomeHero({ poster, video, disciplines, tagline }: HomeHeroProps) {
+export function HomeHero({ poster, video, services }: HomeHeroProps) {
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -132,22 +131,11 @@ export function HomeHero({ poster, video, disciplines, tagline }: HomeHeroProps)
       </div>
 
       <Container className="relative flex min-h-dvh flex-col justify-between pt-32 pb-10 md:pt-40 md:pb-12">
-        {/* Top row: the studio's disciplines, as an index. */}
-        <div className="flex flex-wrap items-start justify-between gap-6">
-          <ul className="flex flex-wrap gap-x-5 gap-y-1.5 sm:gap-x-6">
-            {disciplines.map((discipline, i) => (
-              <li
-                key={discipline}
-                data-hero-meta
-                className="flex items-baseline gap-2 text-meta uppercase text-paper/90"
-              >
-                <span data-numeric className="text-pistachio">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                {discipline}
-              </li>
-            ))}
-          </ul>
+        {/* Top row. The numbered discipline index that used to sit here is
+            gone: it said the same thing as the service list on the baseline
+            rule below, twice, and it crowded the top of the frame the video
+            is the subject of. */}
+        <div className="flex flex-wrap items-start justify-end gap-6">
           <p
             data-hero-meta
             className="hidden max-w-[26ch] text-meta uppercase text-paper/80 lg:block"
@@ -180,21 +168,48 @@ export function HomeHero({ poster, video, disciplines, tagline }: HomeHeroProps)
             </span>
           </h1>
 
-          <div className="mt-8 flex flex-wrap items-end justify-between gap-6 border-t border-paper/20 pt-6">
-            <p data-hero-meta className="text-meta uppercase text-pistachio">
-              {tagline}
-            </p>
+          {/* The baseline rule carries the service lines on the left and the
+              scroll affordance on the right. The word "Scroll" is now the
+              arrow itself — at this size the glyph is the clearer instruction
+              of the two, and it leaves the row to the services. */}
+          <div className="mt-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 border-t border-paper/20 pt-6">
+            <ul className="flex flex-wrap gap-x-5 gap-y-1.5 sm:gap-x-8">
+              {services.map((service) => (
+                <li
+                  key={service}
+                  data-hero-meta
+                  className="text-meta uppercase text-paper/90"
+                >
+                  {service}
+                </li>
+              ))}
+            </ul>
 
             <a
               data-hero-meta
               href="#about"
-              className="group/scroll flex items-center gap-3 text-meta uppercase text-paper/90 transition-colors hover:text-pistachio"
+              aria-label="Scroll to the next section"
+              className="group/scroll -m-2 flex min-h-11 min-w-11 items-center justify-center p-2 text-paper/90 transition-colors hover:text-pistachio"
             >
-              Scroll
-              <span
+              <svg
                 aria-hidden="true"
-                className="block h-8 w-px bg-current transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/scroll:translate-y-1 motion-reduce:transition-none"
-              />
+                viewBox="0 0 24 34"
+                fill="none"
+                className="h-[34px] w-6 overflow-visible"
+              >
+                <path
+                  d="M12 0V32"
+                  stroke="currentColor"
+                  strokeWidth="1.25"
+                  className="origin-top transition-transform duration-[var(--dur-slow)] ease-out-soft group-hover/scroll:scale-y-110 motion-reduce:transition-none"
+                />
+                <path
+                  d="M3.5 23.5L12 32.5L20.5 23.5"
+                  stroke="currentColor"
+                  strokeWidth="1.25"
+                  className="transition-transform duration-[var(--dur-slow)] ease-out-soft group-hover/scroll:translate-y-1 motion-reduce:transition-none"
+                />
+              </svg>
             </a>
           </div>
         </div>

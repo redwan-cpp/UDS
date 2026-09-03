@@ -106,12 +106,12 @@ rather than one continuous tone.
 
 | Family | Role | Why |
 |---|---|---|
-| **Archivo** (variable: weight + width) | Display, headings, navigation, UI, metadata | A grotesque on Roman classical proportions. Swiss lineage without being Helvetica-by-default. The width axis gives real architectural range — condensed for tall display settings, normal for reading — from one family instead of three |
+| **Barlow** | Display, headings, navigation, UI, metadata | A low-contrast grotesque with a tall x-height and tight, even spacing. Set at display scale it reads structural rather than neutral, and it holds its shape at metadata size where a softer grotesque blurs |
 | **Newsreader** (variable: optical size + weight, with italics) | Editorial statements, pull quotes, project narrative | A publication serif with a genuine optical-size axis, so it holds at 14px and at 48px without looking like the same drawing scaled |
 
 Two families. Self-hosted through `next/font` — no external request, no FOUT, and a strict
 CSP stays achievable in a later phase. No third family is permitted; metadata is set in
-Archivo, uppercase and tracked, not in a mono.
+Barlow, uppercase and tracked, not in a mono.
 
 ### Scale
 
@@ -120,23 +120,23 @@ breakpoints, it breathes between them.
 
 | Token | Size | Family | Tracking | Leading | Use |
 |---|---|---|---|---|---|
-| `--text-display` | `clamp(3.25rem, 11vw, 11rem)` | Archivo, 500, width 92 | `-0.04em` | `0.86` | Hero wordmark only |
-| `--text-h1` | `clamp(2.25rem, 6vw, 5.25rem)` | Archivo, 500 | `-0.035em` | `0.92` | Page titles, project titles |
-| `--text-h2` | `clamp(1.75rem, 3.6vw, 3.25rem)` | Archivo, 500 | `-0.03em` | `1.0` | Section titles |
-| `--text-h3` | `clamp(1.25rem, 2vw, 1.75rem)` | Archivo, 500 | `-0.02em` | `1.15` | Sub-sections, card titles |
+| `--text-display` | `clamp(2.75rem, 8.2vw, 8.5rem)` | Barlow, 500 | `-0.04em` | `0.86` | Hero wordmark only |
+| `--text-h1` | `clamp(2.25rem, 6vw, 5.25rem)` | Barlow, 500 | `-0.035em` | `0.92` | Page titles, project titles |
+| `--text-h2` | `clamp(1.75rem, 3.6vw, 3.25rem)` | Barlow, 500 | `-0.03em` | `1.0` | Section titles |
+| `--text-h3` | `clamp(1.25rem, 2vw, 1.75rem)` | Barlow, 500 | `-0.02em` | `1.15` | Sub-sections, card titles |
 | `--text-statement` | `clamp(1.375rem, 2.9vw, 2.5rem)` | Newsreader, 300 | `-0.015em` | `1.3` | Editorial statements, pull quotes |
 | `--text-lead` | `clamp(1.0625rem, 1.3vw, 1.3125rem)` | Newsreader, 400 | `0` | `1.6` | Introductory paragraphs |
-| `--text-body` | `1rem` | Archivo, 400 | `0` | `1.65` | Interface body copy |
+| `--text-body` | `1rem` | Barlow, 400 | `0` | `1.65` | Interface body copy |
 | `--text-body-serif` | `1.0625rem` | Newsreader, 400 | `0` | `1.7` | Long-form project narrative |
-| `--text-small` | `0.875rem` | Archivo, 400 | `0` | `1.55` | Secondary copy |
-| `--text-caption` | `0.8125rem` | Archivo, 400 | `0.005em` | `1.5` | Image captions, credits |
-| `--text-meta` | `0.6875rem` | Archivo, 500 | `0.14em`, uppercase | `1.4` | Eyebrows, indices, labels, years |
-| `--text-nav` | `0.8125rem` | Archivo, 500 | `0.02em` | `1` | Navigation |
+| `--text-small` | `0.875rem` | Barlow, 400 | `0` | `1.55` | Secondary copy |
+| `--text-caption` | `0.8125rem` | Barlow, 400 | `0.005em` | `1.5` | Image captions, credits |
+| `--text-meta` | `0.6875rem` | Barlow, 500 | `0.14em`, uppercase | `1.4` | Eyebrows, indices, labels, years |
+| `--text-nav` | `0.8125rem` | Barlow, 500 | `0.02em` | `1` | Navigation |
 
 ### Rules
 
 - Display is used **once per page**, and only in a hero.
-- Measure is capped at **68 characters** for Archivo body and **72** for Newsreader.
+- Measure is capped at **68 characters** for Barlow body and **72** for Newsreader.
 - Negative tracking scales with size; small text is never tracked negative.
 - Metadata is the only uppercase style. Headings are never all-caps.
 - Numerals are tabular in counters, statistics and tables; proportional elsewhere.
@@ -470,7 +470,7 @@ hover; every hover behaviour has a tap or focus equivalent.
 
 Recorded here so they are not silently defaulted:
 
-- **Wordmark.** Currently typographic (Archivo, tracked). A drawn mark is a client decision.
+- **Wordmark.** Currently typographic (Barlow, tracked). A drawn mark is a client decision.
 - **Photography direction.** Phase 1 uses labelled demo imagery. Real art direction — lens,
   time of day, whether people appear in the frames — is set with the studio.
 - **Demo library size.** The demo library is 26 assets after curation: 16 photographs and

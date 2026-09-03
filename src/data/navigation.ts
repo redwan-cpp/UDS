@@ -8,7 +8,7 @@ import type { NavItem } from "@/types/content";
  * contents page is organised.
  */
 export const navigation: NavItem[] = [
-  { index: "01", label: "Studio", href: "/studio" },
+  { index: "01", label: "About", href: "/studio" },
   { index: "02", label: "Major Projects", href: "/projects" },
   { index: "03", label: "Portfolio", href: "/portfolio" },
   { index: "04", label: "Products", href: "/products" },

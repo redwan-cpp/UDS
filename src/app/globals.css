@@ -50,15 +50,20 @@
   --color-hairline: var(--color-line);
 
   /* --- Typography ---------------------------------------------------------
-     Two families. Archivo (variable weight + width) carries structure;
-     Newsreader (variable optical size) carries editorial register.
+     Two families. Barlow carries structure — it replaced Archivo as the
+     primary, as briefed. Newsreader (variable optical size) is unchanged and
+     still carries the editorial register.
      ---------------------------------------------------------------------- */
   --font-*: initial;
   --font-sans:
-    var(--font-archivo), "Helvetica Neue", Helvetica, Arial, sans-serif;
+    var(--font-barlow), "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
 
-  --text-display: clamp(3.25rem, 11vw, 11rem);
+  /* Stepped down from 11vw / 11rem: at the old size the wordmark filled the
+     hero edge-to-edge and left the video reading as texture behind lettering
+     rather than as the subject. The type is still display scale, it just no
+     longer crowds the frame it sits in. */
+  --text-display: clamp(2.75rem, 8.2vw, 8.5rem);
   --text-display--line-height: 0.86;
   --text-display--letter-spacing: -0.04em;
   --text-display--font-weight: 500;
@@ -326,10 +331,7 @@
 
   /* The site header.
      Driven by data attributes written from a rAF-throttled scroll listener
-     rather than by React state, so scrolling causes no re-render. The scrolled
-     state deliberately has no `backdrop-filter`: blurring a full-width fixed
-     bar costs a compositor pass on every scrolled frame, and a flat ink veil is
-     truer to the language anyway. */
+     rather than by React state, so scrolling causes no re-render. */
   .site-header {
     background-color: transparent;
     border-bottom: 1px solid transparent;
@@ -341,9 +343,30 @@
       opacity var(--dur-base) var(--ease-out-soft);
   }
 
+  /* Glass, as briefed. This reverses the earlier rejection of backdrop-filter
+     on the header (memory.md) — that call was made when the header sat over a
+     still photograph and a 94% ink fill was indistinguishable from blur at a
+     fraction of the cost. Over the hero video the two no longer look alike, so
+     the cost now buys something.
+
+     Only the translucent fill lives here. The blur itself is applied as a
+     `data-[scrolled]:backdrop-blur-*` utility on the element (SiteHeader.tsx):
+     a hand-written `backdrop-filter` declaration in this file is stripped
+     entirely by the CSS transformer before it reaches the browser, which is
+     how this shipped looking like a flat 62% veil the first time. Tailwind
+     emits its own, and that survives. */
   .site-header[data-scrolled] {
-    background-color: color-mix(in srgb, var(--color-ink) 94%, transparent);
+    background-color: color-mix(in srgb, var(--color-ink) 62%, transparent);
     border-bottom-color: var(--color-line);
+  }
+
+  /* No backdrop-filter support: fall back to the opaque fill this used to
+     have, so the header is never a washed-out sheet with nothing legible
+     behind it. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .site-header[data-scrolled] {
+      background-color: color-mix(in srgb, var(--color-ink) 94%, transparent);
+    }
   }
 
   .site-header[data-hidden] {
@@ -499,6 +522,152 @@
   /* Promoted only while the heading is still waiting to animate. */
   .js-motion [data-reveal-words]:not([data-revealed]) [data-word] {
     will-change: transform;
+  }
+
+  /* --- Collaborator marquee ------------------------------------------------
+     Two identical passes translated by exactly -50% of the track, so the
+     second copy arrives where the first started and the loop is seamless.
+     Transform only, so it composites; `mask-image` fades both ends into the
+     surface instead of cutting names off at a hard edge. */
+  .uds-marquee {
+    overflow: hidden;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 8%,
+      black 92%,
+      transparent
+    );
+  }
+
+  .uds-marquee__track {
+    display: flex;
+    width: max-content;
+    animation: uds-marquee 42s linear infinite;
+    will-change: transform;
+  }
+
+  /* Hovering stops it, so a name can actually be read. */
+  .uds-marquee:hover .uds-marquee__track {
+    animation-play-state: paused;
+  }
+
+  .uds-marquee__pass {
+    display: flex;
+    align-items: center;
+  }
+
+  .uds-marquee__item {
+    display: flex;
+    align-items: center;
+    padding-inline-end: 2.5rem;
+  }
+
+  @keyframes uds-marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  /* Reduced motion: no animation at all, and the strip becomes scrollable so
+     the content behind the loop is still reachable. */
+  @media (prefers-reduced-motion: reduce) {
+    .uds-marquee {
+      overflow-x: auto;
+    }
+
+    .uds-marquee__track {
+      animation: none;
+      will-change: auto;
+    }
+  }
+
+  /* --- The CAD crosshair cursor -------------------------------------------
+     Only ever mounted for a fine pointer with motion allowed (see
+     CrosshairCursor.tsx), and only visible once the pointer has moved. The
+     element is fixed at the origin and moved with translate3d, so a pointer
+     move costs one compositor transform and nothing else.
+
+     `data-crosshair` is set on <html> by the component itself, never in the
+     server markup — so a no-JS visitor keeps their ordinary cursor and never
+     lands on a page that hid the pointer and then failed to draw one. */
+  .uds-crosshair {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 95;
+    display: none;
+    pointer-events: none;
+    color: var(--color-accent);
+    will-change: transform;
+  }
+
+  .uds-crosshair[data-active] {
+    display: block;
+  }
+
+  .uds-crosshair__h,
+  .uds-crosshair__v,
+  .uds-crosshair__box {
+    position: absolute;
+    background: currentColor;
+    opacity: 0.55;
+  }
+
+  /* The hairlines run the full viewport, the way a CAD reticle does — they
+     are what makes it read as a drawing tool rather than a dot. */
+  .uds-crosshair__h {
+    left: -100vw;
+    top: 0;
+    width: 200vw;
+    height: 1px;
+  }
+
+  .uds-crosshair__v {
+    top: -100vh;
+    left: 0;
+    height: 200vh;
+    width: 1px;
+  }
+
+  /* The pickbox. Transparent centre, so it frames what it is over. */
+  .uds-crosshair__box {
+    top: -5px;
+    left: -5px;
+    width: 10px;
+    height: 10px;
+    background: transparent;
+    border: 1px solid currentColor;
+    opacity: 0.9;
+  }
+
+  /* Hide the system cursor over the page surface only. Anything interactive
+     keeps its own — a pointer over a link is a stronger affordance than a
+     reticle, and losing it is the usual reason custom cursors are a downgrade. */
+  html[data-crosshair],
+  html[data-crosshair] body {
+    cursor: none;
+  }
+
+  html[data-crosshair] a,
+  html[data-crosshair] button,
+  html[data-crosshair] input,
+  html[data-crosshair] select,
+  html[data-crosshair] textarea,
+  html[data-crosshair] summary,
+  html[data-crosshair] [role="button"],
+  html[data-crosshair] [tabindex]:not([tabindex="-1"]) {
+    cursor: pointer;
   }
 
   /* The intro overlay only exists for a first visit with motion enabled.

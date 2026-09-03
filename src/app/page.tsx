@@ -3,14 +3,11 @@ import { AboutStatement } from "@/components/sections/AboutStatement";
 import { Numbers } from "@/components/sections/Numbers";
 import { ExpertiseIndex } from "@/components/sections/ExpertiseIndex";
 import { FeaturedProjects } from "@/components/sections/FeaturedProjects";
-import { TeamSection } from "@/components/sections/TeamSection";
-import { BrandsSection } from "@/components/sections/BrandsSection";
 import { LatestNews } from "@/components/sections/LatestNews";
 
 import { studio } from "@/data/studio";
 import { statistics } from "@/data/statistics";
 import { expertise } from "@/data/expertise";
-import { team } from "@/data/team";
 import { brands } from "@/data/brands";
 import { getFeaturedProjects } from "@/data/projects";
 import { getFeaturedNews } from "@/data/news";
@@ -37,8 +34,7 @@ export default function HomePage() {
       <HomeHero
         poster={heroVideo.poster}
         video={heroVideo}
-        disciplines={studio.disciplines}
-        tagline={studio.tagline}
+        services={studio.services}
       />
 
       <AboutStatement
@@ -51,15 +47,16 @@ export default function HomePage() {
         )}
       />
 
-      <Numbers statistics={statistics} />
+      <Numbers statistics={statistics} brands={brands} />
 
       <ExpertiseIndex areas={expertise} />
 
       <FeaturedProjects projects={featuredProjects} />
 
-      <TeamSection members={team} />
-
-      <BrandsSection brands={brands} />
+      {/* The management team and the collaborator index used to sit here. Both
+          now live on About (/studio), where they already had fuller sections —
+          the homepage was showing a truncated second copy of each. See
+          memory.md; this reverses the original homepage order deliberately. */}
 
       <LatestNews items={latestNews} />
     </>

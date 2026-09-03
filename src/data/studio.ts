@@ -14,6 +14,9 @@ export const studio: StudioProfile = {
 
   disciplines: ["Architecture", "Interior Design", "Spatial Strategy"],
 
+  /** The four service lines, as briefed. Set along the hero's baseline rule. */
+  services: ["Interior", "Exterior", "Products", "Consultancy"],
+
   /**
    * The About statement. Set in the serif at statement scale, so it is short by
    * construction — three sentences, not three paragraphs.
@@ -46,13 +49,22 @@ export const studio: StudioProfile = {
 
   // PLACEHOLDER — no profile URLs supplied. `href` is deliberately omitted
   // rather than set to "#", which would ship three dead links on every page.
+  /**
+   * The four channels the studio asked for. Deliberately still href-less:
+   * these are real accounts on real platforms and the studio has not supplied
+   * the handles — inventing plausible ones would produce links that either
+   * 404 or, worse, land on somebody else's profile. The UI renders a labelled
+   * entry with no link until a handle exists (see `social` handling below).
+   */
   social: [
+    { label: "Facebook" },
     { label: "Instagram" },
+    { label: "WhatsApp" },
     { label: "LinkedIn" },
-    { label: "Behance" },
   ],
 
   legal: [
+    { label: "Careers", href: "/careers" },
     { label: "Privacy", href: "/privacy" },
     { label: "Terms", href: "/terms" },
   ],
