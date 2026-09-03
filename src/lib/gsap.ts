@@ -2,14 +2,21 @@
 
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Flip } from "gsap/Flip";
 
 /**
  * Single registration point for GSAP. Importing from here rather than from
- * "gsap" directly guarantees ScrollTrigger is registered exactly once and that
+ * "gsap" directly guarantees every plugin is registered exactly once and that
  * no component quietly forgets to register it.
+ *
+ * `Flip` costs nothing extra to bundle: it has shipped inside the core `gsap`
+ * package (formerly a "Club GreenSock" bonus plugin) since 3.13, so it is not
+ * a sixth runtime dependency — it is already sitting in `node_modules/gsap`.
+ * It is what a shared-element "card expands in place" morph is built on here
+ * instead of Framer Motion's `layoutId`, which this project does not carry.
  */
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, Flip);
 
   // `fastScrollEnd` skips intermediate states when the user flicks past a
   // trigger, which is what stops a fast scroll from queueing a backlog of
@@ -18,7 +25,7 @@ if (typeof window !== "undefined") {
   ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
-export { gsap, ScrollTrigger };
+export { gsap, ScrollTrigger, Flip };
 
 /** Shared durations in seconds, mirroring the --dur-* tokens. */
 export const DUR = {

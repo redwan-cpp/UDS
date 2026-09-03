@@ -215,8 +215,16 @@ export interface NewsItem extends ContentBase {
 export interface TeamMember extends ContentBase {
   name: string;
   role: string;
-  /** Optional short biography, one paragraph. */
+  /** Optional short biography, one sentence — shown on the card at rest. */
   bio?: string;
+  /**
+   * A longer paragraph, shown only in the expanded detail view. Kept separate
+   * from `bio` rather than making the card's own bio longer: the card is
+   * meant to stay scannable in a grid of four, and the detail view is meant
+   * to be worth clicking through to — the same content in both places would
+   * make opening the card pointless.
+   */
+  detail?: string;
   portrait: MediaAsset;
   /**
    * The member's own LinkedIn profile. Absent for demo people — these are

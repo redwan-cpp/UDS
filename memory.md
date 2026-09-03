@@ -79,7 +79,7 @@ it deliberately and say why — reversing something in this file is a decision, 
 - `MediaAsset` carries `alt`, `caption`, `credit`, `source`, `licence`, `width`, `height` from
   day one, matching the future media library, so no migration is needed later.
 - Server components by default. `"use client"` only for: menu overlay, portfolio filter,
-  contact flow, motion primitives.
+  contact flow, motion primitives, team card expand.
 - Portfolio filter state lives in the URL, not component state — linkable and shareable.
 
 ---
@@ -218,6 +218,29 @@ it deliberately and say why — reversing something in this file is a decision, 
     compositor-driven rather than dependent on a JS frame callback. Confirmed empirically,
     not just in theory — the CSS-driven version showed genuine smooth mid-transition values
     where the GSAP version had shown none.
+- **Team cards expand to a detail view via GSAP `Flip`** (`TeamGrid.tsx`), not Framer Motion's
+  `layoutId`. `Flip` has shipped free inside the core `gsap` package since 3.13 (formerly a
+  paid "Club GreenSock" plugin), so it cost nothing against the five-dependency cap; it is
+  registered once in `src/lib/gsap.ts` alongside `ScrollTrigger`. The expanded card is the
+  *same* DOM element as the grid card — Flip measures its rect before the state change, React
+  re-renders it in place at its new size/position, `Flip.from` animates the delta — never a
+  duplicate mounted elsewhere, which would mean an unmount/remount FLIP exists to avoid. Two
+  real bugs shipped building this before the pattern below was fixed:
+  - **`position: fixed; margin: auto` self-centres only with `inset: 0`, not `inset: auto`.**
+    Per spec, a fixed/absolute box with all four insets `auto` falls back to its *static*
+    (in-flow) position — the expanded card rendered thousands of pixels down the page, at
+    exactly where it sits in the grid, because `md:inset-auto` was written where `md:inset-0`
+    was meant. The margin-auto centering trick needs explicit zero insets to have anything to
+    distribute the margin against.
+  - **`surface-dark` alone does not make text light** — it only redeclares `--color-accent` /
+    `--color-secondary` / `--color-hairline`. Actual text colour comes from `color`, set at
+    `body` (`--color-paper`) and overridden per-section by `Section`'s `text-ink` /
+    `text-paper` utility. The expanded card added `surface-dark` for the accent flip but
+    forgot the paired `text-paper`, so a heading with no colour class of its own kept
+    inheriting `text-ink` from the ancestor light `Section` — rgb(10,10,10) on an ink
+    background, invisible. Every existing dark surface in the codebase already writes
+    `surface-dark` and `text-paper` together (see `Section.tsx`'s `SURFACE` map); this is not
+    a new rule, just a reminder that the two are a pair, not one flipping the other.
 - **Rejected:** magnetic buttons, tilt effects, scroll-jacked full-page sections, overshoot
   easing, `ease-in` on entrances.
 

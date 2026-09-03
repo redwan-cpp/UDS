@@ -282,6 +282,13 @@ portfolio items, news items, team members. It is a **hairline-and-interval** car
 background fill, no shadow, no radius, `1px` top rule, content aligned to the grid. Hover
 raises the image scale to `1.03` and shifts the title, nothing else.
 
+**Team cards expand in place** rather than linking to a separate page — the studio's whole
+team is five people, not a section worth its own route. Clicking a card morphs it, via GSAP
+`Flip`, into a larger detail view showing the same element (not a duplicate) at a bigger size
+and a fixed, centred position; a second click, `Esc`, or the backdrop returns it to its grid
+slot. See the Flip note under Motion decisions in `memory.md` for why `Flip` and not Framer
+Motion's `layoutId`.
+
 Everything else — expertise, statistics, products, sustainability principles — is composed
 as an **index**: numbered rows separated by hairlines, which is how architecture publications
 actually present sets.
