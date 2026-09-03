@@ -9,15 +9,16 @@ import type { NavItem } from "@/types/content";
  */
 export const navigation: NavItem[] = [
   { index: "01", label: "About", href: "/studio" },
-  { index: "02", label: "Major Projects", href: "/projects" },
-  { index: "03", label: "Portfolio", href: "/portfolio" },
-  { index: "04", label: "Products", href: "/products" },
-  { index: "05", label: "Sustainability", href: "/sustainability" },
-  { index: "06", label: "Collaboration & News", href: "/news" },
-  { index: "07", label: "Contact", href: "/contact" },
+  // Major Projects and Portfolio were two answers to the same question and
+  // showed the same six case studies twice. Merged into one index.
+  { index: "02", label: "Projects", href: "/projects" },
+  { index: "03", label: "Products", href: "/products" },
+  { index: "04", label: "Sustainability", href: "/sustainability" },
+  { index: "05", label: "Collaboration & News", href: "/news" },
+  { index: "06", label: "Contact", href: "/contact" },
 ];
 
 /** Shown in the header on wide screens. The full index lives in the overlay. */
 export const primaryNavigation: NavItem[] = navigation.filter((item) =>
-  ["/projects", "/portfolio", "/studio", "/contact"].includes(item.href),
+  ["/projects", "/studio", "/contact"].includes(item.href),
 );

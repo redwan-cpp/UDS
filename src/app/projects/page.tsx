@@ -3,26 +3,57 @@ import type { Metadata } from "next";
 import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
-import { Reveal } from "@/components/motion/Reveal";
-import { ProjectCard } from "@/components/projects/ProjectCard";
-import { getProjects } from "@/data/projects";
+import { PortfolioFilter } from "@/components/portfolio/PortfolioFilter";
+import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid";
+import { filterPortfolio, getPortfolio, portfolioFilters } from "@/data/portfolio";
+import type { ProjectCategory } from "@/types/content";
 
 export const metadata: Metadata = {
-  title: "Major Projects",
+  title: "Projects",
   description:
-    "Selected architecture, interior and urban projects by Uthan Design Studio, shown at length.",
+    "The full index of work by Uthan Design Studio, filterable by category. Selected projects are documented in full.",
 };
 
-export default function ProjectsPage() {
-  const projects = getProjects();
+/** Anything not in the filter set falls back to "all" rather than an error. */
+function readFilter(value: string | undefined): ProjectCategory | "all" {
+  if (!value) return "all";
+  const match = portfolioFilters.find((f) => f.value === value);
+  return match ? match.value : "all";
+}
+
+/**
+ * Projects — one index for all the work.
+ *
+ * This used to be two routes: `/projects` for the six documented case studies
+ * and `/portfolio` for the full index of everything built. They were two
+ * different answers to the same question, and the split forced a visitor to
+ * guess which page held the thing they were looking for — while the six case
+ * studies appeared on both.
+ *
+ * The portfolio data was already a superset (it carried every case study plus
+ * the work without one), so the merge is that superset shown once, with a
+ * case-study link where a case study exists. `/portfolio` now redirects here.
+ *
+ * Filtering stays URL-driven rather than client state, so a filtered view is
+ * linkable, crawlable and ships no JavaScript.
+ */
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = await searchParams;
+  const active = readFilter(category);
+  const items = filterPortfolio(getPortfolio(), active);
+  const documented = items.filter((item) => item.projectSlug).length;
 
   return (
     <>
       <PageHero
         index="02"
         eyebrow="Selected work"
-        title="Major Projects"
-        intro="A small number of projects, documented properly — the thinking, the drawings, and what happened on site."
+        title="Projects"
+        intro="Everything the studio has built. The projects documented at length — the thinking, the drawings, and what happened on site — link through to their full case study."
         aside={
           <DemoNotice>
             Every project shown here is placeholder content created for design
@@ -31,23 +62,37 @@ export default function ProjectsPage() {
         }
       />
 
-      <Section surface="dark" spacing="none" className="pb-24 md:pb-32">
+      <Section
+        surface="dark"
+        spacing="none"
+        className="pb-24 md:pb-32"
+        labelledBy="work-index-heading"
+      >
         <Container>
-          <p className="pb-8 text-meta uppercase text-secondary">
-            <span data-numeric>{projects.length}</span> projects
-          </p>
+          {/* The card titles are h3. Without this the document jumped h1 → h3,
+              which is a heading level a screen-reader user has to step over
+              wondering what they missed. */}
+          <h2 id="work-index-heading" className="sr-only">
+            Index of work
+          </h2>
 
-          <Reveal
-            as="ul"
-            stagger={0.08}
-            className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-14 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {projects.map((project, i) => (
-              <li key={project.id}>
-                <ProjectCard project={project} index={i + 1} priority={i < 3} />
-              </li>
-            ))}
-          </Reveal>
+          <div className="flex flex-col gap-6 border-b border-hairline pb-6 md:flex-row md:items-baseline md:justify-between">
+            <PortfolioFilter active={active} basePath="/projects" />
+            <p aria-live="polite" className="text-meta uppercase text-secondary">
+              <span data-numeric>{items.length}</span>{" "}
+              {items.length === 1 ? "project" : "projects"}
+              {documented > 0 && (
+                <>
+                  {" · "}
+                  <span data-numeric>{documented}</span> documented
+                </>
+              )}
+            </p>
+          </div>
+
+          <div className="pt-14">
+            <PortfolioGrid items={items} />
+          </div>
         </Container>
       </Section>
     </>

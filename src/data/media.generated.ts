@@ -205,6 +205,30 @@ export const LIBRARY = {
     "licence": "CC BY-SA 3.0",
     "source": "https://commons.wikimedia.org/wiki/File:Centro_de_Ciencia,_Macao,_2013-08-08,_DD_09.jpg"
   },
+  "pool/arch-05": {
+    "src": "/media/pool/arch-05.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "Kreuzschnabel",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:2014_Scar_House_Reservoir_Dam.jpg"
+  },
+  "pool/arch-18": {
+    "src": "/media/pool/arch-18.jpg",
+    "width": 2400,
+    "height": 1600,
+    "credit": "King of Hearts",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Clark_Center_Stanford_October_2019_HDR_2.jpg"
+  },
+  "pool/arch-19": {
+    "src": "/media/pool/arch-19.jpg",
+    "width": 2400,
+    "height": 4609,
+    "credit": "Basile Morin",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Mode_Gakuen_Cocoon_Tower_in_the_evening_with_blue_sky_Tokyo_Japan.jpg"
+  },
   "pool/door-01": {
     "src": "/media/pool/door-01.jpg",
     "width": 2400,
@@ -229,6 +253,30 @@ export const LIBRARY = {
     "licence": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:F%C3%BCnf_H%C3%B6fe_-_Hanging_Gardens,_Munich,_April_2017.jpg"
   },
+  "pool/elem-06": {
+    "src": "/media/pool/elem-06.jpg",
+    "width": 2400,
+    "height": 1554,
+    "credit": "Martin Falbisoner",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:F%C3%BCnf_H%C3%B6fe_-_Sphere,_Munich,_April_2017_-02.jpg"
+  },
+  "pool/elem-08": {
+    "src": "/media/pool/elem-08.jpg",
+    "width": 2400,
+    "height": 1654,
+    "credit": "Maksim Sokolov (maxergon.com)",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Benches_at_Oakes_Garden_Theatre,_Niagara_Falls,_Canada.jpg"
+  },
+  "pool/int-02": {
+    "src": "/media/pool/int-02.jpg",
+    "width": 2400,
+    "height": 1598,
+    "credit": "Jebulon",
+    "licence": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Escalier_monumental_Neue_Burg_Vienne.jpg"
+  },
   "pool/int-03": {
     "src": "/media/pool/int-03.jpg",
     "width": 2400,
@@ -236,6 +284,30 @@ export const LIBRARY = {
     "credit": "Arild Vågen",
     "licence": "CC BY-SA 4.0",
     "source": "https://commons.wikimedia.org/wiki/File:R%C3%A5dhuset_metro_station_June_2015.jpg"
+  },
+  "pool/int-12": {
+    "src": "/media/pool/int-12.jpg",
+    "width": 2400,
+    "height": 3200,
+    "credit": "Basile Morin",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Interior_of_the_Tokyo_International_Forum_Glass_Building,_Japan.jpg"
+  },
+  "pool/int-13": {
+    "src": "/media/pool/int-13.jpg",
+    "width": 2400,
+    "height": 1534,
+    "credit": "Fwsbsb",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Museu_da_Rep%C3%BAblica_1_edit.jpg"
+  },
+  "pool/int-17": {
+    "src": "/media/pool/int-17.jpg",
+    "width": 2400,
+    "height": 1644,
+    "credit": "Thomas Bresson",
+    "licence": "CC BY 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:15-02-21-f-giro.jpg"
   }
 } as const satisfies Record<string, RawAsset>;
 

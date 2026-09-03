@@ -14,14 +14,23 @@ import type { ProjectCategory } from "@/types/content";
  * The active state is carried by weight, a drawn rule and `aria-current` —
  * never by colour alone.
  */
-export function PortfolioFilter({ active }: { active: ProjectCategory | "all" }) {
+export function PortfolioFilter({
+  active,
+  basePath = "/projects",
+}: {
+  active: ProjectCategory | "all";
+  /** The route the filter links back into. */
+  basePath?: string;
+}) {
   return (
-    <nav aria-label="Filter portfolio by category">
+    <nav aria-label="Filter work by category">
       <ul className="flex flex-wrap items-baseline gap-x-6 gap-y-3">
         {portfolioFilters.map((filter) => {
           const current = filter.value === active;
           const href =
-            filter.value === "all" ? "/portfolio" : `/portfolio?category=${filter.value}`;
+            filter.value === "all"
+              ? basePath
+              : `${basePath}?category=${filter.value}`;
           const count = countPortfolio(filter.value);
 
           return (

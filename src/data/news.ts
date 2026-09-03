@@ -48,7 +48,7 @@ export const news: NewsItem[] = [
       "The studio contributed six salvaged components to a group exhibition on material reuse: two steel beams, a run of hardwood flooring, a cast-iron column, and two sets of nineteenth-century window ironmongery.",
       "Each was shown at full size alongside the drawing that found it a second use. The point of the show was that reuse is a design problem before it is a sustainability one — a beam is only reusable if someone has drawn what it can become.",
     ],
-    image: img("news", 2, "Exhibition space with structural components on display"),
+    image: img("news", 2, "A vaulted stone undercroft used as an exhibition space"),
     gallery: imgs("news", [
       "Salvaged steel beam shown at full size",
       "Drawings displayed beside each component",

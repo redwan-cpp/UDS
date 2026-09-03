@@ -13,22 +13,66 @@ import type { PortfolioItem } from "@/types/content";
  * items that do not are rendered as plain articles rather than as dead links.
  */
 function PortfolioEntry({ item }: { item: PortfolioItem }) {
+  const documented = Boolean(item.projectSlug);
+
   const body = (
     <>
-      <Media
-        asset={item.image}
-        ratio="portrait"
-        hoverScale
-        sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 100vw"
-      />
+      {/* Landscape and fixed, like every other card in the system: a row stays
+          symmetrical whatever shape the source images are, because the frame
+          crops to its own ratio rather than following the image. */}
+      <div className="relative overflow-hidden">
+        <Media
+          asset={item.image}
+          ratio="landscape"
+          hoverScale
+          sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 100vw"
+        />
+
+        {/* Only the documented work gets the corner arrow, because only that
+            work goes anywhere. An arrow on a card that does not link is a
+            promise the card cannot keep. */}
+        {documented && (
+          <span
+            aria-hidden="true"
+            className="absolute top-4 right-4 block size-4 overflow-hidden text-paper"
+          >
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              className="absolute inset-0 size-4 transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-4 group-hover:-translate-y-4 motion-reduce:transition-none"
+            >
+              <path
+                d="M4 12L12 4M12 4H5.5M12 4V10.5"
+                stroke="currentColor"
+                strokeWidth="1.25"
+                strokeLinecap="square"
+              />
+            </svg>
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              className="absolute inset-0 size-4 -translate-x-4 translate-y-4 transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-0 group-hover:translate-y-0 motion-reduce:hidden"
+            >
+              <path
+                d="M4 12L12 4M12 4H5.5M12 4V10.5"
+                stroke="currentColor"
+                strokeWidth="1.25"
+                strokeLinecap="square"
+              />
+            </svg>
+          </span>
+        )}
+      </div>
 
       <div className="mt-5 flex items-baseline justify-between gap-4">
         <h3 className="text-h3 transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-1.5 motion-reduce:transform-none motion-reduce:transition-none">
           {item.title}
         </h3>
-        <span data-numeric className="shrink-0 text-meta uppercase text-secondary">
-          {item.year}
-        </span>
+        {documented && (
+          <span className="shrink-0 text-meta uppercase text-accent">
+            Case study
+          </span>
+        )}
       </div>
 
       <p className="mt-3 max-w-[42ch] text-small text-secondary">{item.summary}</p>

@@ -98,7 +98,7 @@ export const projects: Project[] = [
       { label: "Structure", value: "Retained timber frame, new steel inserts" },
       { label: "Services", value: "Architecture, Adaptive Reuse, Interiors" },
     ],
-    hero: img("project", 1, "White rendered elevation of a converted industrial building"),
+    hero: img("project", 1, "Raking light striping a concrete stair and its landing"),
     gallery: imgs("interior", [
       "The new stair cut through four floors",
       "Light slot seen from the third floor",
@@ -146,7 +146,7 @@ export const projects: Project[] = [
       { label: "Structure", value: "Timber frame on pad foundations" },
       { label: "Services", value: "Architecture, Landscape, Interiors" },
     ],
-    hero: img("project", 2, "Long low building against water at dusk"),
+    hero: img("project", 2, "A low pavilion mirrored in still water"),
     gallery: imgs("sustain", [
       "Pavilion loggia facing the valley",
       "Standing-seam roof meeting the timber wall plate",
@@ -190,7 +190,7 @@ export const projects: Project[] = [
       { label: "Structure", value: "Concrete frame, masonry infill" },
       { label: "Services", value: "Architecture, Interiors, Furniture" },
     ],
-    hero: img("project", 3, "Top-lit public interior under a glazed roof"),
+    hero: img("project", 3, "A tall civic hall enclosed in a glass and steel lattice"),
     gallery: imgs("interior", [
       "The street-level reading room",
       "Stair between the second and third rooms",
@@ -231,7 +231,7 @@ export const projects: Project[] = [
       { label: "Structure", value: "Steel frame, perforated aluminium soffit" },
       { label: "Services", value: "Architecture, Urban Design" },
     ],
-    hero: img("project", 4, "Masonry arch and canopy edge over an open public floor"),
+    hero: img("project", 4, "A white lattice canopy spanning an open public floor"),
     gallery: imgs("detail", [
       "Shade pattern on the market floor at midday",
       "Column base detail at ground level",
@@ -271,7 +271,7 @@ export const projects: Project[] = [
       { label: "Client", value: "Private" },
       { label: "Services", value: "Interiors, Furniture" },
     ],
-    hero: img("project", 5, "Double-height interior with light from a roof lantern"),
+    hero: img("project", 5, "A stone spiral stair seen straight down through the full height of its void"),
     gallery: imgs("interior", [
       "The new opening seen from the lower floor",
       "Joinery kept below the original cornice line",

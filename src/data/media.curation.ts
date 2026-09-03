@@ -42,39 +42,56 @@ export const SETS = {
     "pool/elem-02",
     "expertise-04",
     "pool/arch-01",
-    "interior-02",
-    "project-01",
+    "pool/int-12",
+    "pool/elem-08",
     "detail-01",
     "pool/int-03",
     "about-03",
   ],
 
-  /** Project heroes. The six most distinct frames in the library, because a
-   *  project page opens on one of these at full bleed. */
+  /**
+   * Project heroes, ordered to match the six case studies rather than simply
+   * being the six most distinct frames. A card that shows a lattice canopy
+   * above a project called Market Canopy is doing work; a card that shows a
+   * zoo house above it is noise the reader has to ignore.
+   *
+   * The HABS zoo series (`project-01/02/04`) is gone from every slot a reader
+   * meets first. Those frames carry visible building signage and an archive
+   * stamp — both of which read, correctly, as "this is not your building".
+   * The Guggenheim (`interior-02`) is out of this set for the same reason it
+   * left the About band: it is a landmark people recognise, so it reads as a
+   * borrowed credential.
+   */
   project: [
-    "hero-01",
-    "hero-02",
-    "pool/arch-01",
-    "pool/elem-02",
-    "project-01",
-    "interior-02",
+    "hero-01", // Courtyard House — board-marked concrete mass
+    "pool/elem-08", // Warehouse Conversion — a stair, and raking light
+    "pool/int-13", // Hillside Pavilions — a low pavilion against water
+    "pool/int-12", // Civic Reading Rooms — a civic hall under glass
+    "pool/elem-06", // Market Canopy — a lattice canopy over open floor
+    // Apartment in Section — an opening cut straight down through the floors,
+    // which is the project. `pool/int-02` sat here first and was wrong: a
+    // gilded palace stair hall under a project about one cut in a floor of a
+    // terraced house. It reads as somebody else's building, which is exactly
+    // the failure this whole set was re-curated to fix. Shared with the About
+    // band; the library is thin enough that one reuse beats one mismatch.
+    "about-stair",
   ],
 
   /** Interior plates for project galleries. */
   interior: [
-    "interior-02",
+    "pool/int-02",
     "interior-03",
     "about-03",
     "pool/int-03",
-    "pool/elem-02",
+    "pool/int-17",
     "expertise-04",
   ],
 
   /** Material and texture at close range. */
-  detail: ["detail-01", "detail-02", "project-01", "project-02"],
+  detail: ["detail-01", "detail-02", "pool/int-17", "pool/elem-08"],
 
   /** Exterior and context. */
-  urban: ["pool/arch-01", "hero-02", "expertise-04"],
+  urban: ["pool/arch-18", "pool/arch-05", "pool/arch-19"],
 
   /** Drawings. The most coherent set in the library, and the right register for
    *  the rough-work sections — these are working documents, not finished
@@ -96,13 +113,13 @@ export const SETS = {
   product: ["pool/door-01", "pool/door-02", "detail-02"],
 
   /** Fabricated sheet work — weathered metal and folded plate. */
-  metal: ["detail-02", "project-04", "detail-01"],
+  metal: ["detail-02", "pool/elem-06", "detail-01"],
 
   /** Collaboration and news. */
   news: [
     "pool/elem-02",
     "pool/arch-01",
-    "interior-02",
+    "pool/int-17",
     "expertise-04",
     "pool/int-03",
     "about-03",

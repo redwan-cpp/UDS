@@ -52,7 +52,7 @@ export const expertise: ExpertiseArea[] = [
     title: "Commercial",
     description:
       "Workplace, retail and mixed-use projects where operational logic and architectural intent have to hold together.",
-    image: img("expertise", 4, "Spiralling gallery ramp seen from the ground floor"),
+    image: img("expertise", 4, "A tall civic hall enclosed in a glass and steel lattice"),
     isDemo: true,
   },
   {
@@ -61,7 +61,7 @@ export const expertise: ExpertiseArea[] = [
     title: "Residential",
     description:
       "Houses and apartments planned around daily use — where light falls at breakfast, where a door swings, what you see on arrival.",
-    image: img("expertise", 5, "Cut-stone gateway with a deep arched opening"),
+    image: img("expertise", 5, "Raking light striping a concrete stair and its landing"),
     isDemo: true,
   },
   {
