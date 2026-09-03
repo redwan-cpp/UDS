@@ -22,9 +22,9 @@ export function StudioMap({
 }: {
   contact: StudioProfile["contact"];
 }) {
-  const { coordinates, addressLines } = contact;
+  const { mapEmbedUrl, addressLines } = contact;
 
-  if (!coordinates) {
+  if (!mapEmbedUrl) {
     return (
       <div className="relative flex aspect-[4/3] w-full flex-col justify-between overflow-hidden border border-hairline bg-ink-soft p-6 lg:aspect-auto lg:h-full lg:min-h-[26rem]">
         {/* A drawing grid, so the empty state still belongs to the site. */}
@@ -51,11 +51,6 @@ export function StudioMap({
     );
   }
 
-  const { lat, lon } = coordinates;
-  const delta = 0.008;
-  const bbox = [lon - delta, lat - delta, lon + delta, lat + delta].join("%2C");
-  const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
-
   // The written address is still a placeholder while the pin is real, so the
   // accessible name is built from whichever is actually true rather than
   // reading out "Studio address to be confirmed" as if it were an address.
@@ -72,10 +67,14 @@ export function StudioMap({
         // The title is the accessible name — an untitled iframe is announced
         // as "frame" and nothing else.
         title={title}
-        src={src}
+        src={mapEmbedUrl}
         loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-        className="h-full w-full grayscale contrast-125"
+        referrerPolicy="strict-origin-when-cross-origin"
+        // `uds-map` tints Google's stock palette into the site accent. The
+        // width/height attributes on the supplied embed are dropped in favour
+        // of filling the panel, so the map is responsive rather than a fixed
+        // 600×450 block that overflows its column.
+        className="uds-map h-full w-full"
       />
     </div>
   );

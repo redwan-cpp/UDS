@@ -132,9 +132,12 @@ export default function ContactPage() {
             </ul>
           </div>
 
+          {/* The address and the map are real now — only the email, phone,
+              hours and social handles are still outstanding, so the notice
+              names those rather than disclaiming the whole block. */}
           <p className="mt-10 text-caption text-secondary">
-            Contact details and social channels above are placeholders pending
-            confirmation by the studio.
+            The email address, telephone number, opening hours and social
+            channels above are placeholders pending confirmation by the studio.
           </p>
         </Container>
       </Section>

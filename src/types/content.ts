@@ -266,12 +266,23 @@ export interface StudioProfile {
     addressLines: string[];
     hours?: string;
     /**
-     * Absent until the studio supplies a real address. The map renders a
-     * stated "location pending" panel rather than dropping a pin somewhere
-     * plausible — a map is a factual claim about where a business is, and an
-     * invented one sends people to a real place that is not the studio.
+     * The canonical location record, supplied by the studio. Kept alongside
+     * `mapEmbedUrl` because the embed URL is an opaque Google string that
+     * cannot be read back for anything else (a directions link, structured
+     * data in a later phase).
      */
     coordinates?: { lat: number; lon: number };
+    /**
+     * Google Maps embed URL for the studio's own listing. Absent until the
+     * studio supplies one, in which case the map renders a stated "location
+     * pending" panel rather than dropping a pin somewhere plausible — a map
+     * is a factual claim about where a business is.
+     *
+     * NOTE: this loads Google content and sets Google cookies. The privacy
+     * page documents it; if this field is ever cleared, that page needs
+     * revisiting too.
+     */
+    mapEmbedUrl?: string;
   };
   /** `href` is absent until the studio supplies a real profile URL.
    *  Components render an unlinked label rather than a dead `#` anchor. */

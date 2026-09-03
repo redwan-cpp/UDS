@@ -40,16 +40,18 @@ export const studio: StudioProfile = {
     // like "+00 0000 000 000" so the field reads as a real phone number
     // rather than a template variable, without risking a real line.
     phone: "+1 (555) 010-0142",
-    addressLines: [
-      "Studio address to be confirmed", // PLACEHOLDER
-      "Full details available on request", // PLACEHOLDER
-    ],
     /**
-     * Supplied by the studio. Dhaka, Bangladesh. The map on /contact is live
-     * from these — the written address lines below are still unconfirmed, so
-     * the pin is currently the more accurate of the two.
+     * Taken from the studio's own Google Business listing, supplied via the
+     * embed below — not invented, and no longer a placeholder. Worth checking
+     * against the listing if that listing is ever edited, since these two now
+     * state the same fact in two places.
      */
+    addressLines: ["Plot 1, Road 4", "Gulshan, Dhaka 1212", "Bangladesh"],
+    /** Supplied by the studio. Dhaka, Bangladesh. */
     coordinates: { lat: 23.783405, lon: 90.420582 },
+    /** The studio's own Google Maps listing, supplied by the studio. */
+    mapEmbedUrl:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58412.11844851091!2d90.37955454160682!3d23.79165168216465!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c7246bf5b245%3A0x30fec1c7bfe52f6c!2sUthan%20Design%20Studio!5e0!3m2!1sen!2sbd!4v1788415440619!5m2!1sen!2sbd",
     hours: "Monday–Friday, 09:00–18:00", // PLACEHOLDER
   },
 

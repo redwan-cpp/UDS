@@ -44,17 +44,23 @@ export default function PrivacyPage() {
               so writing a convincing-sounding policy here would be inventing
               legal commitments on the studio&rsquo;s behalf.
             </p>
+            <p className="mt-3 text-body text-secondary">
+              One thing it will have to cover: the contact page embeds a Google
+              Map, so that page is not cookie-free even though the rest of the
+              site is. Whether that needs a consent prompt depends on where the
+              studio&rsquo;s visitors are.
+            </p>
           </div>
 
           <div className="mt-12 border-t border-hairline pt-8">
             <Eyebrow as="h2">What this build does today</Eyebrow>
             <ul className="mt-5 flex flex-col">
               {[
-                "No analytics, tracking pixels or third-party scripts.",
-                "No cookies are set.",
+                "No analytics and no tracking pixels.",
                 "Fonts are self-hosted, so no request is made to a font provider.",
                 "The contact flow sends nothing — answers stay in your browser.",
                 "Only a first-visit flag is kept, in your browser's session storage.",
+                "The contact page embeds a Google Map. Opening that page loads content from Google, which can set its own cookies and receive your IP address. This is the only third-party content on the site.",
               ].map((line) => (
                 <li key={line} className="border-t border-hairline py-3.5 text-small">
                   {line}
