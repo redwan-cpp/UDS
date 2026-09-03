@@ -5,30 +5,28 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Media } from "@/components/ui/Media";
 import { Reveal } from "@/components/motion/Reveal";
-import { SectionHead, Statement, Prose, Eyebrow } from "@/components/typography";
+import { SectionHead, Statement, Prose } from "@/components/typography";
 import { TeamGrid } from "@/components/team/TeamGrid";
-import { BrandIndex } from "@/components/brands/BrandIndex";
-import { Counter } from "@/components/motion/Counter";
+import { Numbers } from "@/components/sections/Numbers";
 import { studio } from "@/data/studio";
 import { team } from "@/data/team";
-import { brands } from "@/data/brands";
 import { statistics } from "@/data/statistics";
 import { expertise } from "@/data/expertise";
 import { img } from "@/data/media";
 
 export const metadata: Metadata = {
-  title: "Studio",
+  title: "About",
   description:
     "Uthan Design Studio — an architecture and design practice working across architecture, interiors and spatial strategy.",
 };
 
-export default function StudioPage() {
+export default function AboutPage() {
   return (
     <>
       <PageHero
         index="01"
         eyebrow="The practice"
-        title="Studio"
+        title="About"
         intro={studio.statement[0]}
       />
 
@@ -67,29 +65,10 @@ export default function StudioPage() {
         </Container>
       </Section>
 
-      <Section surface="dark" spacing="standard" label="The studio in figures">
-        <Container>
-          <dl className="grid grid-cols-2 pt-2 lg:grid-cols-4">
-            {statistics.map((stat, i) => (
-              <Reveal
-                key={stat.id}
-                delay={i * 0.08}
-                className="flex flex-col gap-3 border-t border-hairline py-8 lg:border-l lg:border-t-0 lg:first:border-l-0 lg:pl-8 lg:first:pl-0"
-              >
-                <dt className="order-2">
-                  <Eyebrow>{stat.label}</Eyebrow>
-                </dt>
-                <dd className="order-1 text-h2">
-                  <Counter value={stat.value} suffix={stat.suffix} />
-                </dd>
-              </Reveal>
-            ))}
-          </dl>
-          <p className="mt-4 text-caption text-secondary">
-            Placeholder figures — to be supplied by the studio.
-          </p>
-        </Container>
-      </Section>
+      {/* Same interactive figures band as the homepage — a hover-responsive
+          rule and lift, not a static dl. Two places showing the same numbers
+          two different ways would read as an inconsistency, not a variation. */}
+      <Numbers statistics={statistics} />
 
       <Section surface="dark" spacing="standard" labelledBy="disciplines-heading">
         <Container>
@@ -136,22 +115,6 @@ export default function StudioPage() {
           </Reveal>
           <div className="pt-12">
             <TeamGrid members={team} />
-          </div>
-        </Container>
-      </Section>
-
-      <Section surface="dark" spacing="standard" labelledBy="collab-heading">
-        <Container>
-          <Reveal>
-            <SectionHead
-              index="04"
-              eyebrow="Who we work with"
-              title="Collaborators"
-              id="collab-heading"
-            />
-          </Reveal>
-          <div className="pt-12">
-            <BrandIndex brands={brands} />
           </div>
         </Container>
       </Section>

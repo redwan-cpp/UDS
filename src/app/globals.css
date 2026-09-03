@@ -791,7 +791,19 @@
     z-index: 95;
     display: none;
     pointer-events: none;
-    color: var(--color-accent);
+    /* A fixed light value, not the surface-aware accent token: this element
+       is mounted once at the document root, outside any `.surface-dark` /
+       `.surface-light` ancestor, so `--color-accent` never flips for it —
+       it would have resolved to pistachio everywhere, including over paper,
+       where pistachio measures 1.4:1 and is prohibited as a meaningful line
+       (design.md's colour contract). `mix-blend-mode: difference` inverts
+       this value against whatever is underneath instead: paper-on-ink reads
+       near-white, the same paper value differenced against paper itself
+       reads black, and anything in between resolves to *something* visibly
+       distinct from its background — one value that is legible on every
+       surface the site has, rather than a colour that has to be told which
+       surface it is currently over. */
+    color: var(--color-paper);
     will-change: transform;
   }
 
@@ -799,27 +811,33 @@
     display: block;
   }
 
+  /* `mix-blend-mode` does not cascade to children — it governs how the
+     element carrying it composites with what is behind it, not how its
+     descendants do. Each painted mark gets its own, rather than relying on
+     it from the wrapper above, which paints nothing itself. */
   .uds-crosshair__h,
   .uds-crosshair__v,
   .uds-crosshair__box {
     position: absolute;
     background: currentColor;
-    opacity: 0.55;
+    opacity: 0.75;
+    mix-blend-mode: difference;
   }
 
-  /* The hairlines run the full viewport, the way a CAD reticle does — they
-     are what makes it read as a drawing tool rather than a dot. */
+  /* A small reticle centred on the pointer, not a full-viewport CAD line —
+     legible as "this is a drawing tool" at a glance without the hairlines
+     drawing a line across whatever the visitor is actually trying to read. */
   .uds-crosshair__h {
-    left: -100vw;
+    left: -11px;
     top: 0;
-    width: 200vw;
+    width: 22px;
     height: 1px;
   }
 
   .uds-crosshair__v {
-    top: -100vh;
+    top: -11px;
     left: 0;
-    height: 200vh;
+    height: 22px;
     width: 1px;
   }
 
@@ -859,7 +877,8 @@
     font-size: var(--text-meta);
     letter-spacing: var(--text-meta--letter-spacing);
     font-weight: var(--text-meta--font-weight);
-    opacity: 0.6;
+    opacity: 0.75;
+    mix-blend-mode: difference;
   }
 
   .uds-crosshair[data-snap] .uds-crosshair__coords {

@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // The practice page moved from /studio to /about. Permanent, so a search
+  // engine or a bookmark from before the rename lands on the current page
+  // instead of a 404.
+  async redirects() {
+    return [{ source: "/studio", destination: "/about", permanent: true }];
+  },
+
   images: {
     // AVIF first, WebP as the fallback. On photography this is the single
     // largest reduction in bytes decoded per scroll, and decode cost is what

@@ -58,7 +58,7 @@ export default function HomePage() {
       <FeaturedProjects projects={featuredProjects} />
 
       {/* The management team and the collaborator index used to sit here. Both
-          now live on About (/studio), where they already had fuller sections —
+          now live on About (/about), where they already had fuller sections —
           the homepage was showing a truncated second copy of each. See
           memory.md; this reverses the original homepage order deliberately. */}
 

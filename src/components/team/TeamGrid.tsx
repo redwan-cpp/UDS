@@ -52,18 +52,6 @@ function TeamMemberCard({
   useLockBodyScroll(expanded);
 
   return (
-    <>
-      {/* The backdrop is its own element, not part of the card, so Flip never
-          has to account for it — it simply fades with a plain CSS transition
-          keyed off the same `expanded` boolean. */}
-      {expanded && (
-        <div
-          aria-hidden="true"
-          onClick={onCollapse}
-          className="fixed inset-0 z-90 bg-ink/80 backdrop-blur-sm"
-        />
-      )}
-
       <article
         ref={articleRef}
         role={expanded ? "dialog" : undefined}
@@ -213,22 +201,37 @@ function TeamMemberCard({
           />
         )}
       </article>
-    </>
   );
 }
+
+/**
+ * Expand and collapse read as two different gestures, not one played in
+ * reverse — matching the site's own duration/ease vocabulary (design.md's
+ * Motion tokens): `ease-out-soft` for anything entering, `ease-in-out-soft`
+ * for anything leaving and returning. GSAP's `ease` string does not read a
+ * CSS custom property, so these are the same curves spelled in GSAP's own
+ * built-in vocabulary rather than the raw cubic-bezier values.
+ */
+const FLIP_MOTION = {
+  expand: { duration: 0.55, ease: "power3.out" },
+  collapse: { duration: 0.45, ease: "power2.inOut" },
+} as const;
 
 export function TeamGrid({ members }: { members: TeamMember[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const flipState = useRef<Flip.FlipState | null>(null);
+  const direction = useRef<keyof typeof FLIP_MOTION>("expand");
   const sorted = [...members].sort((a, b) => a.order - b.order);
 
   const expand = (id: string) => {
+    direction.current = "expand";
     flipState.current = Flip.getState(`[data-flip-id="${id}"]`);
     setExpandedId(id);
   };
 
   const collapse = () => {
     if (expandedId) {
+      direction.current = "collapse";
       flipState.current = Flip.getState(`[data-flip-id="${expandedId}"]`);
     }
     setExpandedId(null);
@@ -245,33 +248,63 @@ export function TeamGrid({ members }: { members: TeamMember[] }) {
 
     if (prefersReducedMotion()) return;
 
+    const { duration, ease } = FLIP_MOTION[direction.current];
+
     Flip.from(state, {
-      duration: 0.5,
-      ease: "power3.inOut",
+      duration,
+      ease,
       absolute: true,
-      onEnter: (els) => gsap.fromTo(els, { opacity: 0 }, { opacity: 1, duration: 0.3 }),
-      onLeave: (els) => gsap.to(els, { opacity: 0, duration: 0.2 }),
+      // Enter/leave durations track the direction they belong to rather
+      // than a single fixed pair — a close whose text fades out slower than
+      // the card itself is shrinking is exactly the kind of mismatch that
+      // reads as sloppy rather than as one continuous motion.
+      onEnter: (els) =>
+        gsap.fromTo(
+          els,
+          { opacity: 0 },
+          { opacity: 1, duration: duration * 0.6, ease: "power1.out" },
+        ),
+      onLeave: (els) =>
+        gsap.to(els, { opacity: 0, duration: duration * 0.5, ease: "power1.in" }),
     });
   }, [expandedId]);
 
   if (members.length === 0) return null;
 
   return (
-    <Reveal
-      as="div"
-      stagger={0.08}
-      className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-12 sm:grid-cols-2 lg:grid-cols-4"
-    >
-      {sorted.map((member, i) => (
-        <TeamMemberCard
-          key={member.id}
-          member={member}
-          position={i + 1}
-          expanded={expandedId === member.id}
-          onExpand={() => expand(member.id)}
-          onCollapse={collapse}
-        />
-      ))}
-    </Reveal>
+    <>
+      {/* One shared backdrop instead of one per card: only a single card can
+          ever be expanded, and a backdrop that mounts and unmounts with the
+          card vanishes in one frame while the card is still mid-flight —
+          the discontinuity that made closing read as sloppy against the
+          smoother, CSS-driven open. Always mounted, opacity-transitioned by
+          CSS on the same `--dur-cinematic` scale the rest of the site's
+          overlays (the menu, the page transition) already use, so the dim
+          and the card settle together instead of one snapping ahead of the
+          other. */}
+      <div
+        aria-hidden="true"
+        onClick={collapse}
+        data-open={expandedId !== null || undefined}
+        className="fixed inset-0 z-90 pointer-events-none bg-ink/80 opacity-0 backdrop-blur-sm transition-opacity duration-[var(--dur-cinematic)] ease-in-out-soft data-[open=true]:pointer-events-auto data-[open=true]:opacity-100 motion-reduce:transition-none"
+      />
+
+      <Reveal
+        as="div"
+        stagger={0.08}
+        className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-12 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        {sorted.map((member, i) => (
+          <TeamMemberCard
+            key={member.id}
+            member={member}
+            position={i + 1}
+            expanded={expandedId === member.id}
+            onExpand={() => expand(member.id)}
+            onCollapse={collapse}
+          />
+        ))}
+      </Reveal>
+    </>
   );
 }

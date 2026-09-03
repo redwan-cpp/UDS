@@ -18,7 +18,7 @@ export const navigation: NavItem[] = [
   {
     index: "01",
     label: "About",
-    href: "/studio",
+    href: "/about",
     image: img("about", 0, ""),
   },
   // Major Projects and Portfolio were two answers to the same question and
@@ -57,5 +57,5 @@ export const navigation: NavItem[] = [
 
 /** Shown in the header on wide screens. The full index lives in the overlay. */
 export const primaryNavigation: NavItem[] = navigation.filter((item) =>
-  ["/projects", "/studio", "/contact"].includes(item.href),
+  ["/projects", "/about", "/contact"].includes(item.href),
 );

@@ -130,20 +130,7 @@ export function HomeHero({ poster, video, services }: HomeHeroProps) {
         </Container>
       </div>
 
-      <Container className="relative flex min-h-dvh flex-col justify-between pt-32 pb-10 md:pt-40 md:pb-12">
-        {/* Top row. The numbered discipline index that used to sit here is
-            gone: it said the same thing as the service list on the baseline
-            rule below, twice, and it crowded the top of the frame the video
-            is the subject of. */}
-        <div className="flex flex-wrap items-start justify-end gap-6">
-          <p
-            data-hero-meta
-            className="hidden max-w-[26ch] text-meta uppercase text-paper/80 lg:block"
-          >
-            An architecture and design practice
-          </p>
-        </div>
-
+      <Container className="relative flex min-h-dvh flex-col justify-end pt-32 pb-10 md:pt-40 md:pb-12">
         {/* The name, on the baseline. */}
         <div className="mt-auto">
           <span

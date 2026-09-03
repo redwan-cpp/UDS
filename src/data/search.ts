@@ -28,7 +28,7 @@ import { categoryLabels, statusLabels } from "@/lib/labels";
  * a search concern — the pages themselves already say it at length.
  */
 const PAGE_SUMMARIES: Record<string, string> = {
-  "/studio": "The practice, its people, and how it works.",
+  "/about": "The practice, its people, and how it works.",
   "/projects": "Every project the studio has built, filterable by category.",
   "/products": "Custom doors and fabricated sheet work.",
   "/sustainability": "How the studio approaches material, energy and reuse.",
@@ -56,7 +56,7 @@ export function getSearchIndex(): SearchEntry[] {
       "phone",
       "enquiry",
     ],
-    "/studio": ["about", "team", "people", "practice", "collaborators"],
+    "/about": ["studio", "team", "people", "practice"],
     "/news": ["collaboration", "press", "exhibition", "award"],
   };
 
@@ -147,7 +147,7 @@ export function getSearchIndex(): SearchEntry[] {
       id: `expertise:${area.id}`,
       title: area.title,
       kind: "expertise",
-      href: "/studio#expertise",
+      href: "/about#expertise",
       summary: area.description,
     });
   }

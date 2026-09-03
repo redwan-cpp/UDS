@@ -19,10 +19,20 @@ it deliberately and say why — reversing something in this file is a decision, 
 - Products arm confirmed in brief: **Custom Doors**, **Fabricated Sheet Work**.
 - Homepage section order is client-specified. **Revised by the studio:** Hero → About →
   Numbers (+ collaborator marquee) → Expertise → Major Projects → Latest News → Closing CTA
-  → Footer. The Management Team and Brands bands were removed from the homepage and now
-  live only on About (`/studio`), which already carried fuller versions of both — the
-  homepage was showing a truncated second copy of each. The collaborator names survive on
-  the homepage as the marquee under the figures.
+  → Footer. The Management Team band was removed from the homepage and now lives only on
+  About (`/about`), which already carried a fuller version — the homepage was showing a
+  truncated second copy. The collaborator names survive on the homepage as the marquee
+  under the figures.
+- **The practice page is `/about`, not `/studio`.** Renamed at the studio's request — route,
+  nav label target, search index, and every internal link moved together in one pass; a
+  permanent redirect from `/studio` (`next.config.ts`) covers anything still pointing at the
+  old path. Its own **Collaborators section is gone**, not just relabelled: `BrandIndex` is
+  no longer rendered anywhere, which leaves it and `BrandsSection`/`brands.ts` fully
+  orphaned — flagged as a follow-up rather than deleted in the same pass that removed their
+  only remaining caller. The figures band on this page is now the *same* `Numbers` component
+  the homepage uses (hover rule-draw, accent lift on the numeral) instead of a second,
+  static `<dl>` — two places showing the same numbers two different ways read as an
+  inconsistency, not a variation worth keeping.
 - **A `/impeccable critique` design review** (dual-agent: an unanchored design-director
   pass plus the skill's own detector/browser-injection pass) scored the homepage 25/32 on
   Nielsen's heuristics — snapshot at `.impeccable/critique/2026-09-03T16-02-35Z__src-app-page-tsx.md`.
@@ -280,6 +290,57 @@ it deliberately and say why — reversing something in this file is a decision, 
   already reserved "decorative only," at `opacity-20` on its wrapper. One placement, not a
   site-wide treatment: a texture earns its place once, spread everywhere it reads as
   wallpaper instead of restraint.
+- **The product detail view reads as a listing page, not an editorial spread** —
+  `ProductFeature.tsx`. The original build paired a full three-paragraph `Prose` block with
+  a large serif `Statement` under each product's title; both are gone, replaced by
+  `product.summary` alone at body scale. In their place: a real gallery, a large frame plus
+  a clickable thumbnail rail — the one interaction every ecommerce product page shares —
+  standing in for the single static hero image `product.gallery` used to only get further
+  down the page in a separate grid. No price, no cart: the *shape* is the familiar one
+  (image, name, one line, spec sheet, one action), not the commerce chrome. Caught while
+  building it: the thumbnail `<Media>` originally carried `key={frames[active].src}` so
+  swapping the active frame remounted it — which also re-arms its `Reveal variant="curtain"`
+  scroll trigger on every click, and a trigger whose position has already been scrolled past
+  gets stuck at `opacity: 0` rather than firing again. Fixed by dropping the `key`; `Media`
+  already cross-fades a changed `src` in on its own `load`.
+- **`data-[open]:` only matches an empty-valued presence attribute, not a boolean rendered as
+  the string `"true"`.** Real bug, not a guess: `TeamGrid`'s shared backdrop was written as
+  `data-open={expandedId !== null || undefined}` with `data-[open]:opacity-100` in its
+  className, and the backdrop never became visible — React stringifies a `data-*` boolean to
+  literally `data-open="true"` (unlike real DOM boolean attributes, which React special-cases),
+  and Tailwind's bracket-only `data-[open]` variant compiles to a selector that wants the
+  bare, empty-string form (`<div data-open>`, the shape `.toggleAttribute()` produces — see
+  `SiteHeader`'s working `data-[scrolled]:`). Fixed by matching the value Tailwind actually
+  needs: `data-[open=true]:opacity-100`. Confirmed by toggling the attribute directly in the
+  console and reading `getComputedStyle` before touching JSX — inspecting the generated
+  stylesheet's `cssRules` was not reliable here, since Tailwind v4 nests utilities in
+  `@layer` blocks that a shallow `sheet.cssRules` walk does not flatten.
+  - **Same pass, the team card's close animation was smoothed.** The backdrop used to mount
+    and unmount with the card (`{expanded && <div className="fixed inset-0 ...">}`), so it
+    vanished in a single frame while the card was still mid-shrink — a discontinuity between
+    an instant disappearance and an in-flight GSAP tween that is exactly what read as
+    "sloppy" specifically on close (open never had this problem, since GSAP's own resolve
+    covered the mount). Now one shared backdrop lives at the `TeamGrid` level, always
+    mounted, CSS-transitioned on `--dur-cinematic` so it settles on the same clock as the
+    card's Flip tween instead of snapping ahead of it. Expand and collapse also stopped
+    sharing one duration/ease: `power3.out` at `0.55s` for expanding (matches
+    `ease-out-soft`'s role, "anything entering"), `power2.inOut` at `0.45s` for collapsing
+    (matches `ease-in-out-soft`'s role, "anything that leaves and returns") — GSAP's `ease`
+    property does not read a CSS custom property, so these are the same two curves already
+    documented above, spelled in GSAP's own built-in vocabulary instead of raw cubic-bezier.
+- **The crosshair cursor is a small local reticle now, not a full-viewport CAD line**, and
+  its colour is `mix-blend-mode: difference` against a fixed `--color-paper` value instead
+  of the surface-aware `--color-accent` token. Two real defects, both from the same root
+  cause: the crosshair is mounted once at the document root, outside any `.surface-dark` /
+  `.surface-light` ancestor, so `--color-accent` never flipped for it — it resolved to
+  pistachio everywhere, including over paper, where pistachio measures 1.4:1 and is
+  prohibited as a meaningful line (the colour contract in design.md). `mix-blend-mode`
+  sidesteps the surface question entirely: differenced against ink it reads near-white,
+  differenced against paper it reads black, and it needs no scroll-linked "which surface am
+  I over" tracking to do it. The second defect: `mix-blend-mode` does not cascade to
+  children, so it has to sit on each painted mark (`__h`/`__v`/`__box`/`__coords`)
+  individually — setting it only on the non-painting wrapper `div` compiles but does
+  nothing, since that element never puts a pixel on screen itself.
 - **Rejected:** magnetic buttons, tilt effects, scroll-jacked full-page sections, overshoot
   easing, `ease-in` on entrances.
 

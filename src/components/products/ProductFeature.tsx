@@ -1,17 +1,25 @@
+"use client";
+
+import { useState } from "react";
+
 import { Container } from "@/components/ui/Container";
-import { Media, Figure } from "@/components/ui/Media";
+import { Media } from "@/components/ui/Media";
 import { Reveal } from "@/components/motion/Reveal";
-import { Eyebrow, Prose, Statement } from "@/components/typography";
+import { Eyebrow } from "@/components/typography";
 import { ButtonLink, Arrow } from "@/components/ui/Button";
 import type { Product } from "@/types/content";
 
 /**
- * A product line.
+ * A product line's own detail — reached by anchor from its card above, not a
+ * separate route.
  *
- * Presented as part of the studio's architectural output, not as a shop: no
- * price, no cart, no "add to basket", no star ratings. The specification table
- * is the closest thing to a product listing, and it reads like a schedule from
- * a drawing set — which is what it actually is.
+ * Restyled to read like a product listing page rather than an editorial
+ * spread: a real gallery (a large frame plus a clickable thumbnail rail,
+ * the one interaction every ecommerce product page shares) stands in for a
+ * single static hero image, and the copy is cut to what a listing actually
+ * carries — a title and one line, then the specification. There is no price
+ * and no cart, but the *shape* is the familiar one: image, name, one-line
+ * pitch, spec sheet, one clear action.
  */
 export function ProductFeature({
   product,
@@ -21,6 +29,8 @@ export function ProductFeature({
   position: number;
 }) {
   const flip = position % 2 === 0;
+  const frames = product.gallery.length > 0 ? product.gallery : [product.hero];
+  const [active, setActive] = useState(0);
 
   return (
     // `id={product.slug}` is the real anchor target — search results and the
@@ -37,15 +47,44 @@ export function ProductFeature({
       <Container bleed>
         <div className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-10 lg:grid-cols-12">
           <div className={`lg:col-span-6 ${flip ? "lg:order-2 lg:col-start-7" : ""}`}>
+            {/* No `key` on the swapped image: this Reveal is armed once, on
+                first scroll into view, by the curtain's own scroll trigger.
+                Keying the image to `active` would remount it on every
+                thumbnail click, re-arming a reveal whose trigger position
+                may already be scrolled past — the classic way a scroll
+                reveal gets stuck at `opacity: 0` after the fact. `Media`
+                already fades a changed `src` in on its own `load`. */}
             <Reveal variant="curtain">
               <Media
-                asset={product.hero}
+                asset={frames[active]}
                 ratio="landscape"
                 revealMedia
                 priority={position === 1}
                 sizes="(min-width: 1024px) 50vw, 100vw"
               />
             </Reveal>
+
+            {frames.length > 1 && (
+              <ul className="mt-3 flex gap-3">
+                {frames.map((frame, i) => (
+                  <li key={frame.src}>
+                    <button
+                      type="button"
+                      onClick={() => setActive(i)}
+                      aria-current={i === active || undefined}
+                      aria-label={`Image ${i + 1} of ${frames.length}`}
+                      className={`relative block size-16 overflow-hidden border transition-colors duration-[var(--dur-fast)] ${
+                        i === active
+                          ? "border-accent"
+                          : "border-hairline hover:border-accent/60"
+                      }`}
+                    >
+                      <Media asset={frame} ratio="square" sizes="64px" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div className={`lg:col-span-5 ${flip ? "lg:order-1 lg:col-start-1" : "lg:col-start-8"}`}>
@@ -61,103 +100,74 @@ export function ProductFeature({
                 {product.title}
               </h2>
 
-              <Statement as="p" className="mt-6 max-w-[24ch] text-balance">
+              <p className="mt-4 max-w-[46ch] text-body text-secondary text-pretty">
                 {product.summary}
-              </Statement>
+              </p>
             </Reveal>
 
-            {/* Prose reveals each paragraph on its own trigger — see
-                typography/index.tsx — so it sits outside the block above
-                rather than nested inside its single reveal. */}
-            <div className="mt-8">
-              <Prose paragraphs={product.description} className="max-w-[52ch]" />
+            <div className="mt-10 flex flex-col gap-8">
+              <div>
+                <Eyebrow as="h3" className="pb-4">
+                  Materials
+                </Eyebrow>
+                <ul className="flex flex-col">
+                  {product.materials.map((material) => (
+                    <li
+                      key={material}
+                      className="border-t border-hairline py-3 text-small last:border-b"
+                    >
+                      {material}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <Eyebrow as="h3" className="pb-4">
+                  Applications
+                </Eyebrow>
+                <ul className="flex flex-col">
+                  {product.applications.map((application) => (
+                    <li
+                      key={application}
+                      className="border-t border-hairline py-3 text-small last:border-b"
+                    >
+                      {application}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <Eyebrow as="h3" className="pb-4">
+                  Specification
+                </Eyebrow>
+                <dl className="flex flex-col">
+                  {product.specs.map((spec) => (
+                    <div
+                      key={spec.label}
+                      className="flex items-baseline justify-between gap-4 border-t border-hairline py-3 last:border-b"
+                    >
+                      <dt className="text-meta uppercase text-secondary">
+                        {spec.label}
+                      </dt>
+                      <dd className="text-right text-small text-secondary">
+                        {spec.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
             </div>
+
+            <Reveal delay={0.1}>
+              <ButtonLink href="/contact" variant="quiet" className="mt-10">
+                Enquire about {product.title.toLowerCase()}
+                <Arrow className="transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/quiet:translate-x-1 motion-reduce:transition-none" />
+              </ButtonLink>
+            </Reveal>
           </div>
         </div>
-      </Container>
-
-      <Container bleed className="mt-16">
-        <div className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <Eyebrow as="h3" className="pb-4">
-              Materials
-            </Eyebrow>
-            <ul className="flex flex-col">
-              {product.materials.map((material) => (
-                <li
-                  key={material}
-                  className="border-t border-hairline py-3 text-small"
-                >
-                  {material}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-4">
-            <Eyebrow as="h3" className="pb-4">
-              Applications
-            </Eyebrow>
-            <ul className="flex flex-col">
-              {product.applications.map((application) => (
-                <li
-                  key={application}
-                  className="border-t border-hairline py-3 text-small"
-                >
-                  {application}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-4">
-            <Eyebrow as="h3" className="pb-4">
-              Specification
-            </Eyebrow>
-            <dl className="flex flex-col">
-              {product.specs.map((spec) => (
-                <div
-                  key={spec.label}
-                  className="flex items-baseline justify-between gap-4 border-t border-hairline py-3"
-                >
-                  <dt className="text-meta uppercase text-secondary">
-                    {spec.label}
-                  </dt>
-                  <dd className="text-right text-small text-secondary">
-                    {spec.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
-      </Container>
-
-      {product.gallery.length > 0 && (
-        <Container bleed className="mt-16">
-          <Reveal
-            as="ul"
-            stagger={0.08}
-            className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-8 sm:grid-cols-3"
-          >
-            {product.gallery.map((image, i) => (
-              <li key={image.src + i}>
-                <Figure
-                  asset={image}
-                  ratio="tall"
-                  sizes="(min-width: 640px) 30vw, 100vw"
-                />
-              </li>
-            ))}
-          </Reveal>
-        </Container>
-      )}
-
-      <Container bleed className="mt-12">
-        <ButtonLink href="/contact" variant="quiet">
-          Enquire about {product.title.toLowerCase()}
-          <Arrow className="transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/quiet:translate-x-1 motion-reduce:transition-none" />
-        </ButtonLink>
       </Container>
     </article>
   );

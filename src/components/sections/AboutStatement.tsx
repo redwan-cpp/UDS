@@ -83,7 +83,7 @@ export function AboutStatement({
             </div>
 
             <Reveal delay={0.1}>
-              <ButtonLink href="/studio" variant="quiet" className="mt-8">
+              <ButtonLink href="/about" variant="quiet" className="mt-8">
                 Read about the practice
                 <Arrow className="transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/quiet:translate-x-1 motion-reduce:transition-none" />
               </ButtonLink>
