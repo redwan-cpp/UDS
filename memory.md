@@ -290,19 +290,21 @@ it deliberately and say why — reversing something in this file is a decision, 
   already reserved "decorative only," at `opacity-20` on its wrapper. One placement, not a
   site-wide treatment: a texture earns its place once, spread everywhere it reads as
   wallpaper instead of restraint.
-- **The product detail view reads as a listing page, not an editorial spread** —
-  `ProductFeature.tsx`. The original build paired a full three-paragraph `Prose` block with
-  a large serif `Statement` under each product's title; both are gone, replaced by
-  `product.summary` alone at body scale. In their place: a real gallery, a large frame plus
-  a clickable thumbnail rail — the one interaction every ecommerce product page shares —
-  standing in for the single static hero image `product.gallery` used to only get further
-  down the page in a separate grid. No price, no cart: the *shape* is the familiar one
-  (image, name, one line, spec sheet, one action), not the commerce chrome. Caught while
-  building it: the thumbnail `<Media>` originally carried `key={frames[active].src}` so
-  swapping the active frame remounted it — which also re-arms its `Reveal variant="curtain"`
-  scroll trigger on every click, and a trigger whose position has already been scrolled past
-  gets stuck at `opacity: 0` rather than firing again. Fixed by dropping the `key`; `Media`
-  already cross-fades a changed `src` in on its own `load`.
+- **`/products` is the card grid and nothing else — there is no per-product detail view.**
+  This went through two revisions before landing here, both worth keeping: the original
+  build paired a full three-paragraph `Prose` block and a large serif `Statement` under each
+  product's title with a `ProductFeature.tsx` detail section (materials, applications, a
+  spec table, a real image gallery with a clickable thumbnail rail) reached by anchor-scroll
+  from its card. The studio's actual ask, once seen, was narrower than either version: no
+  detail section at all, just the cards. `ProductFeature.tsx` is deleted; `ProductCard`'s
+  bottom prompt no longer promises "Materials & specification" it can't deliver — it reads
+  "Enquire" and links straight to `/contact`, same as the search index's product entries
+  (`/products`, not a `#slug` anchor that no longer resolves to anything). Two things caught
+  while the detail view briefly existed, worth remembering even though the component is
+  gone: a thumbnail-swap `<Media>` keyed to the active frame remounts its
+  `Reveal variant="curtain"` on every click, re-arming a scroll trigger whose position may
+  already be scrolled past — it gets stuck at `opacity: 0` rather than firing again, fixed
+  by dropping the `key` (`Media` already cross-fades a changed `src` in on its own `load`).
 - **`data-[open]:` only matches an empty-valued presence attribute, not a boolean rendered as
   the string `"true"`.** Real bug, not a guess: `TeamGrid`'s shared backdrop was written as
   `data-open={expandedId !== null || undefined}` with `data-[open]:opacity-100` in its

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Media } from "@/components/ui/Media";
+import { Arrow } from "@/components/ui/Button";
 import type { Product } from "@/types/content";
 
 /** How long each frame holds before advancing to the next. */
@@ -16,11 +17,9 @@ const CYCLE_MS = 900;
  * gallery, a frame at a time, the way a listing shows more photos without a
  * click. `WorkCard` shows one photograph; this shows the set.
  *
- * The card does not carry the specification — it points at it. Following it
- * scrolls smoothly to that product's full feature further down the same
- * page, where the materials, applications and spec table already live. Two
- * products do not need two routes; they need a way to jump past the first
- * screenful of writing to the one you want.
+ * There is no per-product page or detail section for this to point at — the
+ * card is the whole listing. It links straight to the enquiry instead of
+ * promising a spec sheet that isn't there.
  *
  * Implementation:
  * - Every frame is rendered and stacked (via `Media`, so each one keeps the
@@ -36,12 +35,9 @@ const CYCLE_MS = 900;
  */
 export function ProductCard({
   product,
-  anchorId,
   priority = false,
 }: {
   product: Product;
-  /** The id of this product's full feature section, further down the page. */
-  anchorId: string;
   priority?: boolean;
 }) {
   // Not `[product.hero, ...product.gallery]`: in this data `gallery[0]` is
@@ -80,7 +76,7 @@ export function ProductCard({
   return (
     <article>
       <a
-        href={`#${anchorId}`}
+        href="/contact"
         onPointerEnter={start}
         onPointerLeave={(e) => e.pointerType === "mouse" && stop()}
         className="group relative block overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
@@ -145,20 +141,8 @@ export function ProductCard({
             </p>
 
             <span className="mt-5 inline-flex items-center gap-2.5 border-t border-paper/25 pt-4 text-meta uppercase text-paper">
-              Materials &amp; specification
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 16 16"
-                fill="none"
-                className="size-3.5 -rotate-90 transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-y-1 motion-reduce:transition-none"
-              >
-                <path
-                  d="M3 8h10M9 4l4 4-4 4"
-                  stroke="currentColor"
-                  strokeWidth="1.25"
-                  strokeLinecap="square"
-                />
-              </svg>
+              Enquire
+              <Arrow className="transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-1 motion-reduce:transition-none" />
             </span>
           </div>
         </div>

@@ -121,7 +121,7 @@ export function getSearchIndex(): SearchEntry[] {
       id: `product:${product.slug}`,
       title: product.title,
       kind: "product",
-      href: `/products#${product.slug}`,
+      href: "/products",
       summary: product.summary,
       keywords: [...product.materials, ...product.applications],
     });
