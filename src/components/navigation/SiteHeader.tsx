@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Wordmark } from "./Wordmark";
 import { MenuOverlay } from "./MenuOverlay";
+import { SearchPanel } from "./SearchPanel";
 import { Container } from "@/components/ui/Container";
 import { studio } from "@/data/studio";
 import type { NavItem, SearchEntry } from "@/types/content";
@@ -36,7 +37,9 @@ export function SiteHeader({
   searchIndex,
 }: SiteHeaderProps) {
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+  const searchTriggerRef = useRef<HTMLButtonElement>(null);
   const openRef = useRef(false);
 
   // Mirrored into a ref so the scroll listener can read the current value
@@ -97,12 +100,17 @@ export function SiteHeader({
 
           <div className="flex items-center gap-6 md:gap-8">
             <button
+              ref={searchTriggerRef}
               type="button"
-              onClick={() => setOpen(true)}
-              aria-controls="site-menu"
-              className="group/search -m-2 flex min-h-11 min-w-11 items-center justify-center p-2 transition-colors duration-[var(--dur-fast)] hover:text-accent"
+              onClick={() => setSearchOpen((v) => !v)}
+              aria-expanded={searchOpen}
+              className={`group/search -m-2 flex min-h-11 min-w-11 items-center justify-center p-2 transition-colors duration-[var(--dur-fast)] hover:text-accent ${
+                searchOpen ? "text-accent" : ""
+              }`}
             >
-              <span className="sr-only">Search the site index</span>
+              <span className="sr-only">
+                {searchOpen ? "Close search" : "Search the site"}
+              </span>
               <svg
                 aria-hidden="true"
                 viewBox="0 0 20 20"
@@ -127,7 +135,10 @@ export function SiteHeader({
 
             <button
               type="button"
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                setSearchOpen(false);
+                setOpen(true);
+              }}
               aria-expanded={open}
               aria-controls="site-menu"
               className="group/menu -mr-2 flex min-h-11 items-center gap-3 px-2 text-nav uppercase transition-colors duration-[var(--dur-fast)] hover:text-accent"
@@ -147,7 +158,13 @@ export function SiteHeader({
         onClose={() => setOpen(false)}
         items={items}
         studio={studio}
-        searchIndex={searchIndex}
+      />
+
+      <SearchPanel
+        index={searchIndex}
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        triggerRef={searchTriggerRef}
       />
     </>
   );

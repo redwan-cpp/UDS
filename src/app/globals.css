@@ -572,6 +572,52 @@
     }
   }
 
+  /* The search panel's open and close.
+     It stays mounted and toggles `data-open`, which is what lets it animate
+     *out* as well as in — a panel that unmounts on close has nothing left to
+     transition and simply disappears.
+
+     `visibility` is in the transition list on purpose, with its delay carrying
+     the full duration on the way out: without it the panel is display-adjacent
+     -hidden the instant it closes and the fade never plays. Transform and
+     opacity do the moving; nothing here lays out. */
+  .uds-search-panel {
+    transform-origin: top right;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.5rem) scale(0.97);
+    transition:
+      opacity var(--dur-base) var(--ease-out-soft),
+      transform var(--dur-base) var(--ease-out-soft),
+      visibility 0s linear var(--dur-base);
+  }
+
+  .uds-search-panel[data-open] {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    transition:
+      opacity var(--dur-slow) var(--ease-out-soft),
+      transform var(--dur-slow) var(--ease-out-soft),
+      visibility 0s linear 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .uds-search-panel {
+      transform: none;
+      transition:
+        opacity 1ms linear,
+        visibility 0s linear 1ms;
+    }
+
+    .uds-search-panel[data-open] {
+      transform: none;
+      transition:
+        opacity 1ms linear,
+        visibility 0s linear 0s;
+    }
+  }
+
   /* Disclosure. Removes the default marker in every engine — `list-none`
      alone does not do it in WebKit, which uses its own pseudo-element. */
   .uds-disclosure > summary::-webkit-details-marker,

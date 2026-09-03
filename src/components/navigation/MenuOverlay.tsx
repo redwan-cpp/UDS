@@ -7,18 +7,16 @@ import { usePathname } from "next/navigation";
 import { Media } from "@/components/ui/Media";
 import { Container } from "@/components/ui/Container";
 import { Wordmark } from "./Wordmark";
-import { SiteSearch } from "./SiteSearch";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { gsap, motionSafe } from "@/lib/gsap";
-import type { NavItem, SearchEntry, StudioProfile } from "@/types/content";
+import type { NavItem, StudioProfile } from "@/types/content";
 
 interface MenuOverlayProps {
   open: boolean;
   onClose: () => void;
   items: NavItem[];
   studio: StudioProfile;
-  searchIndex: SearchEntry[];
 }
 
 /**
@@ -36,7 +34,6 @@ export function MenuOverlay({
   onClose,
   items,
   studio,
-  searchIndex,
 }: MenuOverlayProps) {
   const panel = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<string | null>(null);
@@ -182,26 +179,23 @@ export function MenuOverlay({
             </ul>
           </nav>
 
-          {/* The right column: search, and beneath it the decorative preview.
-              The suggestions panel appears in this column as you type, which is
-              why the preview sits under it rather than beside it. */}
-          <div className="flex min-w-0 flex-col gap-6 self-start">
-            <SiteSearch index={searchIndex} onNavigate={onClose} />
-
-            {/* Decorative. Hidden from assistive technology and from anything
-                without the room for it — it duplicates no information. */}
-            <div aria-hidden="true" className="hidden xl:block">
-              <div className="aspect-[4/3] w-full bg-ink">
-                {preview && (
-                  <Media
-                    key={preview.src}
-                    asset={preview}
-                    ratio="landscape"
-                    sizes="24rem"
-                    className="h-full animate-[fade_400ms_ease-out]"
-                  />
-                )}
-              </div>
+          {/* Decorative preview. Search moved out to its own panel, so this
+              column is the image again. Hidden from assistive technology and
+              from anything without the room for it — it duplicates nothing. */}
+          <div
+            aria-hidden="true"
+            className="hidden self-start lg:block"
+          >
+            <div className="aspect-[4/3] w-full bg-ink">
+              {preview && (
+                <Media
+                  key={preview.src}
+                  asset={preview}
+                  ratio="landscape"
+                  sizes="24rem"
+                  className="h-full animate-[fade_400ms_ease-out]"
+                />
+              )}
             </div>
           </div>
         </div>
