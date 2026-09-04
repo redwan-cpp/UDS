@@ -1,5 +1,6 @@
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
+import { SectionSketch } from "@/components/ui/SectionSketch";
 import { Figure } from "@/components/ui/Media";
 import { ButtonLink, Arrow } from "@/components/ui/Button";
 import { Eyebrow, Statement } from "@/components/typography";
@@ -26,7 +27,22 @@ export function AboutStatement({
 }) {
   return (
     <Section id="about" surface="light" spacing="pivotal" labelledBy="about-heading">
-      <Container>
+      {/* The drawn section, along the foot of the band, behind everything.
+          It sits here rather than anywhere else because this is the section
+          that already argues the studio works "in plan, section and light" —
+          a drawing under that sentence is the sentence's own evidence, not
+          decoration hunting for a wall. Anchored bottom-left so it reads as
+          standing on the section's own baseline, and cropped by the band
+          rather than fitted into it, the way a sheet runs off the edge of a
+          drawing board. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-[min(22rem,45%)] text-hairline opacity-70 md:block"
+      >
+        <SectionSketch />
+      </div>
+
+      <Container className="relative">
         <Reveal>
           <div className="flex items-baseline gap-4 pb-4">
             <span className="text-meta uppercase text-accent" data-numeric>

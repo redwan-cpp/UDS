@@ -129,15 +129,24 @@ breakpoints, it breathes between them.
 | `--text-display` | `clamp(2.75rem, 8.2vw, 8.5rem)` | Barlow, 500 | `-0.04em` | `0.86` | Hero wordmark only |
 | `--text-h1` | `clamp(2.25rem, 6vw, 5.25rem)` | Barlow, 500 | `-0.035em` | `0.92` | Page titles, project titles |
 | `--text-h2` | `clamp(1.75rem, 3.6vw, 3.25rem)` | Barlow, 500 | `-0.03em` | `1.0` | Section titles |
-| `--text-h3` | `clamp(1.25rem, 2vw, 1.75rem)` | Barlow, 500 | `-0.02em` | `1.15` | Sub-sections, card titles |
+| `--text-h3` | `clamp(1.375rem, 2vw, 1.8125rem)` | Barlow, 500 | `-0.02em` | `1.15` | Sub-sections, card titles |
 | `--text-statement` | `clamp(1.375rem, 2.9vw, 2.5rem)` | Newsreader, 300 | `-0.015em` | `1.3` | Editorial statements, pull quotes |
-| `--text-lead` | `clamp(1.0625rem, 1.3vw, 1.3125rem)` | Newsreader, 400 | `0` | `1.6` | Introductory paragraphs |
-| `--text-body` | `1rem` | Barlow, 400 | `0` | `1.65` | Interface body copy |
-| `--text-body-serif` | `1.0625rem` | Newsreader, 400 | `0` | `1.7` | Long-form project narrative |
-| `--text-small` | `0.875rem` | Barlow, 400 | `0` | `1.55` | Secondary copy |
-| `--text-caption` | `0.8125rem` | Barlow, 400 | `0.005em` | `1.5` | Image captions, credits |
-| `--text-meta` | `0.6875rem` | Barlow, 500 | `0.14em`, uppercase | `1.4` | Eyebrows, indices, labels, years |
-| `--text-nav` | `0.8125rem` | Barlow, 500 | `0.02em` | `1` | Navigation |
+| `--text-lead` | `clamp(1.125rem, 1.4vw, 1.375rem)` | Newsreader, 400 | `0` | `1.6` | Introductory paragraphs |
+| `--text-body` | `1.0625rem` | Barlow, 400 | `0` | `1.65` | Interface body copy |
+| `--text-body-serif` | `1.125rem` | Newsreader, 400 | `0` | `1.7` | Long-form project narrative |
+| `--text-small` | `0.9375rem` | Barlow, 400 | `0` | `1.55` | Secondary copy |
+| `--text-caption` | `0.875rem` | Barlow, 400 | `0.005em` | `1.5` | Image captions, credits |
+| `--text-meta` | `0.75rem` | Barlow, 500 | `0.13em`, uppercase | `1.4` | Eyebrows, indices, labels, years |
+| `--text-nav` | `0.875rem` | Barlow, 500 | `0.02em` | `1` | Navigation |
+
+The reading end of this scale was raised one step in September 2026 — body 16→17px, small
+14→15px, caption 13→14px, meta 11→12px, nav 13→14px, h3's floor 20→22px. The studio's
+clients skew older, and 11px tracked uppercase is the point where a style decision becomes
+a barrier. Display, h1 and h2 are deliberately untouched: they were never the legibility
+problem, and growing them would have cost every composition its proportion for nothing.
+The hierarchy compresses slightly as a result, which is the correct trade rather than a
+casualty of one. The `ch` measure caps below scale with the type, so line lengths are
+unchanged.
 
 ### Rules
 
@@ -270,10 +279,37 @@ media has not been supplied yet.
 - Crops are deliberate and stated in the data layer. Faces and structural lines are not
   cropped by accident.
 - Duotone, heavy filters and colour overlays are **not** used. Architecture photography is
-  the content; treating it is editing someone else's work.
+  the content; treating it is editing someone else's work. **One exception, at the studio's
+  request: index and grid thumbnails.** A project card sits desaturated and returns to full
+  colour under the pointer — a grid of competing thumbnails reads as one field with a
+  consistent tone, and the card being considered is the one that comes back. It applies to
+  `WorkCard` and the project index only. A full-bleed plate, a case study's own gallery, the
+  hero and every product image are never treated, so the photograph is never *shown* to a
+  visitor in an edited state — only held back in a contact-sheet register until chosen.
+  Gated behind a fine pointer: with no hover there is nothing to restore the colour, so a
+  phone gets the photography as shot.
 - A `4%` ink scrim sits under text laid over images, plus a gradient only where legibility
   actually requires it.
 - Every image has an intentional `alt`; decorative images take `alt=""`.
+
+### Background motifs
+
+Two, and each is used exactly once. `TerraceMotif` is a stepped-terrace silhouette, filled,
+behind the homepage figures band on ink — geometry sourced from haikei.app's Layered Steps
+generator and recoloured through this project's own tokens. `SectionSketch` is the same
+stepped mass **drawn** rather than filled — outline, slab edges, dashed gridlines with their
+bubbles, poché hatching on the cut, a dimension run with the 45° ticks a drawing actually
+uses, and a level marker — along the foot of the homepage About band on paper.
+
+They are deliberately one subject seen two ways, solid and drawn, which is the pairing the
+whole site is built on: a drawing sheet laid over a photograph. The sketch is authored by
+hand rather than sourced, because there is no honest stock version — an architectural line
+drawing carries a specific building, and borrowing one would put someone else's project in
+the background of this studio's page. Both take `currentColor` at the surface's own hairline
+tone, so neither has to be told which ground it is on.
+
+A motif earns its place once. Spread across every section, texture reads as wallpaper
+instead of restraint.
 
 ### Cards — used sparingly, and only where they earn it
 
@@ -289,9 +325,38 @@ and a fixed, centred position; a second click, `Esc`, or the backdrop returns it
 slot. See the Flip note under Motion decisions in `memory.md` for why `Flip` and not Framer
 Motion's `layoutId`.
 
-Everything else — expertise, statistics, products, sustainability principles — is composed
-as an **index**: numbered rows separated by hairlines, which is how architecture publications
+Everything else — expertise, statistics, sustainability principles — is composed as an
+**index**: numbered rows separated by hairlines, which is how architecture publications
 actually present sets.
+
+**Products are cards that link to their own page.** The listing carries the image, the name
+and one line; the materials, applications and specification live on `/products/[slug]`.
+Stacking every product's spec sheet under the grid made the index a document to scroll past
+rather than a set to choose from.
+
+### Category filters
+
+One component (`CategoryFilter`) serves the project index and the product index. It is a row
+of real links — a filtered view is linkable, crawlable and ships no JavaScript — and the
+active state is carried by weight, a drawn rule and `aria-current`, never by colour alone.
+
+The row **scrolls sideways; it does not wrap**. A wrapping filter set is fine at six
+categories and quietly stops working at sixteen: it grows downward and pushes the results it
+is filtering off the screen. The scrollbar is kept and themed rather than hidden — a row that
+scrolls with no sign that it scrolls is a row whose right-hand half nobody finds — in the
+secondary tone, not the accent, because it sits directly beneath a drawn accent rule and two
+accent marks that close together read as one mistake. The fade is on the right edge only: at
+rest the row is at scroll 0, so a left fade would dim the active filter to hint at content
+that isn't there.
+
+### The image viewer
+
+Gallery plates and slideshow frames open a viewer (`Lightbox`): a glass panel over the page,
+the whole photograph fitted rather than cropped, arrows and Left/Right to step, `Esc` to
+close, focus trapped and returned, and the credit travelling with the image because several
+plates are CC BY where attribution is a licence term. The enter animation is a keyframe, not
+a transition, and there is deliberately no exit animation — an exit needs a state machine
+that can strand the overlay on screen, which is a far worse failure than an instant close.
 
 ---
 

@@ -16,7 +16,12 @@ it deliberately and say why — reversing something in this file is a decision, 
 - **Every business fact is unsupplied.** Legal name, address, founding year, principals, team,
   regions, real projects, real statistics, real clients, real sustainability practice: all
   `PLACEHOLDER`. Nothing about the studio may be invented to fill a layout.
-- Products arm confirmed in brief: **Custom Doors**, **Fabricated Sheet Work**.
+- Products arm confirmed in brief: **Custom Doors**, **Fabricated Sheet Work**. Each has its
+  own route (`/products/[slug]`) carrying the materials, applications and specification; the
+  index is cards only. Categorised (`doors`, `metalwork`) behind the same filter the project
+  index uses. Two lines and two categories is a thin filter and that is the honest state of
+  it — inventing a third category to make the row look busier would be claiming a capability
+  the studio has not.
 - Homepage section order is client-specified. **Revised by the studio:** Hero → About →
   Numbers (+ collaborator marquee) → Expertise → Major Projects → Latest News → Closing CTA
   → Footer. The Management Team band was removed from the homepage and now lives only on
@@ -91,6 +96,23 @@ it deliberately and say why — reversing something in this file is a decision, 
 - **A component that paints a surface colour declares that surface.** The accent flip is
   inherited through the DOM, not from what is visually behind an element, so an ink block
   inside a light section needs `surface-dark` or it renders olive-on-ink at 2.6:1.
+- **Index thumbnails are desaturated and return to colour on hover — reversing "no filters
+  on architecture photography"**, at the studio's request. It applies to project cards only
+  (`WorkCard`, the project index), never to a full-bleed plate, a case-study gallery, the
+  hero or a product image: a grid of competing thumbnails reads as one field with a
+  consistent tone, and the card being considered is the one that comes back — so the
+  photograph is never *shown* edited, only held in a contact-sheet register until chosen.
+  Fine pointers only, since with no hover there is nothing to restore the colour. `filter`
+  is on the compositor's accelerated list alongside `transform` and `opacity`, so this does
+  not breach the "everything composites" rule.
+- **Two background motifs exist, and each is used exactly once.** `TerraceMotif` — the
+  stepped mass as a filled silhouette, on the ink figures band. `SectionSketch` — the same
+  mass *drawn*: outline, slab edges, dashed gridlines with bubbles, poché hatch, a dimension
+  run with 45° ticks, a level marker, along the foot of the paper About band. One subject,
+  seen as solid and as drawing, which is the pairing the whole site rests on. The sketch is
+  hand-authored rather than sourced: an architectural line drawing carries a specific
+  building, so a stock one would put someone else's project in this studio's background.
+  A motif spread across every section stops being restraint and becomes wallpaper.
 - `.surface-*` redeclares `--color-accent` / `--color-secondary` / `--color-hairline`
   **directly**. Aliasing through an intermediate variable does not work: a custom property
   containing `var()` is substituted where it is declared, not where it is used. This shipped
@@ -107,6 +129,13 @@ it deliberately and say why — reversing something in this file is a decision, 
 - Metadata is Barlow uppercase and tracked. **A mono family was rejected** — it would have
   been a third typeface doing a job tracking already does.
 - Fluid `clamp()` scale; type does not step at breakpoints.
+- **The reading end of the scale was raised one step** (body 16→17px, small 14→15px,
+  caption 13→14px, meta 11→12px, nav 13→14px, h3 floor 20→22px) because the studio's
+  clients skew older. Display, h1 and h2 were left alone deliberately: they were never the
+  legibility problem, and enlarging them would have cost every composition its proportion
+  to fix something that was not broken. The hierarchy compresses a little as a result,
+  which is the correct trade. Measure caps are in `ch`, so they scaled with the type and no
+  line length changed.
 
 ---
 
@@ -126,6 +155,16 @@ it deliberately and say why — reversing something in this file is a decision, 
 ---
 
 ## Layout decisions
+
+- **One `CategoryFilter` serves both indexes**, and it scrolls sideways rather than wrapping.
+  A wrapping filter row is fine at six categories and quietly fails at sixteen: it grows
+  downward and pushes the results it is filtering off the screen. It replaced
+  `PortfolioFilter`, which also read `src/data` directly — a standing violation of the
+  "only routes read `src/data`" rule; the filter list now arrives as a prop.
+  The scrollbar is kept and themed (`.uds-scroll-x`) rather than hidden, in the *secondary*
+  tone: an accent thumb sat a few pixels under the active filter's own drawn accent rule and
+  the two read as one confused mark. The edge fade is right-side only — at rest the row is at
+  scroll 0, so a symmetrical fade dims the active filter to signal content that is not there.
 
 - **A grid row never `stretch`es a shorter item to match a taller sibling.** CSS Grid's
   default cross-axis alignment does this automatically for any two column-span items that
@@ -345,6 +384,23 @@ it deliberately and say why — reversing something in this file is a decision, 
   from building the blend-mode version even though it is gone: `mix-blend-mode` does not
   cascade to children, so it has to sit on each painted mark individually, never on a
   non-painting wrapper.
+- **Gallery plates and slideshow frames open a glass viewer** (`Lightbox`). The whole
+  photograph is fitted rather than cropped — the one place on the site where the frame does
+  not get to choose the crop — so it uses `next/image` directly rather than `Media`, whose
+  job is the opposite. Arrows and Left/Right step with wrapping, `Esc` closes, focus is
+  trapped and restored, body scroll locks, and the credit travels with the image because
+  several demo plates are CC BY, where attribution is a licence term rather than a courtesy.
+  In the slideshow a press that never travelled counts as a tap and opens it, distinguished
+  by distance because the frame captures the pointer for dragging and a click fires at the
+  end of a drag too; closing leaves the carousel on whichever plate was last looked at.
+  - Its enter animation is a **keyframe, not a transition**, and there is deliberately no
+    exit animation. A keyframe plays once on insertion with no state flip to miss; an exit
+    needs a state machine that can strand a full-screen overlay on the page, which is a far
+    worse failure than an instant close. Same reasoning that rebuilt `PageTransition`.
+  - Stepping uses a **functional state update**. React batches events, so two arrow presses
+    landing in one batch both computed their target from the same stale index and the second
+    was a no-op — hold Right and the viewer advanced one plate and stopped. Caught in
+    testing, not in review.
 - **Rejected:** magnetic buttons, tilt effects, scroll-jacked full-page sections, overshoot
   easing, `ease-in` on entrances.
 
@@ -443,6 +499,17 @@ is updated to say ADOPTED.**
 ---
 
 ## Verification performed (Phase 1)
+
+- **`scripts/audit.js` no longer guesses at a background it cannot see.** Its contrast check
+  walked up the DOM for the nearest solid colour, which meant a card title in `text-paper`
+  sitting on a dark scrim over a photograph was measured against the *section's* paper two
+  levels further up and reported as paper-on-paper at 1.0:1 — a permanent pair of false HIGH
+  findings that made the "zero HIGH" gate meaningless. `bgOf` now returns "unknown" when a
+  background-image sits between the text and the nearest solid colour, or when the text is
+  in a positioned box that also contains an image or video painted beneath it, and the check
+  skips rather than guessing. Decorative `[aria-hidden]` text is skipped too — the crosshair's
+  coordinate readout is a fixed overlay whose ground is whatever it floats over, which has
+  nothing to do with its DOM ancestry. A checker that cannot see the ground has to say so.
 
 - Production build, typecheck and lint: clean.
 - Automated in-browser audit across all 13 routes: **zero HIGH findings** — no contrast

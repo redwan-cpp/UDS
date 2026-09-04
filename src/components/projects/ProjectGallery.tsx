@@ -1,7 +1,86 @@
+"use client";
+
+import { useState } from "react";
+
 import { Container } from "@/components/ui/Container";
-import { Figure, Media } from "@/components/ui/Media";
+import { Media } from "@/components/ui/Media";
+import { Lightbox } from "@/components/ui/Lightbox";
 import { Reveal } from "@/components/motion/Reveal";
 import type { MediaAsset } from "@/types/content";
+
+/**
+ * A gallery plate.
+ *
+ * The image is a button that opens the viewer, and the caption sits outside
+ * it — a caption inside the control would be read out as part of the button's
+ * name, turning "Open image 3" into the whole credit line. The corner mark is
+ * the affordance: at rest the plate is just the photograph, and the expand
+ * glyph arrives on hover or focus, the same way every other card on the site
+ * holds its detail back until it is being looked at.
+ */
+function Plate({
+  image,
+  ratio,
+  sizes,
+  index,
+  onOpen,
+  priority,
+}: {
+  image: MediaAsset;
+  ratio: "landscape" | "portrait" | "wide";
+  sizes: string;
+  index: number;
+  onOpen: (index: number) => void;
+  priority?: boolean;
+}) {
+  return (
+    <figure>
+      <button
+        type="button"
+        onClick={() => onOpen(index)}
+        aria-label={`Enlarge: ${image.alt}`}
+        className="group relative block w-full overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+      >
+        <Media
+          asset={image}
+          ratio={ratio}
+          sizes={sizes}
+          priority={priority}
+          revealMedia
+        />
+
+        {/* Expand mark: four corner brackets pulling outward on hover. Drawn
+            rather than borrowed — one stroke weight, matching the section
+            mark and the arrow already in the system. */}
+        <span
+          aria-hidden="true"
+          className="surface-dark pointer-events-none absolute top-4 right-4 flex size-9 items-center justify-center border border-paper/30 bg-ink/50 text-paper opacity-0 transition-opacity duration-[var(--dur-base)] ease-out-soft group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
+        >
+          <svg viewBox="0 0 16 16" fill="none" className="size-4">
+            <path
+              d="M6 2H2V6M10 2H14V6M14 10V14H10M6 14H2V10"
+              stroke="currentColor"
+              strokeWidth="1.25"
+              strokeLinecap="square"
+            />
+          </svg>
+        </span>
+      </button>
+
+      {(image.caption || image.credit) && (
+        <figcaption className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-caption text-secondary">
+          {image.caption && <span>{image.caption}</span>}
+          {image.credit && (
+            <span className="opacity-70">
+              {image.credit}
+              {image.licence ? ` · ${image.licence}` : ""}
+            </span>
+          )}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
 
 /**
  * The main project gallery.
@@ -14,6 +93,11 @@ import type { MediaAsset } from "@/types/content";
  *   Mobile  — a horizontal snap-scroll strip. A masonry field on a 375px screen
  *             becomes an endless column of small pictures; a strip keeps each
  *             photograph at a size worth looking at.
+ *
+ * Every plate opens the viewer (`Lightbox`), where the photograph is shown
+ * whole rather than cropped to the frame the composition chose for it. One
+ * viewer instance serves both compositions — the mobile strip and the desktop
+ * field are two arrangements of the same list, so they share one index.
  */
 export function ProjectGallery({
   images,
@@ -22,6 +106,8 @@ export function ProjectGallery({
   images: MediaAsset[];
   title: string;
 }) {
+  const [open, setOpen] = useState<number | null>(null);
+
   if (images.length === 0) return null;
 
   return (
@@ -35,16 +121,23 @@ export function ProjectGallery({
       {/* Mobile: a snap strip. Sized so the next plate is always just visible,
           which is what tells you the strip scrolls. */}
       <div className="md:hidden">
-        <ul className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-(--gutter) pb-4">
+        <ul className="uds-scroll-x flex snap-x snap-mandatory gap-4 px-(--gutter) pb-4">
           {images.map((image, i) => (
             <li key={image.src + i} className="w-[86%] shrink-0 snap-start">
-              <Figure asset={image} ratio="landscape" sizes="86vw" />
+              <Plate
+                image={image}
+                ratio="landscape"
+                sizes="86vw"
+                index={i}
+                onOpen={setOpen}
+              />
             </li>
           ))}
         </ul>
         <Container>
           <p className="text-meta uppercase text-secondary">
-            <span data-numeric>{images.length}</span> images · scroll sideways
+            <span data-numeric>{images.length}</span> images · scroll sideways ·
+            tap to enlarge
           </p>
         </Container>
       </div>
@@ -64,10 +157,12 @@ export function ProjectGallery({
           {groupIntoRows(images).map((row, ri) =>
             row.length === 1 ? (
               <Reveal key={row[0].image.src + row[0].i} variant="curtain">
-                <Figure
-                  asset={row[0].image}
+                <Plate
+                  image={row[0].image}
                   ratio="wide"
                   sizes="(min-width: 1024px) 90vw, 100vw"
+                  index={row[0].i}
+                  onOpen={setOpen}
                 />
               </Reveal>
             ) : (
@@ -77,19 +172,23 @@ export function ProjectGallery({
               >
                 <div className="w-full sm:w-[58.3333%]">
                   <Reveal variant="curtain">
-                    <Figure
-                      asset={row[0].image}
+                    <Plate
+                      image={row[0].image}
                       ratio="landscape"
                       sizes="(min-width: 1024px) 52vw, 100vw"
+                      index={row[0].i}
+                      onOpen={setOpen}
                     />
                   </Reveal>
                 </div>
                 <div className="w-full sm:w-[41.6667%]">
                   <Reveal variant="curtain">
-                    <Figure
-                      asset={row[1].image}
+                    <Plate
+                      image={row[1].image}
                       ratio="portrait"
                       sizes="(min-width: 1024px) 38vw, 100vw"
+                      index={row[1].i}
+                      onOpen={setOpen}
                     />
                   </Reveal>
                 </div>
@@ -98,6 +197,14 @@ export function ProjectGallery({
           )}
         </div>
       </Container>
+
+      <Lightbox
+        images={images}
+        index={open}
+        onClose={() => setOpen(null)}
+        onIndexChange={setOpen}
+        label={title}
+      />
     </section>
   );
 }
@@ -133,13 +240,6 @@ function groupIntoRows(
 }
 
 /**
- * Rough work / behind the scenes.
- *
- * Set as a smaller, denser strip than the main gallery — these are working
- * documents, not finished plates, and presenting them at the same scale would
- * claim more for them than they are.
- */
-/**
  * Rough work — sketches, drawings and site photography.
  *
  * A horizontal strip rather than a grid, because that is what this material
@@ -151,44 +251,67 @@ function groupIntoRows(
  * It is a real scroll container, not a JS carousel: it works with a trackpad,
  * a shift-wheel, a touch drag, and the keyboard (the strip is focusable and
  * scrolls with arrow keys) without shipping a line of script. The plates snap
- * so the strip always settles somewhere deliberate, and the last one carries
- * trailing space so it can reach the left edge like the others.
+ * so the strip always settles somewhere deliberate.
+ *
+ * These are the sheets most worth enlarging — a drawing at 31% of a column is
+ * legible as a drawing and not as its content — so each one opens the viewer
+ * too.
  */
 export function ProcessGallery({ images }: { images: MediaAsset[] }) {
+  const [open, setOpen] = useState<number | null>(null);
+
   if (images.length === 0) return null;
 
   return (
     <div>
       <ul
-        tabIndex={0}
         // A focusable scroll container needs a name, or it is announced as an
-        // unlabelled group that happens to be tabbable.
+        // unlabelled group that happens to be tabbable. It keeps `tabIndex`
+        // even though the plates are now buttons: the buttons tab in sequence,
+        // and the container itself remains arrow-key scrollable for anyone
+        // who reaches it that way.
         aria-label="Rough work, scrolls horizontally"
-        className="-mx-(--gutter) flex snap-x snap-mandatory gap-6 overflow-x-auto px-(--gutter) pb-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+        className="uds-scroll-x -mx-(--gutter) flex snap-x snap-mandatory gap-6 px-(--gutter) pb-6"
       >
         {images.map((image, i) => (
           <li
             key={image.src + i}
             className="w-[78%] shrink-0 snap-start sm:w-[46%] lg:w-[31%]"
           >
-            <Media
-              asset={image}
-              ratio="landscape"
-              sizes="(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 78vw"
-            />
-            <p className="mt-3 flex gap-3 text-caption text-secondary">
-              <span data-numeric className="shrink-0 text-accent">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              {image.alt}
-            </p>
+            <button
+              type="button"
+              onClick={() => setOpen(i)}
+              aria-label={`Enlarge: ${image.alt}`}
+              className="group block w-full text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+            >
+              <Media
+                asset={image}
+                ratio="landscape"
+                sizes="(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 78vw"
+              />
+              <p className="mt-3 flex gap-3 text-caption text-secondary">
+                <span data-numeric className="shrink-0 text-accent">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                {image.alt}
+              </p>
+            </button>
           </li>
         ))}
       </ul>
 
       <p className="text-meta uppercase text-secondary">
-        <span data-numeric>{images.length}</span> sheets · scroll sideways
+        <span data-numeric>{images.length}</span> sheets · scroll sideways ·
+        click to enlarge
       </p>
+
+      <Lightbox
+        images={images}
+        index={open}
+        onClose={() => setOpen(null)}
+        onIndexChange={setOpen}
+        label="Rough work"
+      />
     </div>
   );
 }

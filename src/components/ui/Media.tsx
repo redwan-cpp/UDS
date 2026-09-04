@@ -40,6 +40,12 @@ interface MediaProps {
   className?: string;
   /** Scale the image slightly on hover of the nearest `.group` ancestor. */
   hoverScale?: boolean;
+  /**
+   * Hold the image desaturated until the nearest `.group` ancestor is hovered
+   * or focused. Index and grid thumbnails only — never a full-bleed plate or
+   * a case study's own gallery. Fine pointers only; see `.hover-desaturate`.
+   */
+  hoverDesaturate?: boolean;
   /** Marks the inner image for the curtain reveal's counter-scale. */
   revealMedia?: boolean;
 }
@@ -58,6 +64,7 @@ export function Media({
   sizes = "(min-width: 1280px) 50vw, (min-width: 768px) 70vw, 100vw",
   className = "",
   hoverScale = false,
+  hoverDesaturate = false,
   revealMedia = false,
 }: MediaProps) {
   const focal = asset.focal
@@ -134,6 +141,7 @@ export function Media({
           // layer only while hovering, and drops back to `will-change: auto`
           // the moment the pointer leaves.
           hoverScale ? "hover-zoom" : "",
+          hoverDesaturate ? "hover-desaturate" : "",
         ].join(" ")}
       />
     </div>
@@ -151,6 +159,7 @@ export function Figure({
   sizes,
   className = "",
   hoverScale,
+  hoverDesaturate,
   revealMedia,
 }: MediaProps) {
   return (
@@ -161,6 +170,7 @@ export function Figure({
         priority={priority}
         sizes={sizes}
         hoverScale={hoverScale}
+        hoverDesaturate={hoverDesaturate}
         revealMedia={revealMedia}
       />
       {(asset.caption || asset.credit) && (

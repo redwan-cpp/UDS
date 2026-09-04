@@ -11,7 +11,7 @@
    wholesale once the studio supplies real capability data.
    ============================================================================= */
 
-import type { Product } from "@/types/content";
+import type { Product, ProductCategory } from "@/types/content";
 
 import { img, imgs } from "./media";
 
@@ -21,6 +21,7 @@ export const products: Product[] = [
     slug: "custom-doors",
     isDemo: true,
     title: "Custom Doors",
+    category: "doors",
     summary: "Doors made to the opening, not to a catalogue.",
     description: [
       "A door is the part of a building people touch every day, and the one place where the difference between made and bought is immediately obvious in the hand.",
@@ -61,6 +62,7 @@ export const products: Product[] = [
     slug: "fabricated-sheet-work",
     isDemo: true,
     title: "Fabricated Sheet Work",
+    category: "metalwork",
     summary: "Folded, perforated and patinated metal, drawn as part of the building.",
     description: [
       "Sheet metal is where a lot of architecture is quietly decided: the soffit, the reveal, the balustrade infill, the screen that makes a facade read as one surface instead of a collection of openings.",
@@ -99,5 +101,43 @@ export const products: Product[] = [
 
 export function getProducts(): Product[] {
   return [...products].sort((a, b) => a.order - b.order);
+}
+
+export function getProductBySlug(slug: string): Product | undefined {
+  return products.find((p) => p.slug === slug);
+}
+
+export function getProductSlugs(): string[] {
+  return products.map((p) => p.slug);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Filtering                                                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The category filter set. Two lines and two categories is a thin filter, and
+ * that is the honest state of it: the brief confirms exactly these two product
+ * arms, and inventing a third to make the row look busier would be inventing a
+ * capability the studio has not claimed. The machinery is the same as the
+ * portfolio's, so a third line is one data entry and one label, not a feature.
+ */
+export const productFilters: { value: ProductCategory | "all"; label: string }[] =
+  [
+    { value: "all", label: "All" },
+    { value: "doors", label: "Doors" },
+    { value: "metalwork", label: "Metalwork" },
+  ];
+
+export function filterProducts(
+  items: Product[],
+  filter: ProductCategory | "all",
+): Product[] {
+  if (filter === "all") return items;
+  return items.filter((p) => p.category === filter);
+}
+
+export function countProducts(filter: ProductCategory | "all"): number {
+  return filterProducts(products, filter).length;
 }
 

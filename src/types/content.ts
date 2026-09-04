@@ -167,8 +167,17 @@ export interface ProductSpec {
   value: string;
 }
 
+/**
+ * What kind of thing a product line is. Deliberately describes only the lines
+ * that exist — a category with nothing in it is a filter that returns an
+ * empty page, which is worse than not offering the filter at all. Extend this
+ * when the studio adds a line, not in anticipation of one.
+ */
+export type ProductCategory = "doors" | "metalwork";
+
 export interface Product extends ContentBase {
   title: string;
+  category: ProductCategory;
   /** One line, sits under the title. */
   summary: string;
   description: string[];

@@ -46,6 +46,7 @@ export function WorkCard({
           asset={project.hero}
           ratio="landscape"
           hoverScale
+          hoverDesaturate
           priority={priority}
           sizes="(min-width: 1024px) 46vw, 100vw"
         />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 import { Media } from "@/components/ui/Media";
 import { Arrow } from "@/components/ui/Button";
@@ -17,9 +18,10 @@ const CYCLE_MS = 900;
  * gallery, a frame at a time, the way a listing shows more photos without a
  * click. `WorkCard` shows one photograph; this shows the set.
  *
- * There is no per-product page or detail section for this to point at — the
- * card is the whole listing. It links straight to the enquiry instead of
- * promising a spec sheet that isn't there.
+ * The card links into that product's own page, where the materials,
+ * applications and specification live. The listing's job is to get a visitor
+ * to the right line; the spec sheet belongs on the line's own page rather
+ * than stacked below the grid for every product at once.
  *
  * Implementation:
  * - Every frame is rendered and stacked (via `Media`, so each one keeps the
@@ -75,8 +77,9 @@ export function ProductCard({
 
   return (
     <article>
-      <a
-        href="/contact"
+      <Link
+        href={`/products/${product.slug}`}
+        aria-label={`${product.title} — ${product.summary}`}
         onPointerEnter={start}
         onPointerLeave={(e) => e.pointerType === "mouse" && stop()}
         className="group relative block overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
@@ -141,12 +144,12 @@ export function ProductCard({
             </p>
 
             <span className="mt-5 inline-flex items-center gap-2.5 border-t border-paper/25 pt-4 text-meta uppercase text-paper">
-              Enquire
+              View the line
               <Arrow className="transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-1 motion-reduce:transition-none" />
             </span>
           </div>
         </div>
-      </a>
+      </Link>
     </article>
   );
 }

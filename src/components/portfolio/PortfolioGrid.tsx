@@ -37,6 +37,7 @@ function PortfolioEntry({ item }: { item: PortfolioItem }) {
           asset={item.image}
           ratio="landscape"
           hoverScale
+          hoverDesaturate
           sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 100vw"
         />
 

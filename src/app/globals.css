@@ -78,7 +78,7 @@
   --text-h2--letter-spacing: -0.03em;
   --text-h2--font-weight: 500;
 
-  --text-h3: clamp(1.25rem, 2vw, 1.75rem);
+  --text-h3: clamp(1.375rem, 2vw, 1.8125rem);
   --text-h3--line-height: 1.15;
   --text-h3--letter-spacing: -0.02em;
   --text-h3--font-weight: 500;
@@ -88,29 +88,41 @@
   --text-statement--letter-spacing: -0.015em;
   --text-statement--font-weight: 300;
 
-  --text-lead: clamp(1.0625rem, 1.3vw, 1.3125rem);
+  /* --- The reading end of the scale ---------------------------------------
+     Raised one step across the board (body 16→17px, small 14→15px, caption
+     13→14px, meta 11→12px, nav 13→14px) because the studio's clients skew
+     older, and 11px tracked uppercase is where that stops being a style
+     decision and starts being a barrier. Display, h1 and h2 are untouched:
+     they were never the legibility problem, and growing them would have cost
+     the compositions their proportion for nothing. The hierarchy compresses
+     very slightly as a result — which is the correct trade, not a casualty
+     of one.
+
+     The `ch`-based measure caps (design.md §3) scale with these values
+     automatically, so a wider glyph does not widen the line count. */
+  --text-lead: clamp(1.125rem, 1.4vw, 1.375rem);
   --text-lead--line-height: 1.6;
   --text-lead--font-weight: 400;
 
-  --text-body: 1rem;
+  --text-body: 1.0625rem;
   --text-body--line-height: 1.65;
 
-  --text-body-serif: 1.0625rem;
+  --text-body-serif: 1.125rem;
   --text-body-serif--line-height: 1.7;
 
-  --text-small: 0.875rem;
+  --text-small: 0.9375rem;
   --text-small--line-height: 1.55;
 
-  --text-caption: 0.8125rem;
+  --text-caption: 0.875rem;
   --text-caption--line-height: 1.5;
   --text-caption--letter-spacing: 0.005em;
 
-  --text-meta: 0.6875rem;
+  --text-meta: 0.75rem;
   --text-meta--line-height: 1.4;
-  --text-meta--letter-spacing: 0.14em;
+  --text-meta--letter-spacing: 0.13em;
   --text-meta--font-weight: 500;
 
-  --text-nav: 0.8125rem;
+  --text-nav: 0.875rem;
   --text-nav--line-height: 1;
   --text-nav--letter-spacing: 0.02em;
   --text-nav--font-weight: 500;
@@ -314,6 +326,37 @@
     .group:focus-visible .hover-zoom {
       transform: none;
       will-change: auto;
+    }
+  }
+
+  /* Project photography sits desaturated in the index and returns to full
+     colour under the pointer. The card grid is a set of thumbnails competing
+     with each other; drained of colour they read as one field with a
+     consistent tone, and the one being considered is the one that comes back.
+     This reverses design.md's "no filters on architecture photography" rule
+     for the *index* only, at the studio's request — a full-bleed plate, a
+     case study's own gallery and the hero are never treated (see memory.md).
+     `filter` is on the compositor's own accelerated list alongside transform
+     and opacity, so this is not the paint-per-frame cost the rule exists to
+     prevent.
+     Gated behind a fine pointer: on a phone there is no hover to restore the
+     colour, so the photography simply stays as shot. */
+  @media (hover: hover) and (pointer: fine) {
+    .hover-desaturate {
+      filter: grayscale(1);
+      transition: filter var(--dur-slow) var(--ease-out-soft);
+    }
+
+    .group:hover .hover-desaturate,
+    .group:focus-visible .hover-desaturate {
+      filter: grayscale(0);
+      will-change: filter;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hover-desaturate {
+      transition: none;
     }
   }
 
@@ -762,6 +805,42 @@
     }
   }
 
+  /* Entry animations for elements that appear on mount rather than on scroll.
+     A keyframe rather than a transition, deliberately: a transition needs a
+     state to change *after* the element exists, which in React means a
+     second render or a rAF dance that can strand the element mid-way if the
+     frame never lands (see PageTransition in memory.md). A keyframe plays on
+     insertion, once, with nothing to get stuck on.
+
+     `fade` is also what MenuOverlay's hover preview already asks for; the
+     keyframe was missing, so that animation had been doing nothing. */
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes uds-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 10px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .uds-lightbox,
+    .uds-lightbox * {
+      animation: none !important;
+    }
+  }
+
   /* Reduced motion: no animation at all, and the strip becomes scrollable so
      the content behind the loop is still reachable. */
   @media (prefers-reduced-motion: reduce) {
@@ -917,5 +996,62 @@
 
   .js-intro .uds-intro {
     display: grid;
+  }
+
+  /* A horizontal scroller that keeps its scrollbar rather than hiding it.
+     A hidden scrollbar on a row that scrolls is a row nobody knows scrolls —
+     and the browser's default bar is a piece of chrome belonging to no design
+     system, sitting inside a page that themes everything else. This is the
+     hairline treatment: a 1px track rule and a thumb in the surface's own
+     accent, both drawn at the same weight as every other rule on the site.
+
+     Firefox takes `scrollbar-width`/`scrollbar-color`; WebKit and Blink take
+     the pseudo-elements. Both are declared, because the two families do not
+     read each other's syntax. */
+  .uds-scroll-x {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-secondary) transparent;
+  }
+
+  .uds-scroll-x::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .uds-scroll-x::-webkit-scrollbar-track {
+    background: var(--color-hairline);
+  }
+
+  /* The thumb is secondary, not accent. It sits directly under a filter row
+     whose active item is already marked with a drawn accent rule, and an
+     accent thumb put two horizontal accent marks within a few pixels of each
+     other — the scrollbar reading as a second, longer underline competing
+     with the real one. The accent marks what matters; a scrollbar is not it. */
+  .uds-scroll-x::-webkit-scrollbar-thumb {
+    background: var(--color-secondary);
+  }
+
+  /* The edge fade that says "there is more this way". A mask rather than a
+     gradient overlay, so it works over whatever surface the row is on
+     instead of needing a matching solid colour to fade into — the overlay
+     version breaks the moment the section behind it is a different tone.
+
+     Right edge only. A symmetrical fade looks tidier in isolation and is
+     wrong in use: at rest the row is scrolled to 0, so there is nothing off
+     the left to hint at, and the fade lands on the first item — which is the
+     active one. Fading the currently-selected filter to say "there is more
+     to the left of it", when there is not, is worse than a hard edge. The
+     hard left edge reads as the edge of the container, which is what it is. */
+  .uds-scroll-fade {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      #000 calc(100% - var(--gutter, 1.5rem)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      #000 calc(100% - var(--gutter, 1.5rem)),
+      transparent 100%
+    );
   }
 }

@@ -3,10 +3,13 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { Media } from "@/components/ui/Media";
+import { Lightbox } from "@/components/ui/Lightbox";
 import type { MediaAsset } from "@/types/content";
 
 /** Past this much horizontal travel, a drag counts as a change of slide. */
 const COMMIT_PX = 60;
+/** Under this much travel, the gesture was a tap, not a drag — open the viewer. */
+const TAP_PX = 6;
 /** Drag follows the pointer at this fraction, so the plate resists a little. */
 const DRAG_DAMPING = 0.35;
 
@@ -43,6 +46,8 @@ export function ProjectSlideshow({
 }) {
   const [active, setActive] = useState(0);
   const [dragging, setDragging] = useState(false);
+  /** Which plate the viewer is showing, or null while it is closed. */
+  const [zoom, setZoom] = useState<number | null>(null);
   const headingId = useId();
   const rootRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
@@ -131,6 +136,12 @@ export function ProjectSlideshow({
 
     if (Math.abs(dx) > COMMIT_PX) {
       go(dx < 0 ? active + 1 : active - 1);
+    } else if (Math.abs(dx) < TAP_PX) {
+      // A press that never travelled is a click on the picture, which on any
+      // gallery means "show me this bigger". Distinguished by distance rather
+      // than by a separate click handler, because the frame captures the
+      // pointer for dragging and a click fires at the end of a drag too.
+      setZoom(active);
     }
     drag.current.dx = 0;
   };
@@ -154,7 +165,7 @@ export function ProjectSlideshow({
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
         className={[
-          "relative aspect-[16/9] w-full touch-pan-y overflow-hidden bg-ink-soft select-none",
+          "group relative aspect-[16/9] w-full touch-pan-y overflow-hidden bg-ink-soft select-none",
           dragging ? "cursor-grabbing" : "cursor-grab",
         ].join(" ")}
       >
@@ -191,6 +202,27 @@ export function ProjectSlideshow({
             </div>
           );
         })}
+
+        {/* Enlarge. The plate itself opens the viewer on a tap, but a tap is
+            a pointer gesture — this is the same action as a real control, so
+            it is reachable by keyboard and announced. `stopPropagation` on
+            pointerdown keeps the frame's drag from engaging underneath it. */}
+        <button
+          type="button"
+          onPointerDown={(event) => event.stopPropagation()}
+          onClick={() => setZoom(active)}
+          className="surface-dark absolute top-4 right-4 flex size-11 items-center justify-center border border-paper/30 bg-ink/50 text-paper opacity-0 transition-opacity duration-[var(--dur-base)] ease-out-soft focus-visible:opacity-100 group-hover:opacity-100 motion-reduce:transition-none hover:opacity-100"
+        >
+          <span className="sr-only">Enlarge image</span>
+          <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" className="size-4">
+            <path
+              d="M6 2H2V6M10 2H14V6M14 10V14H10M6 14H2V10"
+              stroke="currentColor"
+              strokeWidth="1.25"
+              strokeLinecap="square"
+            />
+          </svg>
+        </button>
 
         {/* Progress. Sits on the frame's own bottom edge and measures how far
             through the set you are — the same job a row of dots does, in the
@@ -281,6 +313,20 @@ export function ProjectSlideshow({
           })}
         </ul>
       )}
+
+      {/* The viewer. Closing it leaves the slideshow on whichever plate was
+          last looked at, so stepping through images in the viewer and then
+          closing does not silently rewind the carousel behind it. */}
+      <Lightbox
+        images={images}
+        index={zoom}
+        onClose={() => {
+          if (zoom !== null) go(zoom);
+          setZoom(null);
+        }}
+        onIndexChange={setZoom}
+        label={title}
+      />
     </section>
   );
 }

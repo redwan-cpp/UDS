@@ -32,7 +32,11 @@ export function Numbers({
         <TerraceMotif />
       </div>
 
-      <Container>
+      {/* `relative`, so the figures paint in the positioned layer above the
+          motif behind them. An absolutely positioned sibling otherwise paints
+          over in-flow text, which the motif was quietly doing — invisible at
+          20% of a hairline tone, but wrong. */}
+      <Container className="relative">
         <Reveal variant="rule">
           <div className="h-px w-full bg-hairline" />
         </Reveal>

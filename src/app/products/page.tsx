@@ -4,8 +4,15 @@ import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal";
+import { CategoryFilter } from "@/components/ui/CategoryFilter";
 import { ProductCard } from "@/components/products/ProductCard";
-import { getProducts } from "@/data/products";
+import {
+  countProducts,
+  filterProducts,
+  getProducts,
+  productFilters,
+} from "@/data/products";
+import type { ProductCategory } from "@/types/content";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -13,8 +20,21 @@ export const metadata: Metadata = {
     "Custom doors and fabricated sheet work, designed and specified by Uthan Design Studio.",
 };
 
-export default function ProductsPage() {
-  const products = getProducts();
+/** Anything not in the filter set falls back to "all" rather than an error. */
+function readFilter(value: string | undefined): ProductCategory | "all" {
+  if (!value) return "all";
+  const match = productFilters.find((f) => f.value === value);
+  return match ? match.value : "all";
+}
+
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = await searchParams;
+  const active = readFilter(category);
+  const products = filterProducts(getProducts(), active);
 
   return (
     <>
@@ -25,33 +45,66 @@ export default function ProductsPage() {
         intro="Two lines that come out of the studio's own projects: the doors people touch every day, and the folded metal that quietly decides how a facade reads."
         aside={
           <DemoNotice>
-            Both product lines are real. The copy below is illustrative — not
+            Both product lines are real. The copy on each is illustrative — not
             confirmed capability data. Replaced once the studio supplies it.
           </DemoNotice>
         }
       />
 
-      {/* Cards only — image, cycling on hover through the rest of the
-          gallery, name and a line of summary. There is no per-product page
-          or detail section beneath this: two product lines don't need one,
-          and the enquiry is the actual next step either way. */}
-      <Section surface="dark" spacing="standard" className="pb-24 md:pb-32">
+      {/* Cards only. Each one is a real link into that product's own page,
+          where the materials, applications and specification live — the
+          listing's job is to get a visitor to the right line, not to hold the
+          spec sheet for both at once. */}
+      <Section
+        surface="dark"
+        spacing="none"
+        className="pt-16 pb-24 md:pt-20 md:pb-32"
+        labelledBy="product-index-heading"
+      >
         <Container>
           {/* The cards below are h3 (matching the card language everywhere
               else on the site); without this the document jumped h1 to h3. */}
-          <h2 className="sr-only">The product lines</h2>
+          <h2 id="product-index-heading" className="sr-only">
+            The product lines
+          </h2>
 
-          <Reveal
-            as="ul"
-            stagger={0.08}
-            className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-10 md:grid-cols-2"
-          >
-            {products.map((product, i) => (
-              <li key={product.id}>
-                <ProductCard product={product} priority={i === 0} />
-              </li>
-            ))}
-          </Reveal>
+          <div className="flex flex-col gap-4 border-b border-hairline pb-3 md:flex-row md:items-baseline md:justify-between md:gap-8">
+            <CategoryFilter
+              filters={productFilters.map((f) => ({
+                value: f.value,
+                label: f.label,
+                count: countProducts(f.value),
+              }))}
+              active={active}
+              basePath="/products"
+              label="Filter products by category"
+            />
+            <p
+              aria-live="polite"
+              className="shrink-0 pb-3 text-meta uppercase text-secondary"
+            >
+              <span data-numeric>{products.length}</span>{" "}
+              {products.length === 1 ? "line" : "lines"}
+            </p>
+          </div>
+
+          {products.length === 0 ? (
+            <p className="pt-14 text-meta uppercase text-secondary">
+              No product lines in this category yet.
+            </p>
+          ) : (
+            <Reveal
+              as="ul"
+              stagger={0.08}
+              className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-10 pt-14 md:grid-cols-2"
+            >
+              {products.map((product, i) => (
+                <li key={product.id}>
+                  <ProductCard product={product} priority={i === 0} />
+                </li>
+              ))}
+            </Reveal>
+          )}
         </Container>
       </Section>
     </>

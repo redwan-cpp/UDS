@@ -3,9 +3,14 @@ import type { Metadata } from "next";
 import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
-import { PortfolioFilter } from "@/components/portfolio/PortfolioFilter";
+import { CategoryFilter } from "@/components/ui/CategoryFilter";
 import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid";
-import { filterPortfolio, getPortfolio, portfolioFilters } from "@/data/portfolio";
+import {
+  countPortfolio,
+  filterPortfolio,
+  getPortfolio,
+  portfolioFilters,
+} from "@/data/portfolio";
 import type { ProjectCategory } from "@/types/content";
 
 export const metadata: Metadata = {
@@ -76,9 +81,21 @@ export default async function ProjectsPage({
             Index of work
           </h2>
 
-          <div className="flex flex-col gap-6 border-b border-hairline pb-6 md:flex-row md:items-baseline md:justify-between">
-            <PortfolioFilter active={active} basePath="/projects" />
-            <p aria-live="polite" className="text-meta uppercase text-secondary">
+          <div className="flex flex-col gap-4 border-b border-hairline pb-3 md:flex-row md:items-baseline md:justify-between md:gap-8">
+            <CategoryFilter
+              filters={portfolioFilters.map((f) => ({
+                value: f.value,
+                label: f.label,
+                count: countPortfolio(f.value),
+              }))}
+              active={active}
+              basePath="/projects"
+              label="Filter work by category"
+            />
+            <p
+              aria-live="polite"
+              className="shrink-0 pb-3 text-meta uppercase text-secondary"
+            >
               <span data-numeric>{items.length}</span>{" "}
               {items.length === 1 ? "project" : "projects"}
               {documented > 0 && (

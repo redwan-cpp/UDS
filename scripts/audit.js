@@ -31,11 +31,41 @@ function audit() {
     const l2 = lum(b);
     return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
   };
-  /** Walk up for the first non-transparent background. */
+  /**
+   * Walk up for the first non-transparent background.
+   *
+   * Returns `null` when the real ground cannot be known from the cascade —
+   * a photograph, a gradient scrim, or any other background-image between
+   * the text and the nearest solid colour. This tool used to walk straight
+   * past those to whatever solid colour sat further up the tree, which is
+   * how a card title in `text-paper` over a dark scrim over a photograph got
+   * reported as paper-on-paper at 1.0:1. The pairing is real and fine; the
+   * measurement was of two things that never touch. A checker that cannot
+   * see the ground has to say so, not guess and file it as HIGH.
+   */
   const bgOf = (el) => {
     let n = el;
+    let overlaid = false;
     while (n && n !== document.documentElement) {
-      const c = parseRgb(getComputedStyle(n).backgroundColor);
+      const cs = getComputedStyle(n);
+      if (cs.backgroundImage && cs.backgroundImage !== "none") return null;
+
+      // Once we have passed through a positioned box, this text is painted
+      // over whatever else that box contains rather than after it in flow.
+      // A photograph or a gradient scrim sitting there as a *sibling* is the
+      // real ground, and it is not in the ancestor chain — which is exactly
+      // how a card title over a scrimmed photo used to be measured against
+      // the section colour two levels further up and reported at 1.0:1.
+      const position = cs.position;
+      if (position === "absolute" || position === "fixed") overlaid = true;
+
+      if (overlaid) {
+        for (const painted of n.querySelectorAll("img, video, svg")) {
+          if (!painted.contains(el)) return null;
+        }
+      }
+
+      const c = parseRgb(cs.backgroundColor);
       if (c && c.a > 0.9) return c;
       n = n.parentElement;
     }
@@ -123,12 +153,20 @@ function audit() {
   for (const el of document.querySelectorAll("p,span,a,li,h1,h2,h3,h4,dt,dd,button,label,time,figcaption,address,code")) {
     if (el.offsetParent === null) continue;
     if (el.classList.contains("sr-only")) continue;
+    // Decorative text is out of scope for the same reason the other checks
+    // skip it: it is not exposed to assistive technology, and where it is a
+    // viewport-positioned overlay (the crosshair's coordinate readout) its
+    // ground is whatever it happens to be floating over, which has nothing
+    // to do with its DOM ancestry.
+    if (el.closest('[aria-hidden="true"]')) continue;
     const text = (el.textContent || "").trim();
     if (!text || el.children.length > 0) continue;
     const cs = getComputedStyle(el);
     const fg = parseRgb(cs.color);
     if (!fg || fg.a < 0.99) continue;
     const bg = bgOf(el);
+    // Unknown ground — see bgOf. Not a pass and not a failure; unmeasurable.
+    if (!bg) continue;
     const key = cs.color + "|" + [bg.r, bg.g, bg.b].join(",") + "|" + cs.fontSize;
     if (seen.has(key)) continue;
     seen.add(key);
