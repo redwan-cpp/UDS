@@ -12,10 +12,21 @@ import type { ReactNode } from "react";
 type Spacing = "pivotal" | "standard" | "connective" | "none";
 type Surface = "dark" | "soft" | "light" | "dim";
 
+/**
+ * Fluid on both axes, from tokens — not breakpoint steps.
+ *
+ * These were `py-24 md:py-40 lg:py-48` and friends, which made vertical
+ * rhythm a function of viewport *width* and nothing else. A 1366x640 laptop
+ * hits the `lg` step and spent 384px of a 640px viewport on padding: 60% of
+ * the screen empty, with the content it frames squeezed into the band left
+ * over. The tokens key to whichever axis is scarcer, so a short or ultrawide
+ * monitor gets rhythm proportional to the room it actually has, and a phone
+ * still gets the width-driven value it needs. See `--space-*` in globals.css.
+ */
 const SPACING: Record<Spacing, string> = {
-  pivotal: "py-24 md:py-40 lg:py-48",
-  standard: "py-20 md:py-28 lg:py-32",
-  connective: "py-16 md:py-20 lg:py-24",
+  pivotal: "py-[var(--space-pivotal)]",
+  standard: "py-[var(--space-standard)]",
+  connective: "py-[var(--space-connective)]",
   none: "",
 };
 

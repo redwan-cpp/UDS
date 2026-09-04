@@ -124,10 +124,16 @@ Barlow, uppercase and tracked, not in a mono.
 Fluid via `clamp()` between an explicit floor and ceiling — the type does not step at
 breakpoints, it breathes between them.
 
+Display and `h1` clamp against **both** axes (`min(vw, vh)`). Sizing display type off width
+alone assumes a monitor's height follows its width, and plenty do not: a short laptop and an
+ultrawide both got type scaled for a screen far taller than the one it had to fit in, which
+is how a first viewport ends up unable to show its own first viewport. The `vh` term only
+ever binds on a short screen; on a phone the `vw` term is smaller and nothing changes.
+
 | Token | Size | Family | Tracking | Leading | Use |
 |---|---|---|---|---|---|
-| `--text-display` | `clamp(2.75rem, 8.2vw, 8.5rem)` | Barlow, 500 | `-0.04em` | `0.86` | Hero wordmark only |
-| `--text-h1` | `clamp(2.25rem, 6vw, 5.25rem)` | Barlow, 500 | `-0.035em` | `0.92` | Page titles, project titles |
+| `--text-display` | `clamp(2.75rem, min(8.2vw, 16vh), 8.5rem)` | Barlow, 500 | `-0.04em` | `0.86` | Hero wordmark only |
+| `--text-h1` | `clamp(2.25rem, min(6vw, 11vh), 5.25rem)` | Barlow, 500 | `-0.035em` | `0.92` | Page titles, project titles |
 | `--text-h2` | `clamp(1.75rem, 3.6vw, 3.25rem)` | Barlow, 500 | `-0.03em` | `1.0` | Section titles |
 | `--text-h3` | `clamp(1.375rem, 2vw, 1.8125rem)` | Barlow, 500 | `-0.02em` | `1.15` | Sub-sections, card titles |
 | `--text-statement` | `clamp(1.375rem, 2.9vw, 2.5rem)` | Newsreader, 300 | `-0.015em` | `1.3` | Editorial statements, pull quotes |
@@ -203,11 +209,27 @@ Rules that actually get broken, so they are written down:
 - **Internal spacing ≤ external spacing.** An element's own padding never exceeds the gap
   between it and its neighbour. Violating this is what makes a layout read as cramped and
   empty simultaneously.
-- **Section padding is weighted by role, not uniform.** Pivotal sections (hero, featured
-  projects, closing CTA) take `128–192px` block padding at desktop. Connective sections take
-  `80–96px`. Applying one value everywhere is what makes a page read as "nothing gets its
-  own moment".
-- Mobile section padding: `64–96px`. Not the desktop value, not half of it — chosen.
+- **Section padding is weighted by role, and fluid on both axes.** Three tokens:
+
+  | Token | Value | Role |
+  |---|---|---|
+  | `--space-pivotal` | `clamp(4rem, min(12vh, 14vw), 12rem)` | Hero, featured work, the closing move |
+  | `--space-standard` | `clamp(3rem, min(8.5vh, 10vw), 8rem)` | The default band |
+  | `--space-connective` | `clamp(2.5rem, min(6.5vh, 8vw), 6rem)` | A section linking two bigger ones |
+
+  Applying one value everywhere is what makes a page read as "nothing gets its own moment",
+  so the roles stay separated. But these were fixed breakpoint steps until they were
+  measured on a short screen: a 1366×640 laptop hit the `lg` step and spent **384px of a
+  640px viewport on padding** — 60% of the screen empty, the content it was framing reduced
+  to a band. The values were right for the tall display they were tuned on and wrong for
+  most machines they actually meet.
+
+  `min(vh, vw)` keys each one to whichever axis is scarcer. The `vh` term binds on short and
+  ultrawide monitors; the `vw` term binds on phones, which are tall and narrow and where a
+  height-only rule would pad far too much. Measured across the range, pivotal padding now
+  resolves to 64px on a phone, 77px on a 1366×640 laptop, 130px at 1080p and 168px at 1440p
+  — the documented 64–96px mobile and 128–192px desktop bands, reached by measurement
+  rather than by breakpoint.
 
 ### Radius, borders, shadows
 

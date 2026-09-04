@@ -173,6 +173,20 @@ it deliberately and say why — reversing something in this file is a decision, 
 
 ## Layout decisions
 
+- **Vertical rhythm and display type are fluid on both axes, not on width alone.** Section
+  padding was fixed breakpoint steps, which made it a function of viewport *width* and
+  nothing else: a 1366×640 laptop hit the `lg` step and spent 384px of a 640px viewport on
+  padding — 60% of the screen empty, with the content it framed squeezed into what was left.
+  The values were correct for the tall display they were tuned on and wrong for most of the
+  machines they meet. `--space-pivotal` / `--space-standard` / `--space-connective` now clamp
+  against `min(vh, vw)`, as do `--text-display` and `--text-h1`: the `vh` term binds on short
+  and ultrawide monitors, the `vw` term on phones, which are tall and narrow and where a
+  height-only rule would go wrong in the other direction. Verified by measurement from
+  320×640 up to 2560×1400, including a 2400×700 ultrawide.
+- Tailwind's `py-(--token)` paren shorthand did not compile for these while `px-(--gutter)`
+  did; `py-[var(--token)]` does. Not worth diagnosing further — the bracket form is the
+  canonical syntax and it is what these use.
+
 - **One `CategoryFilter` serves both indexes**, and it scrolls sideways rather than wrapping.
   A wrapping filter row is fine at six categories and quietly fails at sixteen: it grows
   downward and pushes the results it is filtering off the screen. It replaced
@@ -418,6 +432,25 @@ it deliberately and say why — reversing something in this file is a decision, 
     landing in one batch both computed their target from the same stale index and the second
     was a no-op — hold Right and the viewer advanced one plate and stopped. Caught in
     testing, not in review.
+- **Lenis is resynced on every route change, and so is ScrollTrigger.** Lenis keeps its own
+  `targetScroll` and writes it to the window every frame; nothing about a client-side
+  navigation told it the document underneath had been replaced, so it carried the old page's
+  position into the new one and re-asserted it over whatever the router had just set. The
+  symptom is landing on a page already scrolled, or a first gesture that jumps.
+  - It is timing-dependent, which is what makes it nasty to pin down. With a mouse wheel the
+    events stop when you stop turning it and the router usually wins the race; with a
+    trackpad they do not — inertial momentum keeps delivering wheel events for a second or
+    more *after* the click that navigated, and those land on the new page. Reported from a
+    real machine and not reproducible with synthetic wheel events in the test harness, which
+    is exactly the shape of an inertia-dependent bug.
+  - Handled by intent rather than by reading the scroll position back: a link click sets 0
+    outright (reading `window.scrollY` there would be reading the very value the bug
+    corrupts), while a back/forward or a link carrying a fragment waits a frame and adopts
+    whatever history restoration or the anchor decided.
+  - `ScrollTrigger.refresh()` moved here for the same reason. It had only ever run on
+    `fonts.ready` and window `load`, both of which fire once for the page a visitor lands
+    on — every route reached by clicking a link afterwards kept the previous page's
+    measurements.
 - **Rejected:** magnetic buttons, tilt effects, scroll-jacked full-page sections, overshoot
   easing, `ease-in` on entrances.
 

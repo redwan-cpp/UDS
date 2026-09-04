@@ -63,12 +63,19 @@
      hero edge-to-edge and left the video reading as texture behind lettering
      rather than as the subject. The type is still display scale, it just no
      longer crowds the frame it sits in. */
-  --text-display: clamp(2.75rem, 8.2vw, 8.5rem);
+  /* `min(vw, vh)` rather than `vw` alone. Sizing display type off width only
+     assumes a monitor's height follows its width, and plenty do not: a 1366
+     x 640 laptop and a short ultrawide both get type scaled for a screen far
+     taller than the one it has to fit in, which is how the first viewport
+     ends up not showing its own first viewport. The vh term only ever binds
+     on a short screen; on a phone the vw term is smaller and nothing
+     changes. */
+  --text-display: clamp(2.75rem, min(8.2vw, 16vh), 8.5rem);
   --text-display--line-height: 0.86;
   --text-display--letter-spacing: -0.04em;
   --text-display--font-weight: 500;
 
-  --text-h1: clamp(2.25rem, 6vw, 5.25rem);
+  --text-h1: clamp(2.25rem, min(6vw, 11vh), 5.25rem);
   --text-h1--line-height: 0.92;
   --text-h1--letter-spacing: -0.035em;
   --text-h1--font-weight: 500;
@@ -175,6 +182,25 @@
   --gutter: clamp(1.25rem, 4vw, 4.5rem);
   /* Fluid grid gutter. */
   --grid-gap: clamp(1rem, 1.6vw, 1.75rem);
+
+  /* --- Section rhythm ----------------------------------------------------
+     Weighted by role (design.md §4) and fluid on *both* axes.
+
+     These were fixed step values — 96/160/192px for a pivotal section — which
+     made vertical rhythm a function of breakpoint width and nothing else. On
+     a 1366x640 laptop that spent 384px of a 640px viewport on padding: 60% of
+     the screen empty, with the content it was supposed to be framing reduced
+     to a band in the middle. The band was correct for the 1400px-tall display
+     it was tuned on and wrong for most of the machines it actually meets.
+
+     `min(vh, vw)` keys the padding to whichever axis is scarcer. The vh term
+     binds on short and ultrawide monitors, where the old values were worst;
+     the vw term binds on phones, which are tall and narrow and where a
+     height-only rule would have gone the other way and padded far too much.
+     The clamps keep both ends inside the ranges design.md already documents. */
+  --space-pivotal: clamp(4rem, min(12vh, 14vw), 12rem);
+  --space-standard: clamp(3rem, min(8.5vh, 10vw), 8rem);
+  --space-connective: clamp(2.5rem, min(6.5vh, 8vw), 6rem);
 
 }
 
