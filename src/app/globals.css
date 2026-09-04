@@ -998,6 +998,32 @@
     display: grid;
   }
 
+  /* Casual-copy deterrence, for the rough-work strip: the studio's concept
+     sketches and working drawings, which are its unpublished thinking rather
+     than the finished plates the page is offering to be studied.
+
+     Three gestures, three blocks: `user-select` stops the drag-highlight,
+     `-webkit-touch-callout` stops iOS's long-press sheet, and taking the
+     image itself out of hit-testing means a right-click lands on the list
+     item instead — so the browser has no image in hand to offer "save as"
+     for. The `contextmenu` and `dragstart` handlers in ProcessGallery close
+     the same three doors from the JS side for browsers that ignore one.
+
+     This is deterrence and nothing more. A screenshot, devtools, or a direct
+     request for the file URL all still work, and no CSS in any browser
+     changes that — if a drawing genuinely must not leave the studio, the
+     answer is to serve a smaller derivative or not publish it. */
+  .uds-protected {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .uds-protected img {
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
   /* A horizontal scroller that keeps its scrollbar rather than hiding it.
      A hidden scrollbar on a row that scrolls is a row nobody knows scrolls —
      and the browser's default bar is a piece of chrome belonging to no design

@@ -14,8 +14,20 @@ export const studio: StudioProfile = {
 
   disciplines: ["Architecture", "Interior Design", "Spatial Strategy"],
 
-  /** The four service lines, as briefed. Set along the hero's baseline rule. */
-  services: ["Interior", "Exterior", "Products", "Consultancy"],
+  /**
+   * The four service lines, as briefed, each pointing at the work that shows
+   * it. Interior has a real category filter behind it; Exterior is the project
+   * index unfiltered, since exterior work is most of it and a filter that
+   * excluded nothing would be a filter pretending to do something. Consultancy
+   * points at the areas-of-work list rather than at the contact form — a
+   * service line should show the work first and ask second.
+   */
+  services: [
+    { label: "Interior", href: "/projects?category=interior" },
+    { label: "Exterior", href: "/projects" },
+    { label: "Products", href: "/products" },
+    { label: "Consultancy", href: "/about#expertise" },
+  ],
 
   /**
    * The About statement. Set in the serif at statement scale, so it is short by

@@ -291,25 +291,39 @@ media has not been supplied yet.
 - A `4%` ink scrim sits under text laid over images, plus a gradient only where legibility
   actually requires it.
 - Every image has an intentional `alt`; decorative images take `alt=""`.
+- **Rough work is not enlargeable, and is guarded against casual saving.** The concept
+  sketches and working drawings in a case study are the studio's unpublished thinking, not
+  the finished plates the page is offering to be studied — so that strip has no viewer, no
+  context menu, no drag-off and no selection, and its images are out of hit-testing so a
+  right-click has no image to offer. This is deterrence at the level of the three gestures
+  someone reaches for without thinking. It does not stop a screenshot, devtools or a direct
+  request for the file URL, and nothing rendered in a browser does; if a drawing genuinely
+  must not leave the studio, the answer is a smaller derivative or not publishing it.
 
 ### Background motifs
 
-Two, and each is used exactly once. `TerraceMotif` is a stepped-terrace silhouette, filled,
-behind the homepage figures band on ink — geometry sourced from haikei.app's Layered Steps
-generator and recoloured through this project's own tokens. `SectionSketch` is the same
-stepped mass **drawn** rather than filled — outline, slab edges, dashed gridlines with their
-bubbles, poché hatching on the cut, a dimension run with the 45° ticks a drawing actually
-uses, and a level marker — along the foot of the homepage About band on paper.
+One. `TerraceMotif` — a stepped-terrace silhouette, filled, behind the homepage figures
+band on ink; geometry sourced from haikei.app's Layered Steps generator and recoloured
+through this project's own tokens.
 
-They are deliberately one subject seen two ways, solid and drawn, which is the pairing the
-whole site is built on: a drawing sheet laid over a photograph. The sketch is authored by
-hand rather than sourced, because there is no honest stock version — an architectural line
-drawing carries a specific building, and borrowing one would put someone else's project in
-the background of this studio's page. Both take `currentColor` at the surface's own hairline
-tone, so neither has to be told which ground it is on.
+A drawn counterpart on the light bands (`SectionSketch`) was built and then removed at the
+studio's request. Recorded because the reasoning still holds if it ever comes back: an
+architectural line drawing carries a specific building, so it has to be authored rather
+than sourced, and a motif spread across every section stops being restraint and becomes
+wallpaper.
 
-A motif earns its place once. Spread across every section, texture reads as wallpaper
-instead of restraint.
+### The lockup
+
+The studio's supplied artwork (`public/brand/uthan-lockup.svg`) is the closing mark of every
+page, set large in the footer. It is used as artwork, not reconstructed: the footer
+previously set the mark beside the name in Barlow, which quietly overruled the spacing and
+the letterforms the studio had already decided. Served as a file rather than inlined — 29
+paths on every page for a mark that caches once — from an ink-ground derivative, since the
+supplied file is drawn for a light page and the footer is always ink.
+
+**The header carries no mark**, only the name set in Barlow. The mark appearing small in a
+fixed header on top of the same mark at scale in the footer meant it read twice on every
+page; the header's job is to hold the name and get out of the way of the work behind it.
 
 ### Cards — used sparingly, and only where they earn it
 
@@ -348,6 +362,15 @@ secondary tone, not the accent, because it sits directly beneath a drawn accent 
 accent marks that close together read as one mistake. The fade is on the right edge only: at
 rest the row is at scroll 0, so a left fade would dim the active filter to hint at content
 that isn't there.
+
+### The hero's service lines
+
+The four service lines on the hero's baseline rule are links, each to the work that shows
+it — Interior to its category filter, Exterior to the project index, Products to the product
+index, Consultancy to the areas-of-work list. The destinations live in `studio.services`,
+because which work stands for which service is a content decision, not a layout one. They
+are set as index links, not buttons: the rule wipes in from the left on hover, the gesture
+the nav and the project index already use.
 
 ### The image viewer
 

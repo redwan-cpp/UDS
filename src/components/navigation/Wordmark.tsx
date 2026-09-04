@@ -1,15 +1,18 @@
 import Link from "next/link";
 
-import { UthanMark } from "@/components/brand/UthanMark";
-
 /**
- * The studio lockup: the drawn mark beside the name.
+ * The studio name, set — no mark.
  *
- * The mark was previously absent on purpose — inventing a logo would have been
- * inventing brand identity. The studio has since supplied one, so it leads the
- * lockup and the name sits beside it, which is how the supplied artwork is
- * composed. The mark inherits `currentColor`, so the header needs no separate
- * light and dark asset.
+ * The drawn mark sat here beside the name until the studio asked for it out.
+ * It leads the footer lockup instead, at scale, where the supplied artwork
+ * has room to be itself. Repeating it small in a fixed header meant the mark
+ * appeared twice on every page, and the header's job is not to re-state the
+ * identity — it is to hold the name and get out of the way of the work
+ * behind it.
+ *
+ * Used by the header and by the menu overlay's top row, which takes the
+ * header's exact position while the overlay is open; they have to match, so
+ * both lose the mark together.
  */
 export function Wordmark({
   name,
@@ -23,11 +26,9 @@ export function Wordmark({
   return (
     <Link
       href="/"
-      className={`group/mark inline-flex items-center gap-3 py-1.5 ${className}`}
+      className={`group/mark inline-flex items-center py-1.5 ${className}`}
       aria-label={`${name} — home`}
     >
-      <UthanMark className="h-7 w-auto shrink-0 transition-colors duration-[var(--dur-base)] group-hover/mark:text-accent" />
-
       <span className="inline-flex flex-col gap-1.5">
         <span className="text-nav uppercase">
           <span className="font-medium">Uthan</span>

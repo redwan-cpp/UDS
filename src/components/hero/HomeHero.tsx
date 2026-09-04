@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 
 import { BackgroundVideo } from "@/components/ui/BackgroundVideo";
 import { Container } from "@/components/ui/Container";
@@ -10,7 +11,7 @@ import type { MediaAsset, VideoAsset } from "@/types/content";
 interface HomeHeroProps {
   poster: MediaAsset;
   video?: VideoAsset;
-  services: string[];
+  services: { label: string; href: string }[];
 }
 
 /**
@@ -160,14 +161,27 @@ export function HomeHero({ poster, video, services }: HomeHeroProps) {
               arrow itself — at this size the glyph is the clearer instruction
               of the two, and it leaves the row to the services. */}
           <div className="mt-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 border-t border-paper/20 pt-6">
+            {/* Each service line goes to the work that shows it — the
+                destinations live in `studio.services`, since which work
+                stands for which service is a content decision. They were
+                plain text until the studio asked for them to be links, and
+                they were the only thing in the hero naming what the studio
+                does with no way to act on it. Styled as index links, not
+                buttons: the rule wipes in from the left on hover, the same
+                gesture the nav and the project index already use. */}
             <ul className="flex flex-wrap gap-x-5 gap-y-1.5 sm:gap-x-8">
               {services.map((service) => (
-                <li
-                  key={service}
-                  data-hero-meta
-                  className="text-meta uppercase text-paper/90"
-                >
-                  {service}
+                <li key={service.href} data-hero-meta>
+                  <Link
+                    href={service.href}
+                    className="group/service relative inline-flex py-1 text-meta uppercase text-paper/90 transition-colors duration-[var(--dur-fast)] hover:text-accent"
+                  >
+                    {service.label}
+                    <span
+                      aria-hidden="true"
+                      className="absolute -bottom-0.5 left-0 block h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/service:scale-x-100 group-focus-visible/service:scale-x-100 motion-reduce:transition-none"
+                    />
+                  </Link>
                 </li>
               ))}
             </ul>

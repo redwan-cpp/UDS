@@ -1,7 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import { Container } from "@/components/ui/Container";
-import { UthanMark } from "@/components/brand/UthanMark";
 import { Eyebrow } from "@/components/typography";
 import { IS_DEMO_BUILD } from "@/data/studio";
 import type { NavItem, StudioProfile } from "@/types/content";
@@ -26,15 +26,33 @@ export function SiteFooter({
   return (
     <footer className="surface-dark border-t border-line bg-ink">
       <Container className="pt-20 pb-10 md:pt-28">
-        {/* The name, at scale, as the closing statement — with the mark set
-            to the cap height beside it, which is how the supplied lockup is
-            composed. */}
-        <div className="flex items-center gap-6 md:gap-8">
-          <UthanMark className="h-[0.78em] w-auto shrink-0 text-display leading-none text-paper" />
-          <p className="text-display leading-[0.86] tracking-[-0.04em] text-paper">
-            Uthan
-          </p>
-        </div>
+        {/* The studio's own lockup, at scale, as the closing statement.
+            Previously this was the mark set beside the name in Barlow — a
+            reconstruction of the lockup rather than the lockup. The supplied
+            artwork carries its own letterforms and its own spacing between
+            mark and name, so setting the name in the UI typeface next to it
+            was quietly overruling a decision the studio had already made.
+
+            Served as a file rather than inlined: it is 29 paths, the footer
+            is on every page, and inlining would put ~25KB of path data into
+            every document for a mark that caches once. It is the ink-ground
+            derivative (see the note in that file) because this footer is
+            always ink; the source stays untouched. */}
+        {/* `unoptimized`: Next's image optimizer refuses SVG unless
+            `dangerouslyAllowSVG` is set globally, and that flag would apply to
+            every image the optimizer ever handles, remote ones included — a
+            real widening of the attack surface to buy nothing, since there is
+            no raster work to do on a vector. Width and height are still
+            declared, which is what actually reserves the space and prevents
+            the shift. */}
+        <Image
+          src="/brand/uthan-lockup-on-ink.svg"
+          alt={studio.name}
+          width={917}
+          height={300}
+          unoptimized
+          className="h-auto w-full max-w-[min(46rem,100%)]"
+        />
 
         <div className="mt-12 grid gap-12 border-t border-line pt-12 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           <nav aria-label="Footer">

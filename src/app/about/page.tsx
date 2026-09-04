@@ -70,7 +70,12 @@ export default function AboutPage() {
           two different ways would read as an inconsistency, not a variation. */}
       <Numbers statistics={statistics} />
 
-      <Section surface="dark" spacing="standard" labelledBy="disciplines-heading">
+      <Section
+        id="expertise"
+        surface="dark"
+        spacing="standard"
+        labelledBy="disciplines-heading"
+      >
         <Container>
           <Reveal>
             <SectionHead

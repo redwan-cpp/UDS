@@ -105,14 +105,31 @@ it deliberately and say why — reversing something in this file is a decision, 
   Fine pointers only, since with no hover there is nothing to restore the colour. `filter`
   is on the compositor's accelerated list alongside `transform` and `opacity`, so this does
   not breach the "everything composites" rule.
-- **Two background motifs exist, and each is used exactly once.** `TerraceMotif` — the
-  stepped mass as a filled silhouette, on the ink figures band. `SectionSketch` — the same
-  mass *drawn*: outline, slab edges, dashed gridlines with bubbles, poché hatch, a dimension
-  run with 45° ticks, a level marker, along the foot of the paper About band. One subject,
-  seen as solid and as drawing, which is the pairing the whole site rests on. The sketch is
-  hand-authored rather than sourced: an architectural line drawing carries a specific
-  building, so a stock one would put someone else's project in this studio's background.
-  A motif spread across every section stops being restraint and becomes wallpaper.
+- **One background motif.** `TerraceMotif` — the stepped mass as a filled silhouette, on
+  the ink figures band. A drawn counterpart on the light bands (`SectionSketch`: outline,
+  slab edges, dashed gridlines with bubbles, poché hatch, a dimension run with 45° ticks)
+  was built and then removed at the studio's request. Kept in the record because the
+  reasoning survives it: an architectural line drawing carries a specific building, so it
+  has to be authored rather than sourced, and a motif spread across every section stops
+  being restraint and becomes wallpaper.
+- **The supplied lockup is the footer's closing mark, at scale; the header carries no mark
+  at all.** The footer previously set `UthanMark` beside the name in Barlow — a
+  reconstruction of the lockup rather than the lockup, which overruled spacing and
+  letterforms the studio had already decided. It now uses the artwork, served as a file
+  rather than inlined (29 paths on every page for a mark that caches once) from an
+  ink-ground derivative, since the supplied file is drawn for a light page and the footer is
+  always ink. The header lost its mark in the same pass: small in a fixed header on top of
+  the same mark at scale in the footer, it read twice on every page.
+  - The derivative is generated, and two things about that generation are load-bearing.
+    The supplied file is sized in percentages, which leaves it with no intrinsic dimensions
+    and collapses it to nothing inside an `<img>` — it takes the viewBox's own 917×300. And
+    the header comment must contain no `--`: a double hyphen is illegal inside an XML
+    comment and makes the whole document malformed, which presents as a broken image and
+    not as any kind of parse error. Both were shipped and caught in the browser first.
+  - It renders `unoptimized`. Next's image optimizer refuses SVG unless
+    `dangerouslyAllowSVG` is set, and that flag applies to every image the optimizer ever
+    handles, remote included — a real widening of the attack surface to buy nothing, since
+    there is no raster work to do on a vector.
 - `.surface-*` redeclares `--color-accent` / `--color-secondary` / `--color-hairline`
   **directly**. Aliasing through an intermediate variable does not work: a custom property
   containing `var()` is substituted where it is declared, not where it is used. This shipped
@@ -458,6 +475,22 @@ is updated to say ADOPTED.**
 ---
 
 ## Content status
+
+- **Rough work does not enlarge and is guarded against casual saving.** The case-study
+  sketches and working drawings are the studio's unpublished thinking, not the finished
+  plates the page offers for study, so that strip has no viewer, no context menu, no
+  drag-off, no selection, and its images are out of hit-testing so a right-click has no
+  image in hand to offer. Stated plainly because it would be easy to mistake for
+  protection: this stops the three gestures someone reaches for without thinking, and stops
+  nothing else. A screenshot, devtools, or the file URL all still work and always will. If
+  a drawing genuinely must not leave the studio, the answer is a smaller derivative or not
+  publishing it — not a CSS rule.
+- **The hero's four service lines are links**, each to the work that shows it (Interior to
+  its category filter, Exterior to the project index, Products to the product index,
+  Consultancy to the areas-of-work list, which gained a real `#expertise` anchor in the
+  process — the search index had been pointing at that anchor since before it existed).
+  The destinations live in `studio.services` alongside the labels, because which work stands
+  for which service is a content decision.
 
 - All Phase 1 content is **demo content**, marked `isDemo: true` and banner-commented in
   every data file. Demo projects are never presented as real Uthan work, and the projects,

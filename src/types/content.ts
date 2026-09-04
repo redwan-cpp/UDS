@@ -294,8 +294,15 @@ export interface StudioProfile {
   /** The hero setting. Kept short — it is display type, not a paragraph. */
   tagline: string;
   disciplines: string[];
-  /** Service lines, set along the hero's baseline rule. */
-  services: string[];
+  /**
+   * Service lines, set along the hero's baseline rule. Each carries where it
+   * goes: the hero states what the studio does, and a visitor who reads
+   * "Interior" and wants to see interiors should not have to go and find the
+   * filter themselves. `href` lives here rather than in the component because
+   * it is a content decision — which work stands for which service — not a
+   * layout one.
+   */
+  services: { label: string; href: string }[];
   /** The editorial About statement. Set in the serif. */
   statement: string[];
   /** Supporting paragraphs below the statement. */
