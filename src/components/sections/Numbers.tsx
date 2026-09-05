@@ -12,8 +12,11 @@ import type { Brand, Statistic } from "@/types/content";
  *
  * Presented as a measured index rather than four boxes: each figure sits in its
  * own column separated by a vertical hairline, numerals set at heading scale
- * and tabular so nothing shifts while they count. On a dark surface, between two
- * light ones, so it reads as a held pause in the scroll.
+ * and tabular so nothing shifts while they count.
+ *
+ * It sits below the work rather than above it, on paper against the ink of the
+ * projects band: the figures are evidence for what you have just been shown,
+ * not a claim made before showing anything.
  */
 export function Numbers({
   statistics,
@@ -25,10 +28,16 @@ export function Numbers({
   if (statistics.length === 0) return null;
 
   return (
-    <Section surface="dark" spacing="standard" label="The studio in figures">
+    <Section surface="light" spacing="standard" label="The studio in figures">
       {/* Full-bleed, behind everything, decorative only — a texture on the
-          "held pause" this band already is, not a second thing to read. */}
-      <div aria-hidden="true" className="absolute inset-0 overflow-hidden opacity-20">
+          "held pause" this band already is, not a second thing to read.
+
+          40% rather than the 20% it carried on ink. The motif takes the
+          surface's own hairline tone, and paper's (#D3D0C2 on #F3F1E8) is a
+          far narrower gap than ink's: at 20% the densest band rendered three
+          values off the ground, which is not subtle, it is absent. This puts
+          it back to roughly the contrast it had on the dark band. */}
+      <div aria-hidden="true" className="absolute inset-0 overflow-hidden opacity-40">
         <TerraceMotif />
       </div>
 
@@ -61,7 +70,7 @@ export function Numbers({
                   {stat.label}
                 </Eyebrow>
               </dt>
-              <dd className="order-1 text-h1 text-paper transition-[color,transform] duration-[var(--dur-slow)] ease-out-soft group-hover/stat:-translate-y-1 group-hover/stat:text-accent motion-reduce:transform-none motion-reduce:transition-none">
+              <dd className="order-1 text-h1 transition-[color,transform] duration-[var(--dur-slow)] ease-out-soft group-hover/stat:-translate-y-1 group-hover/stat:text-accent motion-reduce:transform-none motion-reduce:transition-none">
                 <Counter
                   value={stat.value}
                   prefix={stat.prefix}

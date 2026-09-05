@@ -23,10 +23,13 @@ it deliberately and say why — reversing something in this file is a decision, 
   it — inventing a third category to make the row look busier would be claiming a capability
   the studio has not.
 - Homepage section order is client-specified. **Revised by the studio:** Hero → the opening
-  spread (About statement + expertise browser, one section) → Numbers (+ collaborator
-  marquee) → Major Projects → Latest News → Closing CTA → Footer. About and Expertise were
-  two separate bands with the figures between them until the studio asked for them merged;
-  see Layout decisions. The Management Team band was removed from the homepage and lives on
+  spread (About statement + expertise browser, one section, split paper/ink) → Major
+  Projects (ink) → Numbers + collaborator marquee (paper) → Latest News → Closing CTA →
+  Footer. The figures moved below the work and swapped grounds with it at the studio's
+  request: figures read as evidence for what has just been shown rather than a claim made
+  before showing anything. About and Expertise were themselves two separate bands, with the
+  figures sitting between them, until the studio asked for them merged — see Layout
+  decisions. The Management Team band was removed from the homepage and lives on
   About (`/about`), which already carried a fuller version — the homepage was showing a
   truncated second copy. The collaborator names survive on the homepage as the marquee
   under the figures.
@@ -180,8 +183,13 @@ it deliberately and say why — reversing something in this file is a decision, 
 - **The About statement and the expertise index are one spread**, not two bands with the
   figures between them. They answered one question in two places across roughly three
   screens; merged, the statement holds the left and the nine areas become a browsable
-  column on the right, divided by a vertical hairline at `lg` and stacked below it.
-  `ExpertiseIndex` is gone; `ExpertiseBrowser` replaces it.
+  column on the right. `ExpertiseIndex` is gone; `ExpertiseBrowser` replaces it.
+  - **Equal halves, and two grounds** — paper left, ink right, each bleeding to its own
+    viewport edge, the colour change doing the dividing instead of a rule. The only section
+    on the site carrying both surfaces, so the right half declares `surface-dark` itself
+    rather than inheriting the Section's. The split sits outside `Container` (the only way a
+    ground reaches the viewport edge), with each half's content capped at half the container
+    width and hugged to the centre line so alignment still matches every other section.
   - The right panel is a real tablist — hover opens a row on a fine pointer, Up/Down, Home
     and End work from the keyboard, roving `tabindex` keeps it to one tab stop. The old
     rows were deliberately *not* focusable on the reasoning that a tab stop swapping a
@@ -192,10 +200,11 @@ it deliberately and say why — reversing something in this file is a decision, 
     numbers, which hid what the areas are and gave a 16×25px target — under the WCAG 2.2
     floor and under this site's own 44px rule. Caught by the audit, not by review. Rows
     fix both structurally rather than by padding a too-small control.
-  - The columns are 7/4 rather than 6/5, with a 16:9 frame rather than 4:3, because the
-    first split left the right column 360px taller than the left — bare ground under the
-    statement, bounded by the divider, which reads as a hole rather than as negative space.
-    Now 166px, which reads as a panel running slightly longer than its neighbour.
+  - Column proportion went 6/5 → 7/4 → 6/6 as the studio asked for equal halves. The 16:9
+    frame stayed from the 7/4 pass, where it was introduced because a 4:3 plate left the
+    right column 360px taller than the left. With two grounds the imbalance stopped
+    mattering: the grid stretches both halves to the same height, so the shorter side reads
+    as a matted panel rather than as bare ground under the text.
   - The homepage About photograph went with it. That frame is still curated elsewhere, so
     nothing is orphaned; the spread carries nine photographs now instead of one.
 

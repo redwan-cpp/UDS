@@ -21,7 +21,7 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
 
   return (
     <Section
-      surface="light"
+      surface="dark"
       spacing="pivotal"
       labelledBy="projects-heading"
       id="projects"

@@ -46,13 +46,13 @@ export function LogoMarquee({ brands }: { brands: Brand[] }) {
                     className="h-8 w-auto object-contain"
                   />
                 ) : (
-                  <span className="text-h3 whitespace-nowrap text-paper/70">
+                  <span className="text-h3 whitespace-nowrap text-secondary">
                     {brand.name}
                   </span>
                 )}
                 <span
                   aria-hidden="true"
-                  className="ml-10 block h-1.5 w-1.5 shrink-0 rounded-full bg-pistachio/60 lg:ml-14"
+                  className="ml-10 block h-1.5 w-1.5 shrink-0 rounded-full bg-accent/60 lg:ml-14"
                 />
               </li>
             ))}

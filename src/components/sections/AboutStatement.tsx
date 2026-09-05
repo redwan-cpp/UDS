@@ -1,5 +1,4 @@
 import { Section } from "@/components/ui/Section";
-import { Container } from "@/components/ui/Container";
 import { ButtonLink, Arrow } from "@/components/ui/Button";
 import { Eyebrow, Statement } from "@/components/typography";
 import { Reveal } from "@/components/motion/Reveal";
@@ -10,23 +9,30 @@ import type { ExpertiseArea } from "@/types/content";
  * The opening spread: what the studio is, beside what it does.
  *
  * These were two full-width bands — an editorial About statement with a
- * photograph, then a separate Expertise index listing nine areas as rows with
- * a sticky companion image, with the figures band sitting between them. They
- * were answering one question in two places and taking three screens to do
- * it, so they are now one spread: the statement holds the left, the nine
- * areas become a browsable column on the right.
+ * photograph, then a separate expertise index listing nine areas as rows,
+ * with the figures band sitting between them. They were answering one
+ * question in two places and taking three screens to do it, so they are now
+ * one spread: the statement holds the left half, the nine areas the right.
  *
- * **A vertical hairline divides them, not a box.** Two panels on one ground,
- * each with its own index and eyebrow, separated by a rule — the same way a
- * drawing sheet carries two titled panels. The rule appears only at `lg`,
- * where the two are genuinely side by side; below that they stack and the
- * divider becomes the horizontal rule each panel already has under its own
- * label, so the separation survives the reflow without being restated.
+ * **The two halves are two grounds, split down the middle.** Paper on the
+ * left, ink on the right, each running to its own edge of the viewport — the
+ * colour change is what divides them, so there is no rule and no box doing
+ * the same job twice. It is the one place on the site where a single section
+ * carries both surfaces, and each half declares its own (`surface-light` is
+ * the Section's; the right half sets `surface-dark` itself), so the accent,
+ * the secondary text and the hairlines flip correctly on each side without
+ * either being told what is behind it.
  *
- * The About photograph that used to hold the right column is gone — the
- * expertise browser occupies that space now, and it carries nine photographs
- * of its own rather than one. That frame is still in use elsewhere in the
- * curated set, so nothing is orphaned by dropping it here.
+ * The split lives outside `Container`, which is what lets each ground reach
+ * the viewport edge rather than stopping at the page gutter. Alignment is
+ * kept by capping each half's content at half the container width and hugging
+ * it to the centre line: at any width up to the container's cap the content
+ * simply fills its half from the page gutter, exactly as every other section
+ * does, and past that the two columns meet in the middle while the outer
+ * margins grow — which is what the capped container does too.
+ *
+ * Below `lg` the halves stack, each keeping its own ground, so the division
+ * survives the reflow as a horizontal edge instead of a vertical one.
  */
 export function AboutStatement({
   statement,
@@ -37,11 +43,21 @@ export function AboutStatement({
   approach: string[];
   areas: ExpertiseArea[];
 }) {
+  // Half the page container, so the two halves' contents align to the same
+  // centre line the full-width sections above and below align their edges to.
+  const halfWidth = "w-full lg:max-w-[calc(var(--container-wide)/2)]";
+  const halfPadding = "px-(--gutter) py-[var(--space-pivotal)]";
+
   return (
-    <Section id="about" surface="light" spacing="pivotal" labelledBy="about-heading">
-      <Container>
-        <div className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-16 lg:grid-cols-12 lg:items-start">
-          <div className="lg:col-span-7">
+    <Section
+      id="about"
+      surface="light"
+      spacing="none"
+      labelledBy="about-heading"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-2">
+        <div className={`${halfPadding} lg:flex lg:justify-end`}>
+          <div className={halfWidth}>
             <Reveal>
               <div className="flex items-baseline gap-4 pb-4">
                 <span className="text-meta uppercase text-accent" data-numeric>
@@ -57,7 +73,7 @@ export function AboutStatement({
             </h2>
 
             <Reveal>
-              <Statement as="p" className="mt-8 max-w-[20ch] text-ink">
+              <Statement as="p" className="mt-8 max-w-[20ch]">
                 {statement[0]}
               </Statement>
             </Reveal>
@@ -91,18 +107,21 @@ export function AboutStatement({
               </ButtonLink>
             </Reveal>
           </div>
+        </div>
 
-          {/* The dividing rule rides on this column rather than being its own
-              grid item: a hairline needs no column of its own, and giving it
-              one would put a third track in a twelve-column grid that the rest
-              of the page's compositions do not share. */}
-          <div className="lg:col-span-4 lg:col-start-9 lg:border-l lg:border-hairline lg:pl-(--grid-gap)">
+        {/* Declares its own surface, per the rule that whatever paints a
+            ground names it — otherwise the accent here would still resolve to
+            the light surface's olive and land at 2.6:1 on ink. */}
+        <div
+          className={`surface-dark bg-ink text-paper ${halfPadding} lg:flex lg:justify-start`}
+        >
+          <div className={halfWidth}>
             <Reveal>
               <ExpertiseBrowser areas={areas} eyebrow="What we do" index="02" />
             </Reveal>
           </div>
         </div>
-      </Container>
+      </div>
     </Section>
   );
 }

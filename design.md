@@ -348,14 +348,24 @@ page; the header's job is to hold the name and get out of the way of the work be
 
 ### The opening spread
 
-The About statement and the expertise index are one section, not two bands: two panels on
-one light ground, each with its own index and eyebrow, divided by a **vertical hairline**
-rather than a box. They were answering one question in two places and taking three screens
-to do it — the statement says what the studio is, the areas say what it does.
+The About statement and the expertise index are one section, not two bands: equal halves,
+each with its own index and eyebrow. They were answering one question in two places and
+taking three screens to do it — the statement says what the studio is, the areas say what
+it does.
 
-The rule appears only at `lg`, where the two are genuinely side by side. Below that they
-stack, and the divider becomes the horizontal rule each panel already carries under its own
-label, so the separation survives the reflow without being restated.
+**The two halves are two grounds.** Paper on the left, ink on the right, each running to
+its own edge of the viewport. The colour change is the division, so there is no rule and no
+box doing that job twice. This is the one section that carries both surfaces, and each half
+declares its own, so the accent, secondary text and hairlines flip correctly on each side
+without either being told what sits behind it.
+
+The split lives outside `Container` — that is what lets each ground reach the viewport edge
+instead of stopping at the page gutter. Alignment is kept by capping each half's content at
+half the container width and hugging it to the centre line: up to the container's cap the
+content simply fills its half from the page gutter like every other section, and past that
+the two columns meet in the middle while the outer margins grow, which is what the capped
+container does anyway. Below `lg` the halves stack, each keeping its ground, so the division
+survives the reflow as a horizontal edge instead of a vertical one.
 
 The right panel is a **tablist**, not a list: the open area's photograph and description
 show, and the nine titles stay visible as a hairline-separated index you run down. Hover

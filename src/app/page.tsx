@@ -48,9 +48,11 @@ export default function HomePage() {
         areas={expertise}
       />
 
-      <Numbers statistics={statistics} brands={brands} />
-
       <FeaturedProjects projects={featuredProjects} />
+
+      {/* Below the work, not above it: the figures are evidence for what has
+          just been shown rather than a claim made before showing anything. */}
+      <Numbers statistics={statistics} brands={brands} />
 
       {/* The management team and the collaborator index used to sit here. Both
           now live on About (/about), where they already had fuller sections —
