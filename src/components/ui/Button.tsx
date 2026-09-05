@@ -99,6 +99,38 @@ export function CloseIcon({ className = "size-4" }: { className?: string }) {
   );
 }
 
+/**
+ * The vertical chevron, for stepping through a stack rather than a sequence.
+ *
+ * Same weight, cap and geometry as `Arrow` so the two read as one family;
+ * `direction` only decides which way it points. Kept here rather than inlined
+ * at the call site for the reason the close cross is: this glyph is drawn
+ * twice in the same component and hand-copying a path is how the two drift.
+ */
+export function Chevron({
+  direction,
+  className = "",
+}: {
+  direction: "up" | "down";
+  className?: string;
+}) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      aria-hidden="true"
+      className={`size-4 shrink-0 ${className}`}
+    >
+      <path
+        d={direction === "up" ? "M3 10l5-5 5 5" : "M3 6l5 5 5-5"}
+        stroke="currentColor"
+        strokeWidth="1.25"
+        strokeLinecap="square"
+      />
+    </svg>
+  );
+}
+
 /** The arrow used on quiet links and index rows. Decorative — never the only cue. */
 export function Arrow({ className = "" }: { className?: string }) {
   return (

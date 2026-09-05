@@ -156,11 +156,14 @@ export function HomeHero({ poster, video, services }: HomeHeroProps) {
             </span>
           </h1>
 
-          {/* The baseline rule carries the service lines on the left and the
-              scroll affordance on the right. The word "Scroll" is now the
-              arrow itself — at this size the glyph is the clearer instruction
-              of the two, and it leaves the row to the services. */}
-          <div className="mt-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-4 border-t border-paper/20 pt-6">
+          {/* The baseline rule carries the service lines. It also held a scroll
+              arrow on the right, which is gone at the studio's request — and it
+              was doing less than it looked like it was: the hero is under a
+              full viewport tall, so the next section is already cresting the
+              fold on most screens, and an arrow telling someone to scroll a
+              page they are visibly already able to scroll is decoration with an
+              instruction painted on it. The row is the services' now. */}
+          <div className="mt-8 flex flex-wrap items-end gap-x-6 gap-y-4 border-t border-paper/20 pt-6">
             {/* Each service line goes to the work that shows it — the
                 destinations live in `studio.services`, since which work
                 stands for which service is a content decision. They were
@@ -186,32 +189,6 @@ export function HomeHero({ poster, video, services }: HomeHeroProps) {
               ))}
             </ul>
 
-            <a
-              data-hero-meta
-              href="#about"
-              aria-label="Scroll to the next section"
-              className="group/scroll -m-2 flex min-h-11 min-w-11 items-center justify-center p-2 text-paper/90 transition-colors hover:text-pistachio"
-            >
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 34"
-                fill="none"
-                className="h-[34px] w-6 overflow-visible"
-              >
-                <path
-                  d="M12 0V32"
-                  stroke="currentColor"
-                  strokeWidth="1.25"
-                  className="origin-top transition-transform duration-[var(--dur-slow)] ease-out-soft group-hover/scroll:scale-y-110 motion-reduce:transition-none"
-                />
-                <path
-                  d="M3.5 23.5L12 32.5L20.5 23.5"
-                  stroke="currentColor"
-                  strokeWidth="1.25"
-                  className="transition-transform duration-[var(--dur-slow)] ease-out-soft group-hover/scroll:translate-y-1 motion-reduce:transition-none"
-                />
-              </svg>
-            </a>
           </div>
         </div>
       </Container>

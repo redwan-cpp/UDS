@@ -137,7 +137,7 @@ export function MenuOverlay({
 
         {/* `flex-1` + `min-h-0` lets this middle band absorb whatever height is
             left rather than pushing the contact block off the bottom. */}
-        <div className="grid min-h-0 flex-1 gap-10 pt-10 lg:grid-cols-[1fr_24rem] lg:gap-16 lg:pt-12">
+        <div className="grid min-h-0 flex-1 gap-10 pt-10 lg:grid-cols-[1fr_26rem] lg:gap-16 lg:pt-12">
           <nav aria-label="Primary" className="flex flex-col">
             <ul className="flex flex-col">
               {items.map((item) => {
@@ -179,19 +179,33 @@ export function MenuOverlay({
 
           {/* Decorative preview. Search moved out to its own panel, so this
               column is the image again. Hidden from assistive technology and
-              from anything without the room for it — it duplicates nothing. */}
-          <div
-            aria-hidden="true"
-            className="hidden self-start lg:block"
-          >
-            <div className="aspect-[4/3] w-full bg-ink">
+              from anything without the room for it — it duplicates nothing.
+
+              **It fills the column rather than holding a ratio.** This was a
+              4:3 landscape plate pinned to the top of the column with
+              `self-start`, which left a growing well of empty ink beneath it —
+              on a tall monitor, more empty column than image. Letting it
+              stretch turns the same photograph into a portrait slot the height
+              of the index beside it, which is both the shape the space
+              actually is and the shape architectural photography survives
+              being cropped to: a section rather than a postcard.
+
+              `ratio="auto"` is what makes that possible — every other ratio
+              declares an `aspect-*` that would fight `h-full` for control of
+              the height. The crop is handled by `object-cover` inside `Media`.
+
+              The column also widens from 24rem to 26rem. At full height, 24rem
+              was driving the plate past 1:2.5 on a tall display, which stops
+              reading as a portrait and starts reading as a strip. */}
+          <div aria-hidden="true" className="hidden lg:block">
+            <div className="h-full w-full bg-ink">
               {preview && (
                 <Media
                   key={preview.src}
                   asset={preview}
-                  ratio="landscape"
-                  sizes="24rem"
-                  className="h-full animate-[fade_400ms_ease-out]"
+                  ratio="auto"
+                  sizes="26rem"
+                  className="h-full w-full animate-[fade_400ms_ease-out]"
                 />
               )}
             </div>
