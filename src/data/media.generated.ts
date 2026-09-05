@@ -77,22 +77,6 @@ export const LIBRARY = {
     "licence": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:GENERAL_VIEW,_NORTH_FACADE_-_Lovell_Beach_House,_1242_West_Ocean_Front,_Newport_Beach,_Orange_County,_CA_HABS_CAL,30-NEWBE,1-6.tif"
   },
-  "interior-02": {
-    "src": "/media/interior-02.jpg",
-    "width": 2400,
-    "height": 1351,
-    "credit": "Stevenuccia",
-    "licence": "CC BY-SA 3.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Solomon_R._Guggenheim_Museum_curves.JPG"
-  },
-  "interior-03": {
-    "src": "/media/interior-03.jpg",
-    "width": 2400,
-    "height": 1351,
-    "credit": "Stevenuccia",
-    "licence": "CC BY-SA 3.0",
-    "source": "https://commons.wikimedia.org/wiki/File:Solomon_R._Guggenheim_Museum_floor.JPG"
-  },
   "process-01": {
     "src": "/media/process-01.jpg",
     "width": 1920,
@@ -148,30 +132,6 @@ export const LIBRARY = {
     "credit": "Department of Homeland Security. U.S. Coast Guard. 3/1/2003",
     "licence": "Public domain",
     "source": "https://commons.wikimedia.org/wiki/File:Building_555_Architectural_Bathroom_Floor_Plan,_Elevation_and_Details,_March_1,_1989_-_DPLA_-_a703343359ce7c4488a83d8268c95cd1.tiff"
-  },
-  "project-01": {
-    "src": "/media/project-01.jpg",
-    "width": 1920,
-    "height": 2662,
-    "credit": "Rosenthal, James W. Related names: Mann, William M; Clark, Edwin Hill; Knight, Charles R; Mortellito, Domenico; Olmsted and Eliot; Manhattan Terrazzo Brass Strip Co.; Lombard and Ludwig, Inc., architectural sculptors; Price, Virginia B, transmitter; Schara, Mark, project manager; Davidson, Paul A, field team project manager; Smithsonian Institution, National Zoological Park, Office of Engineering Design and Construction/Office of Facilities Engineering and Operations, sponsor; Price, Virginia B, transmitter; Schara, Mark, project manager",
-    "licence": "Public domain",
-    "source": "https://commons.wikimedia.org/wiki/File:North_elevation_of_west_entrance_loggia_-_National_Zoological_Park,_Elephant_House,_3001_Connecticut_Avenue_NW,_Washington,_District_of_Columbia,_DC_HABS_dc-777-C-2.tif"
-  },
-  "project-02": {
-    "src": "/media/project-02.jpg",
-    "width": 1920,
-    "height": 2651,
-    "credit": "Rosenthal, James W. Related names: Mann, William M; Clark, Edwin Hill; Knight, Charles R; Mortellito, Domenico; Olmsted and Eliot; Manhattan Terrazzo Brass Strip Co.; Lombard and Ludwig, Inc., architectural sculptors; Price, Virginia B, transmitter; Schara, Mark, project manager; Davidson, Paul A, field team project manager; Smithsonian Institution, National Zoological Park, Office of Engineering Design and Construction/Office of Facilities Engineering and Operations, sponsor; Price, Virginia B, transmitter; Schara, Mark, project manager",
-    "licence": "Public domain",
-    "source": "https://commons.wikimedia.org/wiki/File:North_elevation_of_east_entrance_loggia_-_National_Zoological_Park,_Elephant_House,_3001_Connecticut_Avenue_NW,_Washington,_District_of_Columbia,_DC_HABS_dc-777-C-8.tif"
-  },
-  "project-04": {
-    "src": "/media/project-04.jpg",
-    "width": 2400,
-    "height": 3307,
-    "credit": "Rosenthal, James W. Related names: Mann, William M; Clark, Edwin Hill; Knight, Charles R; Mortellito, Domenico; Olmsted and Eliot; Manhattan Terrazzo Brass Strip Co.; Lombard and Ludwig, Inc., architectural sculptors; Price, Virginia B, transmitter; Schara, Mark, project manager; Davidson, Paul A, field team project manager; Smithsonian Institution, National Zoological Park, Office of Engineering Design and Construction/Office of Facilities Engineering and Operations, sponsor; Price, Virginia B, transmitter; Schara, Mark, project manager",
-    "licence": "Public domain",
-    "source": "https://commons.wikimedia.org/wiki/File:North_elevation_of_east_entrance_loggia,_with_scale_stick_-_National_Zoological_Park,_Elephant_House,_3001_Connecticut_Avenue_NW,_Washington,_District_of_Columbia,_DC_HABS_dc-777-C-9.tif"
   },
   "project-06": {
     "src": "/media/project-06.jpg",

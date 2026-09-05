@@ -31,13 +31,15 @@ it deliberately and say why — reversing something in this file is a decision, 
 - **The practice page is `/about`, not `/studio`.** Renamed at the studio's request — route,
   nav label target, search index, and every internal link moved together in one pass; a
   permanent redirect from `/studio` (`next.config.ts`) covers anything still pointing at the
-  old path. Its own **Collaborators section is gone**, not just relabelled: `BrandIndex` is
-  no longer rendered anywhere, which leaves it and `BrandsSection`/`brands.ts` fully
-  orphaned — flagged as a follow-up rather than deleted in the same pass that removed their
-  only remaining caller. The figures band on this page is now the *same* `Numbers` component
-  the homepage uses (hover rule-draw, accent lift on the numeral) instead of a second,
-  static `<dl>` — two places showing the same numbers two different ways read as an
-  inconsistency, not a variation worth keeping.
+  old path. The figures band on this page is now the *same* `Numbers` component the homepage
+  uses (hover rule-draw, accent lift on the numeral) instead of a second, static `<dl>` —
+  two places showing the same numbers two different ways read as an inconsistency, not a
+  variation worth keeping.
+- Its own **Collaborators section is gone**, not just relabelled. `BrandIndex` and
+  `BrandsSection` were left orphaned by that removal and have since been deleted.
+  `brands.ts` and `LogoMarquee` have **not** — an earlier note here claiming they were
+  orphaned too was simply wrong, and they still feed the homepage collaborator marquee
+  through `Numbers`.
 - **A `/impeccable critique` design review** (dual-agent: an unanchored design-director
   pass plus the skill's own detector/browser-injection pass) scored the homepage 25/32 on
   Nielsen's heuristics — snapshot at `.impeccable/critique/2026-09-03T16-02-35Z__src-app-page-tsx.md`.
@@ -565,6 +567,18 @@ is updated to say ADOPTED.**
 ---
 
 ## Verification performed (Phase 1)
+
+- **A maintainability sweep** (September 2026) built an import graph over all source files
+  and computed transitive reachability from the framework's entry points. It found five
+  components unreachable from any route — `FeaturedProject`, `TeamSection`, `BrandsSection`,
+  `BrandIndex` and `ProjectGallery` — plus three unused exports, all now deleted. Roughly
+  450 lines, about 4% of the source tree. Dependencies came back clean: exactly the five
+  documented runtime deps, nothing unused.
+- **`eslint` reports unused imports and variables as warnings, not errors**, so `npm run
+  lint` exits 0 with them present and neither the build nor CI notices. That is how the four
+  drifted copies of the reduced-motion check and a stale `ProductCategory` import survived.
+  Worth knowing before trusting a clean lint run as evidence that nothing is orphaned; the
+  import-graph pass is what actually catches it.
 
 - **`scripts/audit.js` no longer guesses at a background it cannot see.** Its contrast check
   walked up the DOM for the nearest solid colour, which meant a card title in `text-paper`

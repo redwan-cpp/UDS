@@ -38,39 +38,50 @@ src/
 │   ├── layout.tsx             # fonts, shell, providers, skip link
 │   ├── page.tsx               # home
 │   ├── not-found.tsx          # 404
+│   ├── about/page.tsx         # the practice (was /studio; /studio 308s here)
 │   ├── projects/
 │   │   ├── page.tsx
 │   │   └── [slug]/page.tsx
-│   ├── portfolio/page.tsx
-│   ├── products/page.tsx
+│   ├── portfolio/page.tsx     # 308 to /projects; the two merged
+│   ├── products/
+│   │   ├── page.tsx
+│   │   └── [slug]/page.tsx
 │   ├── news/
 │   │   ├── page.tsx
 │   │   └── [slug]/page.tsx
 │   ├── sustainability/page.tsx
-│   ├── studio/page.tsx
 │   ├── contact/page.tsx
+│   ├── careers/page.tsx
+│   ├── privacy/page.tsx
+│   ├── terms/page.tsx
 │   └── globals.css            # token layer + base layer only
 ├── components/
-│   ├── navigation/            # Header, MenuOverlay, NavLink, Footer nav
-│   ├── hero/                  # HomeHero, PageHero, ProjectHero
-│   ├── typography/            # SectionHead, Eyebrow, Statement, Meta
-│   ├── projects/              # ProjectCard, FeaturedProject, ProjectGallery, RelatedProjects
-│   ├── portfolio/             # PortfolioGrid, PortfolioFilter, PortfolioItem
-│   ├── products/              # ProductFeature, ProductIndex
-│   ├── news/                  # NewsCard, NewsList, ArticleBody
-│   ├── team/                  # TeamGrid, TeamMember
-│   ├── brands/                # BrandIndex
-│   ├── sustainability/        # PrincipleList, PrincipleItem
-│   ├── contact/               # ContactFlow + step components
+│   ├── navigation/            # SiteHeader, MenuOverlay, SearchPanel, Wordmark
+│   ├── hero/                  # HomeHero, PageHero
+│   ├── typography/            # index.tsx: SectionHead, Eyebrow, Statement, Prose
+│   ├── projects/              # ProjectCard, WorkCard, ProjectHero, ProjectFacts,
+│   │                          #   ProjectSlideshow, ProcessGallery, ProjectSymbol,
+│   │                          #   RelatedProjects
+│   ├── portfolio/             # PortfolioGrid
+│   ├── products/              # ProductCard, ProductGallery
+│   ├── news/                  # NewsCard
+│   ├── team/                  # TeamGrid
+│   ├── brands/                # LogoMarquee
+│   ├── contact/               # ContactFlow, SocialIcon, StudioMap
 │   ├── footer/                # SiteFooter
-│   ├── sections/              # homepage bands: About, Numbers, Expertise, …
+│   ├── sections/              # homepage bands: AboutStatement, Numbers,
+│   │                          #   ExpertiseIndex, FeaturedProjects, LatestNews,
+│   │                          #   ClosingCTA
 │   ├── motion/                # Reveal, RevealText, Counter, SmoothScroll,
-│   │                          #   LoadingSequence, PageTransition, MotionFailsafe
-│   └── ui/                    # Container, Section, Media, Button, BackgroundVideo
+│   │                          #   LoadingSequence, PageTransition, MotionFailsafe,
+│   │                          #   NeonMark
+│   └── ui/                    # Container, Section, Media, Button, BackgroundVideo,
+│                              #   CategoryFilter, Lightbox, CrosshairCursor,
+│                              #   TerraceMotif, ViewMore
 ├── data/                      # ALL content. Typed. Demo-flagged.
-├── lib/                       # gsap registration, display labels, formatting
+├── lib/                       # gsap.ts (registration + motion helpers), labels.ts
 ├── types/                     # the content contract
-└── hooks/                     # useReducedMotion, useFocusTrap, useLockBodyScroll
+└── hooks/                     # useFocusTrap, useLockBodyScroll
 ```
 
 Alongside the app, `scripts/` holds the media pipeline and review tooling. None of it ships:
@@ -98,8 +109,10 @@ This single rule — *only routes read data* — is what makes the future CMS sw
 one layer instead of a rewrite.
 
 **Server/client boundary.** Server components are the default. `"use client"` appears only
-where an island genuinely needs it: menu overlay, portfolio filter, contact flow, and the
-motion primitives. Sections stay server-rendered so content is in the HTML for crawlers and
+where an island genuinely needs it: the menu overlay and search panel, the contact flow,
+the interactive galleries (slideshow, viewer, team card), and the motion primitives. The
+category filter is deliberately *not* one — it is real links, so a filtered view stays
+linkable and crawlable and ships no JavaScript. Sections stay server-rendered so content is in the HTML for crawlers and
 for users without JavaScript.
 
 ### 2.3 Design-system architecture

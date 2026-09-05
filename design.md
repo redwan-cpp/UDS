@@ -328,11 +328,10 @@ One. `TerraceMotif` — a stepped-terrace silhouette, filled, behind the homepag
 band on ink; geometry sourced from haikei.app's Layered Steps generator and recoloured
 through this project's own tokens.
 
-A drawn counterpart on the light bands (`SectionSketch`) was built and then removed at the
-studio's request. Recorded because the reasoning still holds if it ever comes back: an
-architectural line drawing carries a specific building, so it has to be authored rather
-than sourced, and a motif spread across every section stops being restraint and becomes
-wallpaper.
+A drawn counterpart on the light bands was built and then removed at the studio's request.
+The reasoning is worth keeping if it ever returns: an architectural line drawing carries a
+specific building, so it has to be authored rather than sourced, and a motif spread across
+every section stops being restraint and becomes wallpaper.
 
 ### The lockup
 
