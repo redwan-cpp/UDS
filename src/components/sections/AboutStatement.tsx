@@ -4,7 +4,7 @@ import { ButtonLink, Arrow } from "@/components/ui/Button";
 import { Eyebrow, Statement } from "@/components/typography";
 import { Reveal } from "@/components/motion/Reveal";
 import { ExpertiseBrowser } from "@/components/expertise/ExpertiseBrowser";
-import type { ExpertiseArea } from "@/types/content";
+import type { ExpertiseArea, SectionCopy } from "@/types/content";
 
 /**
  * The opening spread: what the studio is, beside what it does.
@@ -30,10 +30,18 @@ export function AboutStatement({
   statement,
   approach,
   areas,
+  copy,
+  expertiseCopy,
+  readMoreLabel,
 }: {
   statement: string[];
   approach: string[];
   areas: ExpertiseArea[];
+  /** The statement half's own head. */
+  copy: SectionCopy;
+  /** The expertise half's head, passed straight through to the browser. */
+  expertiseCopy: SectionCopy;
+  readMoreLabel: string;
 }) {
   return (
     <Section
@@ -48,9 +56,9 @@ export function AboutStatement({
             <Reveal>
               <div className="flex items-baseline gap-4 pb-4">
                 <span className="text-meta uppercase text-accent" data-numeric>
-                  01
+                  {copy.index}
                 </span>
-                <Eyebrow>The studio</Eyebrow>
+                <Eyebrow>{copy.eyebrow}</Eyebrow>
               </div>
               <div className="h-px w-full bg-hairline" />
             </Reveal>
@@ -89,7 +97,7 @@ export function AboutStatement({
 
             <Reveal delay={0.1}>
               <ButtonLink href="/about" variant="quiet" className="mt-8">
-                Read about the practice
+                {readMoreLabel}
                 <Arrow className="transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/quiet:translate-x-1 motion-reduce:transition-none" />
               </ButtonLink>
             </Reveal>
@@ -101,7 +109,11 @@ export function AboutStatement({
               other composition on the page shares. */}
           <div className="lg:col-span-6 lg:border-l lg:border-hairline lg:pl-(--grid-gap)">
             <Reveal>
-              <ExpertiseBrowser areas={areas} eyebrow="What we do" index="02" />
+              <ExpertiseBrowser
+                areas={areas}
+                eyebrow={expertiseCopy.eyebrow ?? ""}
+                index={expertiseCopy.index ?? ""}
+              />
             </Reveal>
           </div>
         </div>

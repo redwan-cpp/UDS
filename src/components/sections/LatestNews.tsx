@@ -4,9 +4,18 @@ import { SectionHead } from "@/components/typography";
 import { ButtonLink, Arrow } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { NewsCard } from "@/components/news/NewsCard";
-import type { NewsItem } from "@/types/content";
+import type { NewsItem, SectionCopy } from "@/types/content";
 
-export function LatestNews({ items }: { items: NewsItem[] }) {
+export function LatestNews({
+  items,
+  copy,
+  allLabel,
+}: {
+  items: NewsItem[];
+  copy: SectionCopy;
+  /** Label on the link out to the full index. */
+  allLabel: string;
+}) {
   if (items.length === 0) return null;
 
   return (
@@ -14,13 +23,13 @@ export function LatestNews({ items }: { items: NewsItem[] }) {
       <Container>
         <Reveal>
           <SectionHead
-            index="04"
-            eyebrow="From the studio"
-            title="Collaboration & News"
+            index={copy.index}
+            eyebrow={copy.eyebrow}
+            title={copy.title}
             id="news-heading"
             aside={
               <ButtonLink href="/news" variant="quiet">
-                All entries
+                {allLabel}
                 <Arrow className="transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/quiet:translate-x-1 motion-reduce:transition-none" />
               </ButtonLink>
             }

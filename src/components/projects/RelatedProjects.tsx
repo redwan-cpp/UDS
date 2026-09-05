@@ -3,7 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/typography";
 import { Reveal } from "@/components/motion/Reveal";
 import { ProjectCard } from "./ProjectCard";
-import type { Project } from "@/types/content";
+import type { Project, SectionCopy } from "@/types/content";
 
 /**
  * Closing a project page with somewhere to go.
@@ -12,7 +12,13 @@ import type { Project } from "@/types/content";
  * two clicks of every other one, which is what makes the work crawlable in
  * depth rather than only from the index.
  */
-export function RelatedProjects({ projects }: { projects: Project[] }) {
+export function RelatedProjects({
+  projects,
+  copy,
+}: {
+  projects: Project[];
+  copy: SectionCopy;
+}) {
   if (projects.length === 0) return null;
 
   return (
@@ -20,8 +26,8 @@ export function RelatedProjects({ projects }: { projects: Project[] }) {
       <Container>
         <Reveal>
           <SectionHead
-            eyebrow="Continue"
-            title="Related projects"
+            eyebrow={copy.eyebrow}
+            title={copy.title}
             id="related-heading"
           />
         </Reveal>

@@ -12,6 +12,7 @@ import { brands } from "@/data/brands";
 import { getProjects } from "@/data/projects";
 import { getFeaturedNews } from "@/data/news";
 import { heroVideo } from "@/data/hero";
+import { homeCopy, actionCopy } from "@/data/copy";
 
 /**
  * The homepage.
@@ -46,9 +47,16 @@ export default function HomePage() {
         statement={studio.statement}
         approach={studio.approach}
         areas={expertise}
+        copy={homeCopy.about}
+        expertiseCopy={homeCopy.expertise}
+        readMoreLabel={actionCopy.aboutPractice}
       />
 
-      <FeaturedProjects projects={featuredProjects} />
+      <FeaturedProjects
+        projects={featuredProjects}
+        copy={homeCopy.projects}
+        allLabel={actionCopy.allProjects}
+      />
 
       {/* Below the work, not above it: the figures are evidence for what has
           just been shown rather than a claim made before showing anything. */}
@@ -59,9 +67,17 @@ export default function HomePage() {
           the homepage was showing a truncated second copy of each. See
           memory.md; this reverses the original homepage order deliberately. */}
 
-      <LatestNews items={latestNews} />
+      <LatestNews
+        items={latestNews}
+        copy={homeCopy.news}
+        allLabel={actionCopy.allNews}
+      />
 
-      <ClosingCTA closing={studio.closing} />
+      <ClosingCTA
+        closing={studio.closing}
+        copy={homeCopy.closing}
+        actionLabel={actionCopy.startConversation}
+      />
     </>
   );
 }

@@ -7,6 +7,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { NewsCard } from "@/components/news/NewsCard";
 import { getNews } from "@/data/news";
 import { navIndex } from "@/data/navigation";
+import { heroCopy } from "@/data/copy";
 
 export const metadata: Metadata = {
   title: "Collaboration & News",
@@ -21,9 +22,9 @@ export default function NewsPage() {
     <>
       <PageHero
         index={navIndex("/news")}
-        eyebrow="From the studio"
-        title="Collaboration & News"
-        intro="Agreements, exhibitions, site milestones and things we have published."
+        eyebrow={heroCopy["/news"].eyebrow}
+        title={heroCopy["/news"].title}
+        intro={heroCopy["/news"].intro}
         aside={
           <DemoNotice>
             Placeholder entries for design review. No collaboration, event or

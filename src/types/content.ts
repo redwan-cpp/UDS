@@ -358,6 +358,35 @@ export interface NavItem {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Section and page copy                                                       */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The head of a section or a page hero.
+ *
+ * Every field is copy an editor would reasonably want to change, which is why
+ * this exists at all: these strings were written inline in the components and
+ * routes that render them, against ruler.md's rule that no content literal
+ * lives outside `src/data`. A CMS cannot reach a string that is compiled into
+ * a component, so each of them was a future code change wearing the costume of
+ * content.
+ *
+ * `index` is only carried for sections whose numbering is their own sequence.
+ * Page heroes take theirs from `navIndex()` instead, so the menu stays the
+ * single source of truth for the site's numbering.
+ */
+export interface SectionCopy {
+  /** Two-digit index, e.g. "03". Omitted where the sequence is derived. */
+  index?: string;
+  eyebrow?: string;
+  title?: string;
+  /** The standfirst under a page hero. */
+  intro?: string;
+  /** Sits opposite the title on wide screens. */
+  aside?: string;
+}
+
+/* -------------------------------------------------------------------------- */
 /* Contact form (UI only in Phase 1)                                           */
 /* -------------------------------------------------------------------------- */
 

@@ -5,6 +5,8 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/typography";
 import { studio } from "@/data/studio";
+import { heroCopy } from "@/data/copy";
+import { sectionCopy } from "@/data/copy";
 
 export const metadata: Metadata = {
   title: "Terms",
@@ -21,9 +23,9 @@ export default function TermsPage() {
     <>
       <PageHero
         index="—"
-        eyebrow="Legal"
-        title="Terms"
-        intro="This page is a placeholder. Terms of use have not yet been provided by the studio."
+        eyebrow={heroCopy["/terms"].eyebrow}
+        title={heroCopy["/terms"].title}
+        intro={heroCopy["/terms"].intro}
       />
 
       <Section surface="light" spacing="standard">
@@ -40,7 +42,7 @@ export default function TermsPage() {
           </div>
 
           <div className="mt-12 border-t border-hairline pt-8">
-            <Eyebrow as="h2">Content on this build</Eyebrow>
+            <Eyebrow as="h2">{sectionCopy["terms.content"].eyebrow}</Eyebrow>
             <p className="mt-5 text-small text-secondary">
               Every project, statistic, team member, collaborator and news entry
               on this site is placeholder content created for design review, and

@@ -8,6 +8,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Statement, Eyebrow } from "@/components/typography";
 import { getSustainabilityPrinciples } from "@/data/sustainability";
 import { navIndex } from "@/data/navigation";
+import { heroCopy } from "@/data/copy";
 
 export const metadata: Metadata = {
   title: "Sustainability",
@@ -22,9 +23,9 @@ export default function SustainabilityPage() {
     <>
       <PageHero
         index={navIndex("/sustainability")}
-        eyebrow="Position"
-        title="Sustainability"
-        intro="Environmental decisions are made in the drawings, early, where they are still cheap to change — not added at specification stage."
+        eyebrow={heroCopy["/sustainability"].eyebrow}
+        title={heroCopy["/sustainability"].title}
+        intro={heroCopy["/sustainability"].intro}
         aside={
           <DemoNotice>
             These themes are placeholders. The studio&rsquo;s actual practice,

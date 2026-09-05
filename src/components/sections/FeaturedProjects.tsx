@@ -4,7 +4,7 @@ import { SectionHead } from "@/components/typography";
 import { ButtonLink, Arrow } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { ProjectLoop } from "@/components/projects/ProjectLoop";
-import type { Project } from "@/types/content";
+import type { Project, SectionCopy } from "@/types/content";
 
 /**
  * The work band.
@@ -23,7 +23,16 @@ import type { Project } from "@/types/content";
  * and the loop's controls appear only when there is more than one window of
  * work to step through.
  */
-export function FeaturedProjects({ projects }: { projects: Project[] }) {
+export function FeaturedProjects({
+  projects,
+  copy,
+  allLabel,
+}: {
+  projects: Project[];
+  copy: SectionCopy;
+  /** Label on the link out to the full index. */
+  allLabel: string;
+}) {
   if (projects.length === 0) return null;
 
   return (
@@ -36,15 +45,14 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
       <Container>
         <Reveal>
           <SectionHead
-            index="03"
-            eyebrow="Selected work"
-            title="Projects"
+            index={copy.index}
+            eyebrow={copy.eyebrow}
+            title={copy.title}
             id="projects-heading"
             aside={
-              <p className="text-small text-secondary">
-                The studio&rsquo;s major projects. Hover a card for the detail,
-                or open one for the full case study.
-              </p>
+              copy.aside && (
+                <p className="text-small text-secondary">{copy.aside}</p>
+              )
             }
           />
         </Reveal>
@@ -67,7 +75,7 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
             a band out of what is a single button. The spacing carries it. */}
         <Reveal className="mt-10 flex justify-center">
           <ButtonLink href="/projects" variant="secondary">
-            Show all projects
+            {allLabel}
             <Arrow />
           </ButtonLink>
         </Reveal>

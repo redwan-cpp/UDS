@@ -7,6 +7,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
 import { ProductCard } from "@/components/products/ProductCard";
 import { navIndex } from "@/data/navigation";
+import { heroCopy } from "@/data/copy";
 import {
   countProducts,
   filterProducts,
@@ -33,9 +34,9 @@ export default async function ProductsPage({
     <>
       <PageHero
         index={navIndex("/products")}
-        eyebrow="Made, not bought"
-        title="Products"
-        intro="Two lines that come out of the studio's own projects: the doors people touch every day, and the folded metal that quietly decides how a facade reads."
+        eyebrow={heroCopy["/products"].eyebrow}
+        title={heroCopy["/products"].title}
+        intro={heroCopy["/products"].intro}
         aside={
           <DemoNotice>
             Both product lines are real. The copy on each is illustrative — not

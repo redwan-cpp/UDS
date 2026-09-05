@@ -46,9 +46,12 @@ const LABEL =
 export function SiteFooter({
   studio,
   items,
+  headings,
 }: {
   studio: StudioProfile;
   items: NavItem[];
+  /** The four column headings. Copy, so it comes from `src/data`. */
+  headings: { index: string; contact: string; location: string; follow: string };
 }) {
   const year = new Date().getFullYear();
 
@@ -95,7 +98,7 @@ export function SiteFooter({
 
         <div className="mt-10 grid gap-12 border-t border-line pt-12 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           <nav aria-label="Footer">
-            <Eyebrow as="h2">Index</Eyebrow>
+            <Eyebrow as="h2">{headings.index}</Eyebrow>
             <ul className="mt-5 border-b border-line">
               {items.map((item) => (
                 <li key={item.href}>
@@ -108,7 +111,7 @@ export function SiteFooter({
           </nav>
 
           <div>
-            <Eyebrow as="h2">Contact</Eyebrow>
+            <Eyebrow as="h2">{headings.contact}</Eyebrow>
             {/* The phone was in mute here while the email beside it was in
                 paper and underlined — two treatments for two links that do the
                 same job. Both are links, so both are rows. */}
@@ -131,7 +134,7 @@ export function SiteFooter({
           </div>
 
           <div>
-            <Eyebrow as="h2">Location</Eyebrow>
+            <Eyebrow as="h2">{headings.location}</Eyebrow>
             <address className="mt-5 flex flex-col gap-1 text-small not-italic text-secondary">
               {studio.contact.addressLines.map((line) => (
                 <span key={line}>{line}</span>
@@ -140,7 +143,7 @@ export function SiteFooter({
           </div>
 
           <div>
-            <Eyebrow as="h2">Follow</Eyebrow>
+            <Eyebrow as="h2">{headings.follow}</Eyebrow>
             <ul className="mt-5 border-b border-line">
               {studio.social.map((link) => (
                 <li key={link.label}>

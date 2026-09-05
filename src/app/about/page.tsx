@@ -14,6 +14,8 @@ import { statistics } from "@/data/statistics";
 import { expertise } from "@/data/expertise";
 import { img } from "@/data/media";
 import { navIndex } from "@/data/navigation";
+import { heroCopy } from "@/data/copy";
+import { sectionCopy } from "@/data/copy";
 
 export const metadata: Metadata = {
   title: "About",
@@ -26,8 +28,8 @@ export default function AboutPage() {
     <>
       <PageHero
         index={navIndex("/about")}
-        eyebrow="The practice"
-        title="About"
+        eyebrow={heroCopy["/about"].eyebrow}
+        title={heroCopy["/about"].title}
         intro={studio.statement[0]}
       />
 
@@ -81,8 +83,8 @@ export default function AboutPage() {
           <Reveal>
             <SectionHead
               index="02"
-              eyebrow="Areas of work"
-              title="What the studio does"
+              eyebrow={sectionCopy["about.expertise"].eyebrow}
+              title={sectionCopy["about.expertise"].title}
               id="disciplines-heading"
             />
           </Reveal>
@@ -108,8 +110,8 @@ export default function AboutPage() {
           <Reveal>
             <SectionHead
               index="03"
-              eyebrow="Who does the work"
-              title="Management Team"
+              eyebrow={sectionCopy["about.team"].eyebrow}
+              title={sectionCopy["about.team"].title}
               id="people-heading"
               aside={
                 <p className="text-small text-secondary">

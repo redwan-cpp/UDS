@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/Container";
 import { ButtonLink, Arrow } from "@/components/ui/Button";
 import { Eyebrow, Statement } from "@/components/typography";
 import { Reveal } from "@/components/motion/Reveal";
+import type { SectionCopy } from "@/types/content";
 
 /**
  * The homepage's last authored beat before the footer.
@@ -28,24 +29,37 @@ import { Reveal } from "@/components/motion/Reveal";
  * ~108KB of traced path data, which caches once but would otherwise sit in
  * the homepage's HTML on every visit.
  */
-export function ClosingCTA({ closing }: { closing: string }) {
+export function ClosingCTA({
+  closing,
+  copy,
+  actionLabel,
+}: {
+  closing: string;
+  copy: SectionCopy;
+  actionLabel: string;
+}) {
   return (
     <Section surface="light" spacing="pivotal" labelledBy="closing-heading">
       <Container>
         <Reveal>
           <div className="flex items-baseline gap-4 pb-4">
             <span data-numeric className="text-meta uppercase text-accent">
-              05
+              {copy.index}
             </span>
-            <Eyebrow>Start a project</Eyebrow>
+            <Eyebrow>{copy.eyebrow}</Eyebrow>
           </div>
           <div className="h-px w-full bg-hairline" />
         </Reveal>
 
         <div className="grid grid-cols-1 gap-x-(--grid-gap) gap-y-12 pt-12 md:pt-16 lg:grid-cols-12 lg:items-center">
           <div className="lg:col-span-5">
+            {/* The section's accessible name, and the same string as the
+                button below it. Bound to the same value rather than repeated:
+                left as a literal it would keep saying "Start a conversation"
+                after the visible button had been renamed to something else,
+                which is the kind of drift only a screen reader user meets. */}
             <h2 id="closing-heading" className="sr-only">
-              Start a conversation
+              {actionLabel}
             </h2>
             <Reveal>
               <Statement as="p" className="max-w-[26ch]">
@@ -54,7 +68,7 @@ export function ClosingCTA({ closing }: { closing: string }) {
             </Reveal>
             <Reveal delay={0.1}>
               <ButtonLink href="/contact" variant="primary" className="mt-10">
-                Start a conversation
+                {actionLabel}
                 <Arrow />
               </ButtonLink>
             </Reveal>

@@ -11,6 +11,7 @@ import { CrosshairCursor } from "@/components/ui/CrosshairCursor";
 import { navigation } from "@/data/navigation";
 import { studio } from "@/data/studio";
 import { getSearchIndex } from "@/data/search";
+import { footerCopy } from "@/data/copy";
 
 import "./globals.css";
 
@@ -109,7 +110,7 @@ export default function RootLayout({
           <PageTransition>{children}</PageTransition>
         </main>
 
-        <SiteFooter studio={studio} items={navigation} />
+        <SiteFooter studio={studio} items={navigation} headings={footerCopy} />
       </body>
     </html>
   );

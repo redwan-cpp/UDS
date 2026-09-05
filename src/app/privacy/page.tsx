@@ -5,6 +5,8 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/typography";
 import { studio } from "@/data/studio";
+import { heroCopy } from "@/data/copy";
+import { sectionCopy } from "@/data/copy";
 
 export const metadata: Metadata = {
   title: "Privacy",
@@ -25,9 +27,9 @@ export default function PrivacyPage() {
     <>
       <PageHero
         index="—"
-        eyebrow="Legal"
-        title="Privacy"
-        intro="This page is a placeholder. A privacy policy has not yet been provided by the studio."
+        eyebrow={heroCopy["/privacy"].eyebrow}
+        title={heroCopy["/privacy"].title}
+        intro={heroCopy["/privacy"].intro}
       />
 
       <Section surface="light" spacing="standard">
@@ -53,7 +55,7 @@ export default function PrivacyPage() {
           </div>
 
           <div className="mt-12 border-t border-hairline pt-8">
-            <Eyebrow as="h2">What this build does today</Eyebrow>
+            <Eyebrow as="h2">{sectionCopy["privacy.today"].eyebrow}</Eyebrow>
             <ul className="mt-5 flex flex-col">
               {[
                 "No analytics and no tracking pixels.",

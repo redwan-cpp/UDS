@@ -7,6 +7,8 @@ import { Eyebrow } from "@/components/typography";
 import { Reveal } from "@/components/motion/Reveal";
 import { careersIntro, openings } from "@/data/careers";
 import { studio } from "@/data/studio";
+import { heroCopy } from "@/data/copy";
+import { sectionCopy } from "@/data/copy";
 
 export const metadata: Metadata = {
   title: "Careers",
@@ -31,8 +33,8 @@ export default function CareersPage() {
     <>
       <PageHero
         index="—"
-        eyebrow="Careers"
-        title="Work with us"
+        eyebrow={heroCopy["/careers"].eyebrow}
+        title={heroCopy["/careers"].title}
         intro={careersIntro}
       />
 
@@ -43,7 +45,7 @@ export default function CareersPage() {
               <span className="text-meta uppercase text-accent" data-numeric>
                 {String(openings.length).padStart(2, "0")}
               </span>
-              <Eyebrow as="h2">Open roles</Eyebrow>
+              <Eyebrow as="h2">{sectionCopy["careers.roles"].eyebrow}</Eyebrow>
             </div>
             <div className="h-px w-full bg-hairline" />
           </Reveal>

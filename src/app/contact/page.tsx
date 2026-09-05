@@ -10,6 +10,8 @@ import { Eyebrow } from "@/components/typography";
 import { studio } from "@/data/studio";
 import { enquiryTopics } from "@/data/contact";
 import { navIndex } from "@/data/navigation";
+import { heroCopy } from "@/data/copy";
+import { sectionCopy } from "@/data/copy";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -21,9 +23,9 @@ export default function ContactPage() {
     <>
       <PageHero
         index={navIndex("/contact")}
-        eyebrow="Start a conversation"
-        title="Contact"
-        intro="Four fields and a message. It takes a few seconds, and it reaches the right person first."
+        eyebrow={heroCopy["/contact"].eyebrow}
+        title={heroCopy["/contact"].title}
+        intro={heroCopy["/contact"].intro}
         aside={
           <DemoNotice>
             UI prototype. Nothing typed into this form is sent, stored or
@@ -59,12 +61,12 @@ export default function ContactPage() {
       <Section surface="dark" spacing="standard" labelledBy="direct-heading">
         <Container>
           <h2 id="direct-heading" className="text-h2">
-            Or reach us directly
+            {sectionCopy["contact.direct"].title}
           </h2>
 
           <div className="grid grid-cols-1 gap-10 pt-12 sm:grid-cols-2 lg:grid-cols-4">
             <div className="border-t border-hairline pt-5">
-              <Eyebrow as="h3">Email</Eyebrow>
+              <Eyebrow as="h3">{sectionCopy["contact.email"].eyebrow}</Eyebrow>
               <p className="mt-3">
                 <a
                   href={`mailto:${studio.contact.email}`}
@@ -76,14 +78,14 @@ export default function ContactPage() {
             </div>
 
             <div className="border-t border-hairline pt-5">
-              <Eyebrow as="h3">Telephone</Eyebrow>
+              <Eyebrow as="h3">{sectionCopy["contact.phone"].eyebrow}</Eyebrow>
               <p className="mt-3 text-body text-secondary">
                 {studio.contact.phone}
               </p>
             </div>
 
             <div className="border-t border-hairline pt-5">
-              <Eyebrow as="h3">Studio</Eyebrow>
+              <Eyebrow as="h3">{sectionCopy["contact.address"].eyebrow}</Eyebrow>
               <address className="mt-3 not-italic text-body text-secondary">
                 {studio.contact.addressLines.map((line) => (
                   <span key={line} className="block">
@@ -94,7 +96,7 @@ export default function ContactPage() {
             </div>
 
             <div className="border-t border-hairline pt-5">
-              <Eyebrow as="h3">Hours</Eyebrow>
+              <Eyebrow as="h3">{sectionCopy["contact.hours"].eyebrow}</Eyebrow>
               <p className="mt-3 text-body text-secondary">
                 {studio.contact.hours}
               </p>
@@ -105,7 +107,7 @@ export default function ContactPage() {
               a social icon linking to `#`, or worse to a guessed profile that
               belongs to someone else, is a defect, not a placeholder. */}
           <div className="mt-12 border-t border-hairline pt-8">
-            <Eyebrow as="h3">Social</Eyebrow>
+            <Eyebrow as="h3">{sectionCopy["contact.social"].eyebrow}</Eyebrow>
             <ul className="mt-5 flex flex-wrap gap-x-3 gap-y-3">
               {studio.social.map((channel) => {
                 const content = (

@@ -17,6 +17,7 @@ import {
   getProjectSlugs,
   getRelatedProjects,
 } from "@/data/projects";
+import { sectionCopy } from "@/data/copy";
 
 /**
  * Statically rendered per project so every case study is individually
@@ -139,24 +140,24 @@ export default async function ProjectPage({
           anything to reach. Only the long-form writing sits behind View more. */}
       <Section surface="light" spacing="standard">
         <Container>
-          <ProjectFacts facts={project.facts} title="Project information" />
+          <ProjectFacts facts={project.facts} title={sectionCopy["project.facts"].title} />
 
           <div className="pt-16 md:pt-20">
             <ViewMore label="View more" openLabel="View less">
               <div className="flex flex-col gap-20 md:gap-28">
                 <Narrative
-                  eyebrow="Description"
+                  eyebrow={sectionCopy["project.description"].eyebrow}
                   heading="The project"
                   paragraphs={project.description}
                   lead
                 />
                 <Narrative
-                  eyebrow="Uniqueness"
+                  eyebrow={sectionCopy["project.uniqueness"].eyebrow}
                   heading="What makes it particular"
                   paragraphs={project.uniqueness}
                 />
                 <Narrative
-                  eyebrow="Our concept"
+                  eyebrow={sectionCopy["project.concept"].eyebrow}
                   heading="Where it started"
                   paragraphs={project.concept}
                 />
@@ -193,7 +194,7 @@ export default async function ProjectPage({
           writing it belongs with, rather than repeating the same facts a third
           time at the foot of the page. */}
 
-      <RelatedProjects projects={related} />
+      <RelatedProjects projects={related} copy={sectionCopy["project.related"]} />
     </article>
   );
 }
