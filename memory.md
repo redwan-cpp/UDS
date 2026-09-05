@@ -23,11 +23,14 @@ it deliberately and say why — reversing something in this file is a decision, 
   it — inventing a third category to make the row look busier would be claiming a capability
   the studio has not.
 - Homepage section order is client-specified. **Revised by the studio:** Hero → the opening
-  spread (About statement + expertise browser, one section, split paper/ink) → Major
-  Projects (ink) → Numbers + collaborator marquee (paper) → Latest News → Closing CTA →
-  Footer. The figures moved below the work and swapped grounds with it at the studio's
-  request: figures read as evidence for what has just been shown rather than a claim made
-  before showing anything. About and Expertise were themselves two separate bands, with the
+  spread (About statement + expertise browser, one section) → Major Projects → Numbers +
+  collaborator marquee → Latest News → Closing CTA → Footer. The figures moved below the
+  work at the studio's request: they read as evidence for what has just been shown rather
+  than a claim made before showing anything.
+- **The homepage alternates ground strictly**, black and white the whole way down: hero ink,
+  spread paper, projects ink, figures paper, news ink, closing paper, footer ink. Requested
+  by the studio, and it is why `LatestNews` is dark and `ClosingCTA` light rather than the
+  other way round — those two were flipped to close the only gap in the run. About and Expertise were themselves two separate bands, with the
   figures sitting between them, until the studio asked for them merged — see Layout
   decisions. The Management Team band was removed from the homepage and lives on
   About (`/about`), which already carried a fuller version — the homepage was showing a
@@ -84,9 +87,16 @@ it deliberately and say why — reversing something in this file is a decision, 
 - Visual thesis: **"Space described in sequence."** The interface is a frame; the work is the
   subject; the scroll is the walk between framed views.
 - Palette is black + pistachio + warm architectural white, as briefed.
-- **The accent flips with the surface.** Pistachio `#B7D77A` on dark; Olive `#4E5D2A` on
-  light. Pistachio measures 1.4:1 on warm white and is therefore *prohibited* as text, icon
-  or meaningful line on light surfaces. This is the single most-broken rule in the palette.
+- **The accent belongs to ink; paper is monochrome.** Pistachio `#B7D77A` on dark. On light
+  `--color-accent` resolves to **ink**, so warm white carries no colour and emphasis is a
+  17.5:1 tonal step against mute-deep. Pistachio measures 1.4:1 on warm white and is
+  *prohibited* there — the single most-broken rule in the palette, and now impossible to
+  break by reaching for the accent token.
+  - This reverses the olive light-surface accent, at the studio's request: it was legal at
+    6.4:1 but read as a tint rather than as emphasis, while carrying every index number,
+    eyebrow and active state on half the site. Nothing depended on the hue — every active
+    state already carries weight, a drawn rule or `aria-current` — so it cost a
+    reinforcement, not a signal, and the focus ring improved from 6.4:1 to 17.5:1.
 - **The studio's mark is three stacked plates**, supplied as vector by the studio and kept
   verbatim in `public/brand/` as the source of truth. It is rendered through `UthanMark`,
   which makes exactly two changes to the supplied file, both about theming: the plates take
@@ -184,12 +194,19 @@ it deliberately and say why — reversing something in this file is a decision, 
   figures between them. They answered one question in two places across roughly three
   screens; merged, the statement holds the left and the nine areas become a browsable
   column on the right. `ExpertiseIndex` is gone; `ExpertiseBrowser` replaces it.
-  - **Equal halves, and two grounds** — paper left, ink right, each bleeding to its own
-    viewport edge, the colour change doing the dividing instead of a rule. The only section
-    on the site carrying both surfaces, so the right half declares `surface-dark` itself
-    rather than inheriting the Section's. The split sits outside `Container` (the only way a
-    ground reaches the viewport edge), with each half's content capped at half the container
-    width and hugged to the centre line so alignment still matches every other section.
+  - **Equal halves on one paper ground, divided by a vertical hairline.** A split-surface
+    version — paper left, ink right, each bleeding to its own viewport edge — was built and
+    rejected by the studio: two grounds inside one section read as two sections shoved
+    together, and it made the right half recede rather than sit beside its neighbour. Worth
+    keeping in the record because the mechanics were sound and may be wanted elsewhere: the
+    split has to live outside `Container` for a ground to reach the viewport edge, with each
+    half's content capped at half the container width and hugged to the centre line so
+    alignment still matches every other section.
+  - **All nine areas must be on screen at once.** An index you scroll to finish reading is a
+    list, and the point of the shape is that the whole set stays visible while one is open.
+    So the photograph is sized in `vh` rather than by aspect ratio: on a short viewport it
+    gives up height and the rows stay put. Measured at 1366×640 the panel is 634px with the
+    frame down to its 128px floor — still nine rows, still no scroll.
   - The right panel is a real tablist — hover opens a row on a fine pointer, Up/Down, Home
     and End work from the keyboard, roving `tabindex` keeps it to one tab stop. The old
     rows were deliberately *not* focusable on the reasoning that a tab stop swapping a

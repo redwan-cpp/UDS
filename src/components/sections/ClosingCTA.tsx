@@ -20,7 +20,7 @@ import { Reveal } from "@/components/motion/Reveal";
  */
 export function ClosingCTA({ closing }: { closing: string }) {
   return (
-    <Section surface="dark" spacing="pivotal" labelledBy="closing-heading">
+    <Section surface="light" spacing="pivotal" labelledBy="closing-heading">
       <Container>
         <Reveal>
           <div className="flex items-baseline gap-4 pb-4">

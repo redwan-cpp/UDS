@@ -78,9 +78,9 @@ Verified with WCAG relative luminance. These are measurements, not estimates.
 | **pistachio on ink** | **12.3** | Text ✓ · focus ring ✓ |
 | **ink on pistachio** | **12.3** | Button label on pistachio fill ✓ |
 | pistachio on ink-raised | 11.1 | Text ✓ |
-| **olive on paper** | **6.4** | Text ✓ |
-| olive on paper-dim | 5.9 | Text ✓ |
-| **paper on olive** | **6.4** | Button label on olive fill ✓ |
+| **ink on paper** | **17.5** | The light surface's accent — index numbers, active states, focus ring ✓ |
+| **paper on line (#2A2A28)** | **12.8** | Button label on the light surface's accent-hover fill ✓ |
+| olive on paper | 6.4 | Legal, but no longer used — see the rule below |
 | mute on ink | 5.7 | Body & metadata text ✓ |
 | mute-deep on paper | 4.5 | Body & metadata text ✓ — at the floor, never lighten |
 | mute on paper | 3.1 | **UI only.** Never text |
@@ -89,16 +89,29 @@ Verified with WCAG relative luminance. These are measurements, not estimates.
 | line on ink | 1.4 | Decorative rules only |
 | line-light on paper | 1.4 | Decorative rules only |
 
-**The rule underneath the table:** the accent flips with the surface. Dark surface →
-pistachio. Light surface → olive. A designer reaching for pistachio on warm white has
-picked the wrong token, not a lighter shade.
+**The rule underneath the table:** the accent belongs to ink. Dark surface → pistachio.
+**Light surface → no colour at all**: `--color-accent` resolves to ink on paper, so warm
+white is monochrome and emphasis is carried by a 17.5:1 tonal step against mute-deep rather
+than by a hue.
+
+This replaced an olive accent that was legal at 6.4:1 but never earned its place — a muted
+green on warm white reads as a tint rather than as emphasis, and it was carrying every index
+number, eyebrow and active state on half the site. One accent, spent on the ground that can
+actually hold it. Nothing depends on the hue: every active state already carries weight, a
+drawn rule or `aria-current` beside it (§8), so this removes a reinforcement, not a signal —
+and the focus ring gets stronger, 17.5:1 against olive's 6.4.
+
+A designer reaching for pistachio on warm white has picked the wrong surface, not a lighter
+shade.
 
 Any pairing not in this table must be measured and added before it ships.
 
 ### Distribution
 
-Roughly 70% ink surfaces, 25% paper surfaces, 5% accent. The accent appears at most twice
-per viewport. Its job is to mark the single most important thing in view — a primary action,
+Surfaces alternate strictly down the homepage — hero ink, spread paper, projects ink,
+figures paper, news ink, closing paper, footer ink — so the scroll is a run of black and
+white beats rather than one continuous tone. Colour appears only on the ink beats: the
+accent appears at most twice per viewport, and never on paper at all. Its job is to mark the single most important thing in view — a primary action,
 an active state, a focus ring, a live counter — not to decorate.
 
 Surfaces alternate deliberately down the homepage so the scroll has light and dark beats

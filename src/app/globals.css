@@ -211,9 +211,22 @@
    Light surface: the accent darkens to olive, because pistachio measures 1.4:1
    on warm white and is prohibited there. Secondary text darkens too, because
    muted gray only reaches 3.1:1 on warm white. */
+/* Paper is monochrome. The accent resolves to ink here, not to a green.
+   Pistachio is the studio's one accent and it belongs on ink, where it reads
+   as a mark; its darkened counterpart on warm white (olive) was carrying every
+   index number, eyebrow and active state on half the site and never earned
+   it — a muted green on warm white reads as a tint, not as emphasis. So the
+   light surface spends no colour at all: emphasis is ink against mute-deep,
+   which is a 17.5:1 step rather than a hue change, and the accent is kept for
+   the ground that can actually hold it.
+
+   Nothing depends on this being a colour. Every active state on the site
+   already carries weight, a drawn rule or `aria-current` alongside the accent
+   (design.md §8), so removing the hue removes a reinforcement, not the signal.
+   The focus ring gets *better*: ink on paper is 17.5:1 against olive's 6.4. */
 .surface-light {
-  --color-accent: var(--color-olive); /* 6.4:1 on paper */
-  --color-accent-hover: #3f4b22; /* 8.3:1 on paper */
+  --color-accent: var(--color-ink); /* 17.5:1 on paper */
+  --color-accent-hover: var(--color-line); /* #2A2A28 — 12.8:1 under a paper label */
   --color-on-accent: var(--color-paper);
   --color-secondary: var(--color-mute-deep); /* 4.5:1 on paper */
   --color-hairline: var(--color-line-light);

@@ -10,7 +10,7 @@ export function LatestNews({ items }: { items: NewsItem[] }) {
   if (items.length === 0) return null;
 
   return (
-    <Section surface="light" spacing="standard" labelledBy="news-heading">
+    <Section surface="dark" spacing="standard" labelledBy="news-heading">
       <Container>
         <Reveal>
           <SectionHead

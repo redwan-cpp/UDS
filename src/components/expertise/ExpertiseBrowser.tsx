@@ -36,6 +36,13 @@ import type { ExpertiseArea } from "@/types/content";
  * Hover also opens a row, on a fine pointer — the same gesture the site index
  * already uses to preview a route, and what keeps this feeling like something
  * to run down rather than nine buttons to click.
+ *
+ * **The frame flexes; the index does not.** All nine areas have to be on
+ * screen at once — an index you scroll to finish reading is a list, and the
+ * point of this shape is that the whole set is visible while one of them is
+ * open. So the photograph is sized in `vh` rather than by aspect ratio: on a
+ * short viewport it gives up height and the nine rows stay put, instead of
+ * holding its proportion and pushing the last of them below the fold.
  */
 export function ExpertiseBrowser({
   areas,
@@ -102,9 +109,9 @@ export function ExpertiseBrowser({
         id={panelId}
         role="tabpanel"
         aria-labelledby={tabId(active)}
-        className="pt-8"
+        className="pt-6"
       >
-        <div className="relative aspect-[16/9] w-full overflow-hidden bg-ink-soft">
+        <div className="relative h-[clamp(7rem,20vh,16rem)] w-full overflow-hidden bg-paper-dim">
           {areas.map((item, i) => (
             <div
               key={item.id}
@@ -113,15 +120,16 @@ export function ExpertiseBrowser({
             >
               <Media
                 asset={item.image}
-                ratio="wide"
+                ratio="auto"
+                className="h-full w-full"
                 priority={i === 0}
-                sizes="(min-width: 1024px) 32vw, 100vw"
+                sizes="(min-width: 1024px) 46vw, 100vw"
               />
             </div>
           ))}
         </div>
 
-        <p className="mt-5 max-w-[46ch] text-small text-secondary text-pretty">
+        <p className="mt-4 max-w-[52ch] text-small text-secondary text-pretty">
           {area.description}
         </p>
       </div>
@@ -134,7 +142,7 @@ export function ExpertiseBrowser({
         aria-labelledby={`${baseId}-heading`}
         aria-orientation="vertical"
         onKeyDown={onKeyDown}
-        className="mt-8 flex flex-col"
+        className="mt-6 flex flex-col"
       >
         {areas.map((item, i) => {
           const current = i === active;
@@ -153,7 +161,7 @@ export function ExpertiseBrowser({
               onClick={() => setActive(i)}
               onMouseEnter={() => setActive(i)}
               onFocus={() => setActive(i)}
-              className="group/area grid w-full grid-cols-[auto_1fr] items-baseline gap-x-4 border-t border-hairline py-2.5 text-left last:border-b"
+              className="group/area grid w-full grid-cols-[auto_1fr] items-baseline gap-x-4 border-t border-hairline py-2 text-left last:border-b"
             >
               <span
                 data-numeric
