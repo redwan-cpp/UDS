@@ -358,26 +358,13 @@ export interface NavItem {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Contact flow (UI only in Phase 1)                                           */
+/* Contact form (UI only in Phase 1)                                           */
 /* -------------------------------------------------------------------------- */
 
-export interface ContactOption {
+/** One option in the enquiry form's topic select. */
+export interface EnquiryTopic {
   value: string;
   label: string;
-  description?: string;
-}
-
-export type ContactStepKind = "choice" | "text" | "longtext" | "details" | "review";
-
-export interface ContactStep {
-  id: string;
-  index: string;
-  kind: ContactStepKind;
-  question: string;
-  helper?: string;
-  optional?: boolean;
-  options?: ContactOption[];
-  placeholder?: string;
 }
 
 /* -------------------------------------------------------------------------- */

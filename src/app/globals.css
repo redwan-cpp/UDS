@@ -775,18 +775,28 @@
 
   /* --- The location map ----------------------------------------------------
      Google's stock palette (blue roads, mint parks, white ground) is the one
-     thing on the contact page not drawn in the site's language. Greyscale was
-     the first attempt and read as dead — a switched-off map rather than a
-     designed one.
+     thing on the contact page not drawn in the site's language.
 
-     This tints it into the accent instead: flatten to luminance, re-tint warm
-     with sepia, then rotate that warmth (~40°) up to the accent's own hue
-     (olive/pistachio sit at ~81°). Saturation is kept well under 1 on purpose
-     — the map has to stay a map, and street labels stop being readable long
-     before the tint stops being visible. */
+     It was tinted green — flattened to luminance, re-warmed with sepia, then
+     hue-rotated up to the olive/pistachio hue at ~81°. That was written when
+     the accent still applied to light surfaces. It does not any more: the
+     light surface went monochrome, olive was retired, and a green-tinted map
+     on warm white was the largest remaining piece of a colour this site no
+     longer uses.
+
+     Monochrome now, with one qualification. Flat `grayscale(1)` is what this
+     originally rejected as reading dead, and that was a fair read — pure
+     neutral grey next to #F3F1E8 looks like a switched-off map, because the
+     paper it sits on is warm and the map is not. So the grey is warmed by a
+     little sepia: not enough to be a hue, just enough to belong to the same
+     ground. Contrast is pulled slightly under 1 so the map recedes behind the
+     enquiry beside it rather than competing with it, and brightness is left
+     near neutral because street labels are the first thing to go.
+
+     This is a drawing of a place, which is the register the rest of the site
+     is already in. */
   .uds-map {
-    filter: grayscale(1) sepia(0.92) hue-rotate(37deg) saturate(1.1)
-      brightness(1.02) contrast(0.97);
+    filter: grayscale(1) sepia(0.18) brightness(1.01) contrast(0.92);
   }
 
   /* --- Collaborator marquee ------------------------------------------------

@@ -4,13 +4,16 @@ import type { StudioProfile } from "@/types/content";
  * The studio location panel.
  *
  * Rendered in the site's own register rather than Google's: the tile layer is
- * desaturated to black and white and sits behind the same hairline frame the
- * rest of the interface uses, so it reads as a drawing rather than as a
- * third-party widget dropped into the page.
+ * flattened to a warm monochrome by `.uds-map` and sits behind the same
+ * hairline frame the rest of the interface uses, so it reads as a drawing
+ * rather than as a third-party widget dropped into the page.
  *
- * OpenStreetMap, not Google Maps: the embed needs no API key, no billing
- * account and sets no advertising cookies — which keeps the privacy page's
- * claim that this build loads no third-party trackers true.
+ * This is a Google Maps embed. A previous version of this note claimed it was
+ * OpenStreetMap and that it therefore set no third-party cookies, which was
+ * false in both halves and contradicted the site's own privacy page — that
+ * page correctly discloses the Google embed as the only third-party content on
+ * the site, and is the accurate one. Anyone swapping the provider should
+ * update the privacy page with it.
  *
  * When `coordinates` are absent — which is the case today, because the studio
  * address is still a placeholder — the panel says so rather than centring on a
@@ -62,7 +65,7 @@ export function StudioMap({
     : "Map showing the studio location in Dhaka, Bangladesh";
 
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden border border-hairline bg-ink-soft lg:aspect-auto lg:h-full lg:min-h-[26rem]">
+    <div className="relative aspect-[4/3] w-full overflow-hidden border border-hairline bg-paper-dim lg:aspect-auto lg:h-full lg:min-h-[26rem]">
       <iframe
         // The title is the accessible name — an untitled iframe is announced
         // as "frame" and nothing else.
@@ -70,7 +73,7 @@ export function StudioMap({
         src={mapEmbedUrl}
         loading="lazy"
         referrerPolicy="strict-origin-when-cross-origin"
-        // `uds-map` tints Google's stock palette into the site accent. The
+        // `uds-map` flattens Google's stock palette to warm monochrome. The
         // width/height attributes on the supplied embed are dropped in favour
         // of filling the panel, so the map is responsive rather than a fixed
         // 600×450 block that overflows its column.

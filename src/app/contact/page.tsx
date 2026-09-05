@@ -3,11 +3,12 @@ import type { Metadata } from "next";
 import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
-import { ContactFlow } from "@/components/contact/ContactFlow";
+import { ContactForm } from "@/components/contact/ContactForm";
 import { StudioMap } from "@/components/contact/StudioMap";
 import { SocialIcon } from "@/components/contact/SocialIcon";
 import { Eyebrow } from "@/components/typography";
 import { studio } from "@/data/studio";
+import { enquiryTopics } from "@/data/contact";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -21,10 +22,10 @@ export default function ContactPage() {
         index="07"
         eyebrow="Start a conversation"
         title="Contact"
-        intro="A few questions rather than one long form. It takes about a minute, and it means the right person reads it first."
+        intro="Four fields and a message. It takes a few seconds, and it reaches the right person first."
         aside={
           <DemoNotice>
-            UI prototype. Nothing typed into this flow is sent, stored or
+            UI prototype. Nothing typed into this form is sent, stored or
             emailed — the enquiry backend is a later phase.
           </DemoNotice>
         }
@@ -33,15 +34,18 @@ export default function ContactPage() {
       {/* The enquiry on the left, where the studio is on the right. Two things
           a visitor arrives wanting — "how do I start this" and "where are
           you" — answered side by side instead of stacked a screen apart.
-          The map column is sticky so it stays with the flow as the questions
-          advance, and collapses under it entirely on narrow screens. */}
+          The map column is sticky so it stays with the form, and collapses
+          under it entirely on narrow screens. */}
       <Section surface="light" spacing="none" labelledBy="enquiry-heading">
         <h2 id="enquiry-heading" className="sr-only">
           Enquiry
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <ContactFlow email={studio.contact.email} />
+            <ContactForm
+              topics={enquiryTopics}
+              email={studio.contact.email}
+            />
           </div>
           <div className="lg:col-span-5">
             <div className="h-full px-(--gutter) pb-16 lg:sticky lg:top-28 lg:pb-0 lg:pl-0">
