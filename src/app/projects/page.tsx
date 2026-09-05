@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
 import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid";
+import { navIndex } from "@/data/navigation";
 import {
   countPortfolio,
   filterPortfolio,
@@ -47,7 +48,7 @@ export default async function ProjectsPage({
   return (
     <>
       <PageHero
-        index="02"
+        index={navIndex("/projects")}
         eyebrow="Selected work"
         title="Projects"
         intro="Everything the studio has built. The projects documented at length — the thinking, the drawings, and what happened on site — link through to their full case study."

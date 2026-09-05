@@ -9,6 +9,7 @@ import { SocialIcon } from "@/components/contact/SocialIcon";
 import { Eyebrow } from "@/components/typography";
 import { studio } from "@/data/studio";
 import { enquiryTopics } from "@/data/contact";
+import { navIndex } from "@/data/navigation";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -19,7 +20,7 @@ export default function ContactPage() {
   return (
     <>
       <PageHero
-        index="07"
+        index={navIndex("/contact")}
         eyebrow="Start a conversation"
         title="Contact"
         intro="Four fields and a message. It takes a few seconds, and it reaches the right person first."

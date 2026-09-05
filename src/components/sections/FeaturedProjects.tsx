@@ -36,7 +36,7 @@ export function FeaturedProjects({ projects }: { projects: Project[] }) {
       <Container>
         <Reveal>
           <SectionHead
-            index="04"
+            index="03"
             eyebrow="Selected work"
             title="Projects"
             id="projects-heading"

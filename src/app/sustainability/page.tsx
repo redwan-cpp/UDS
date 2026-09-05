@@ -7,6 +7,7 @@ import { Media } from "@/components/ui/Media";
 import { Reveal } from "@/components/motion/Reveal";
 import { Statement, Eyebrow } from "@/components/typography";
 import { getSustainabilityPrinciples } from "@/data/sustainability";
+import { navIndex } from "@/data/navigation";
 
 export const metadata: Metadata = {
   title: "Sustainability",
@@ -20,7 +21,7 @@ export default function SustainabilityPage() {
   return (
     <>
       <PageHero
-        index="05"
+        index={navIndex("/sustainability")}
         eyebrow="Position"
         title="Sustainability"
         intro="Environmental decisions are made in the drawings, early, where they are still cheap to change — not added at specification stage."

@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal";
 import { NewsCard } from "@/components/news/NewsCard";
 import { getNews } from "@/data/news";
+import { navIndex } from "@/data/navigation";
 
 export const metadata: Metadata = {
   title: "Collaboration & News",
@@ -19,7 +20,7 @@ export default function NewsPage() {
   return (
     <>
       <PageHero
-        index="06"
+        index={navIndex("/news")}
         eyebrow="From the studio"
         title="Collaboration & News"
         intro="Agreements, exhibitions, site milestones and things we have published."

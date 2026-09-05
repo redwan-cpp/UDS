@@ -14,7 +14,7 @@ export function LatestNews({ items }: { items: NewsItem[] }) {
       <Container>
         <Reveal>
           <SectionHead
-            index="07"
+            index="04"
             eyebrow="From the studio"
             title="Collaboration & News"
             id="news-heading"

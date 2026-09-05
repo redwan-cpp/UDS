@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal";
 import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
 import { ProductCard } from "@/components/products/ProductCard";
+import { navIndex } from "@/data/navigation";
 import {
   countProducts,
   filterProducts,
@@ -31,7 +32,7 @@ export default async function ProductsPage({
   return (
     <>
       <PageHero
-        index="04"
+        index={navIndex("/products")}
         eyebrow="Made, not bought"
         title="Products"
         intro="Two lines that come out of the studio's own projects: the doors people touch every day, and the folded metal that quietly decides how a facade reads."

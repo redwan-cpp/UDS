@@ -13,6 +13,7 @@ import { team } from "@/data/team";
 import { statistics } from "@/data/statistics";
 import { expertise } from "@/data/expertise";
 import { img } from "@/data/media";
+import { navIndex } from "@/data/navigation";
 
 export const metadata: Metadata = {
   title: "About",
@@ -24,7 +25,7 @@ export default function AboutPage() {
   return (
     <>
       <PageHero
-        index="01"
+        index={navIndex("/about")}
         eyebrow="The practice"
         title="About"
         intro={studio.statement[0]}

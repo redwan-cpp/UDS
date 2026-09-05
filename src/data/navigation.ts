@@ -55,3 +55,23 @@ export const navigation: NavItem[] = [
   },
 ];
 
+
+/**
+ * The index a page carries in its hero, looked up from the nav rather than
+ * written out again on the page.
+ *
+ * These were literals on each route, and they drifted: the site index used to
+ * carry a seventh item, Expertise, at 03. When it was removed the nav
+ * resequenced to 01–06 and the page heroes did not, so every page from
+ * Products onward was showing a number one higher than its own entry in the
+ * menu the visitor had just used to get there. That is the second time this
+ * numbering has gone stale after a section was deleted, so it is derived now
+ * and there is nothing left to forget to update.
+ *
+ * Falls back to an em dash, which is what the unnumbered utility pages
+ * (privacy, terms, careers) already display — they are deliberately outside
+ * the index, not missing from it.
+ */
+export function navIndex(href: string): string {
+  return navigation.find((item) => item.href === href)?.index ?? "—";
+}

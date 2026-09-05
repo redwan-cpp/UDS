@@ -35,7 +35,7 @@ export function ClosingCTA({ closing }: { closing: string }) {
         <Reveal>
           <div className="flex items-baseline gap-4 pb-4">
             <span data-numeric className="text-meta uppercase text-accent">
-              08
+              05
             </span>
             <Eyebrow>Start a project</Eyebrow>
           </div>
