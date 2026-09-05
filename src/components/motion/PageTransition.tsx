@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
 import { NeonMark } from "@/components/motion/NeonMark";
+import { prefersReducedMotion } from "@/lib/gsap";
 
 /** How long the panel holds, fully covering, before wiping away. */
 const COVER_MS = 420;
@@ -12,12 +13,6 @@ const WIPE_MS = 550;
 
 type Phase = "idle" | "covering" | "wiping";
 
-function reducedMotion() {
-  return (
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
-}
 
 /**
  * Route change reveal.
@@ -64,7 +59,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
 
   if (previousPathname !== pathname) {
     setPreviousPathname(pathname);
-    if (!reducedMotion()) setPhase("covering");
+    if (!prefersReducedMotion()) setPhase("covering");
   }
 
   // The *next* step after entering a phase is a genuine side effect (a timer),

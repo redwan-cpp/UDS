@@ -11,7 +11,7 @@ import type { Project } from "@/types/content";
 
 import { img, imgs } from "./media";
 
-export const projects: Project[] = [
+const projects: Project[] = [
   {
     id: "p1",
     slug: "courtyard-house",
@@ -286,10 +286,6 @@ export function getProjects(): Project[] {
   return [...projects].sort((a, b) => a.order - b.order);
 }
 
-export function getFeaturedProjects(limit?: number): Project[] {
-  const featured = getProjects().filter((p) => p.featured);
-  return typeof limit === "number" ? featured.slice(0, limit) : featured;
-}
 
 export function getProjectBySlug(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug);

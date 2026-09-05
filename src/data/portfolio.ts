@@ -8,7 +8,7 @@ import type { PortfolioItem, ProjectCategory } from "@/types/content";
 
 import { img } from "./media";
 
-export const portfolio: PortfolioItem[] = [
+const portfolio: PortfolioItem[] = [
   {
     id: "f1", slug: "courtyard-house", isDemo: true, projectSlug: "courtyard-house",
     title: "Courtyard House", category: "residential", year: "2024",

@@ -10,7 +10,7 @@ import type { NewsItem } from "@/types/content";
 
 import { img, imgs } from "./media";
 
-export const news: NewsItem[] = [
+const news: NewsItem[] = [
   {
     id: "n1",
     slug: "memorandum-with-a-regional-university",

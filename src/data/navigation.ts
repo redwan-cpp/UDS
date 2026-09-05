@@ -55,7 +55,3 @@ export const navigation: NavItem[] = [
   },
 ];
 
-/** Shown in the header on wide screens. The full index lives in the overlay. */
-export const primaryNavigation: NavItem[] = navigation.filter((item) =>
-  ["/projects", "/about", "/contact"].includes(item.href),
-);

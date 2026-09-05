@@ -15,7 +15,7 @@ import type { Product, ProductCategory } from "@/types/content";
 
 import { img, imgs } from "./media";
 
-export const products: Product[] = [
+const products: Product[] = [
   {
     id: "doors",
     slug: "custom-doors",

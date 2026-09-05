@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+import { prefersReducedMotion } from "@/lib/gsap";
+
 /**
  * Elements the pickbox "snaps" to. Kept as one list rather than duplicated
  * between here and the CSS `cursor: pointer` override below, so the two
@@ -55,8 +57,7 @@ export function CrosshairCursor() {
     if (!el) return;
 
     const fine = window.matchMedia("(pointer: fine)");
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!fine.matches || reduced.matches) return;
+    if (!fine.matches || prefersReducedMotion()) return;
 
     const coords = el.querySelector<HTMLElement>("[data-crosshair-coords]");
 

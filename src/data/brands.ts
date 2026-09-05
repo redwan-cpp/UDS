@@ -5,9 +5,12 @@
    most damaging kind of fabrication a studio site can carry.
 
    Logos are deliberately absent: shipping a real company's mark as false proof
-   of a relationship is misleading, and a made-up mark is worthless. The
-   BrandIndex therefore sets each name in type, which is how architecture
-   practices usually list collaborators anyway.
+   of a relationship is misleading, and a made-up mark is worthless. Each name
+   is therefore set in type, which is how architecture practices usually list
+   collaborators anyway.
+
+   One consumer remains: the homepage marquee (`LogoMarquee`, via `Numbers`).
+   The `BrandIndex` list and the Collaborators section that held it are gone.
    ============================================================================= */
 
 import type { Brand } from "@/types/content";

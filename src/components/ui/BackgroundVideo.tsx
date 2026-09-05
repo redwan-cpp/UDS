@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 
 import type { MediaAsset, VideoAsset } from "@/types/content";
+import { prefersReducedMotion } from "@/lib/gsap";
 
 /**
  * Full-bleed background video with a real static fallback.
@@ -32,7 +33,7 @@ export function BackgroundVideo({
     const el = ref.current;
     if (!el) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (prefersReducedMotion()) {
       el.pause();
       return;
     }

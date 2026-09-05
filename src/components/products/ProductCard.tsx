@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 import { Media } from "@/components/ui/Media";
+import { prefersReducedMotion } from "@/lib/gsap";
 import { Arrow } from "@/components/ui/Button";
 import type { Product } from "@/types/content";
 
@@ -49,13 +50,6 @@ export function ProductCard({
   const frames = product.gallery.length > 0 ? product.gallery : [product.hero];
   const [active, setActive] = useState(0);
   const timerRef = useRef<number | null>(null);
-  const reducedRef = useRef(false);
-
-  useEffect(() => {
-    reducedRef.current = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-  }, []);
 
   const stop = () => {
     if (timerRef.current !== null) {
@@ -67,7 +61,7 @@ export function ProductCard({
 
   const start = (event: React.PointerEvent) => {
     if (event.pointerType !== "mouse") return;
-    if (reducedRef.current || frames.length <= 1) return;
+    if (prefersReducedMotion() || frames.length <= 1) return;
     timerRef.current = window.setInterval(() => {
       setActive((i) => (i + 1) % frames.length);
     }, CYCLE_MS);

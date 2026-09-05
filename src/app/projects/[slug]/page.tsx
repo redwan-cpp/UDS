@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { ProjectHero } from "@/components/projects/ProjectHero";
 import { ProjectFacts } from "@/components/projects/ProjectFacts";
-import { ProcessGallery } from "@/components/projects/ProjectGallery";
+import { ProcessGallery } from "@/components/projects/ProcessGallery";
 import { ProjectSlideshow } from "@/components/projects/ProjectSlideshow";
 import { RelatedProjects } from "@/components/projects/RelatedProjects";
 import { Section } from "@/components/ui/Section";

@@ -1,8 +1,4 @@
-import type {
-  ProductCategory,
-  ProjectCategory,
-  ProjectStatus,
-} from "@/types/content";
+import type { ProjectCategory, ProjectStatus } from "@/types/content";
 
 /**
  * Display strings for enum values.
@@ -20,11 +16,6 @@ export const categoryLabels: Record<ProjectCategory, string> = {
   urban: "Urban",
   landscape: "Landscape",
   other: "Other",
-};
-
-export const productCategoryLabels: Record<ProductCategory, string> = {
-  doors: "Doors",
-  metalwork: "Metalwork",
 };
 
 export const statusLabels: Record<ProjectStatus, string> = {

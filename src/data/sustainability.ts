@@ -13,7 +13,7 @@ import type { SustainabilityPrinciple } from "@/types/content";
 
 import { img } from "./media";
 
-export const sustainability: SustainabilityPrinciple[] = [
+const sustainability: SustainabilityPrinciple[] = [
   {
     id: "material",
     index: "01",
