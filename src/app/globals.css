@@ -909,19 +909,26 @@
     z-index: 95;
     display: none;
     pointer-events: none;
-    /* Defaults to the dark-surface accent — the hero underneath the header,
-       where a visitor's pointer usually starts, is ink. `data-surface`,
-       written from a hit-test in CrosshairCursor.tsx against the nearest
+    /* Monochrome, flipped by the surface underneath. `data-surface` is written
+       from a hit-test in CrosshairCursor.tsx against the nearest
        `.surface-dark` / `.surface-light` ancestor of whatever is actually
-       under the pointer, flips this the same way every section's own accent
-       already flips: pistachio on dark, olive on light — the site's real
-       colour contract, not a blend-mode invert standing in for it. */
-    color: var(--color-pistachio);
+       under the pointer, so the reticle is paper on ink and ink on paper —
+       17.5:1 either way, and a real hit-test rather than a blend-mode invert
+       standing in for one.
+
+       This was pistachio on dark and olive on light. Two things were wrong
+       with that. An instrument is not an accent: design.md gives the accent
+       one job, marking the single most important thing in view, and a reticle
+       that follows the pointer everywhere is the one element on the page
+       guaranteed never to be that. And olive was retired when the light
+       surface went monochrome — this rule was the last thing in the codebase
+       still consuming the token, which is why it survived the sweep. */
+    color: var(--color-paper);
     will-change: transform;
   }
 
   .uds-crosshair[data-surface="light"] {
-    color: var(--color-olive);
+    color: var(--color-ink);
   }
 
   .uds-crosshair[data-active] {
@@ -1007,24 +1014,25 @@
     }
   }
 
-  /* Hide the system cursor over the page surface only. Anything interactive
-     keeps its own — a pointer over a link is a stronger affordance than a
-     reticle, and losing it is the usual reason custom cursors are a downgrade. */
-  html[data-crosshair],
-  html[data-crosshair] body {
-    cursor: none;
-  }
+  /* Hide the system cursor everywhere, not just over the page surface.
+     Interactive elements used to keep their own, on the reasoning that a
+     pointer over a link is a stronger affordance than a reticle. In practice
+     that meant the OS arrow drew on top of the crosshair over every link,
+     button and field — two cursors stacked, which is worse than either alone
+     and is what the studio asked to be rid of.
 
-  html[data-crosshair] a,
-  html[data-crosshair] button,
-  html[data-crosshair] input,
-  html[data-crosshair] select,
-  html[data-crosshair] textarea,
-  html[data-crosshair] summary,
-  html[data-crosshair] [role="button"],
-  html[data-crosshair] [tabindex]:not([tabindex="-1"]) {
-    cursor: pointer;
-  }
+     The affordance is not lost: passing over anything interactive fills the
+     pickbox solid and swaps the readout to SELECT, which is the crosshair
+     saying the same thing in its own register.
+
+     The universal selector rather than a list of element names, because the
+     list was already drifting — three components set `cursor-pointer`,
+     `cursor-grab` and `cursor-grabbing` as utilities, and a single-class
+     utility outranks a bare element selector. `html[data-crosshair] *` beats
+     all of them and needs no maintenance when the next one appears.
+
+     The rule itself is at the end of this file, outside every layer — see the
+     note there for why it cannot live in here. */
 
   /* The intro overlay only exists for a first visit with motion enabled.
      Default is `display: none`, so a no-JS or reduced-motion visitor never
@@ -1119,4 +1127,31 @@
       transparent 100%
     );
   }
+}
+
+/* Hide the system cursor while the crosshair is mounted.
+ *
+ * Deliberately OUTSIDE every `@layer`. This lived in `@layer components` and
+ * silently did nothing to three elements: the drag strip in `ProjectSlideshow`
+ * kept `grab`, and the `summary` in `ViewMore` and the option labels in
+ * `ContactFlow` kept `pointer` — so the OS cursor still drew on top of the
+ * reticle exactly where a visitor is most likely to be looking.
+ *
+ * It was not a specificity problem, and raising specificity would not have
+ * fixed it. `html[data-crosshair] *` already outranks `.cursor-pointer`, but
+ * Tailwind's `utilities` layer is ordered after `components`, and layer order
+ * is resolved before specificity is ever consulted. Unlayered styles beat
+ * every layered one, which is the only way to win here without `!important`.
+ *
+ * The universal selector rather than a list of element names: the list was
+ * already drifting from the components, and this needs no maintenance when the
+ * next `cursor-*` utility appears.
+ *
+ * `data-crosshair` is set by CrosshairCursor only after it mounts on a fine
+ * pointer with motion enabled, so a touch, no-JS or reduced-motion visitor
+ * keeps their ordinary cursor and never lands on a page that hid the pointer
+ * without drawing one. */
+html[data-crosshair],
+html[data-crosshair] * {
+  cursor: none;
 }

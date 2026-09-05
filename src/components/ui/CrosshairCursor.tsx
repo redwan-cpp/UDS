@@ -5,11 +5,12 @@ import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "@/lib/gsap";
 
 /**
- * Elements the pickbox "snaps" to. Kept as one list rather than duplicated
- * between here and the CSS `cursor: pointer` override below, so the two
- * cannot silently drift apart — a target the CSS treats as clickable but this
- * selector misses would keep the crosshair in "measuring" mode over something
- * that is actually interactive.
+ * Elements the pickbox "snaps" to.
+ *
+ * This is now the only definition of "interactive" the cursor has. It used to
+ * be paired with a `cursor: pointer` list in the CSS that had to be kept
+ * identical; that list is gone, because the system cursor is hidden
+ * everywhere, so there is nothing left for this to drift against.
  */
 const SNAP_SELECTOR =
   'a[href], button, input, select, textarea, summary, [role="button"], [tabindex]:not([tabindex="-1"])';
@@ -32,22 +33,24 @@ const SNAP_SELECTOR =
  *   acquired" feedback CAD gives when the cursor finds an endpoint or a
  *   midpoint to lock onto, repurposed here for "there is something to click."
  *
- * **The colour flips with the surface it is over**, the same rule every
- * section on the page already follows for its own accent: pistachio on dark,
- * olive on light. A `data-surface` attribute, set from a hit-test against the
- * nearest `.surface-dark` / `.surface-light` ancestor of whatever is under
- * the pointer, drives which token `--color-accent`-equivalent CSS applies —
- * not a colour-blend trick standing in for the real rule.
+ * **It is monochrome, and flips with the surface it is over.** A
+ * `data-surface` attribute, set from a hit-test against the nearest
+ * `.surface-dark` / `.surface-light` ancestor of whatever is under the
+ * pointer, paints it paper on ink and ink on paper — 17.5:1 either way. It
+ * was pistachio and olive; an instrument is not an accent, and the accent has
+ * one job on this site that a reticle following the pointer can never be.
  *
  * `memory.md` previously rejected cursor followers outright; this reverses
  * that, at the studio's request, with the objections it raised still
  * answered: position, the readout's text and the surface hit-test are all
  * written directly to the DOM inside a single rAF-throttled handler — never
- * through React state, so none of this costs a re-render — and the system
- * cursor is only hidden over the page surface. Anything in `SNAP_SELECTOR`
- * keeps its own cursor **and** drives the crosshair's snap state, so the
- * affordance is reinforced rather than replaced. Never mounted for coarse
- * pointers or reduced motion.
+ * through React state, so none of this costs a re-render. Never mounted for
+ * coarse pointers or reduced motion.
+ *
+ * The system cursor is hidden everywhere rather than over the page surface
+ * only. Leaving it on interactive elements stacked the OS arrow on top of the
+ * reticle over every link and field; the snap state is what carries the
+ * affordance instead.
  */
 export function CrosshairCursor() {
   const ref = useRef<HTMLDivElement>(null);
