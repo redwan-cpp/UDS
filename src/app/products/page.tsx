@@ -4,7 +4,7 @@ import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal";
-import { CategoryFilter } from "@/components/ui/CategoryFilter";
+import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
 import { ProductCard } from "@/components/products/ProductCard";
 import {
   countProducts,
@@ -12,7 +12,6 @@ import {
   getProducts,
   productFilters,
 } from "@/data/products";
-import type { ProductCategory } from "@/types/content";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -20,20 +19,13 @@ export const metadata: Metadata = {
     "Custom doors and fabricated sheet work, designed and specified by Uthan Design Studio.",
 };
 
-/** Anything not in the filter set falls back to "all" rather than an error. */
-function readFilter(value: string | undefined): ProductCategory | "all" {
-  if (!value) return "all";
-  const match = productFilters.find((f) => f.value === value);
-  return match ? match.value : "all";
-}
-
 export default async function ProductsPage({
   searchParams,
 }: {
   searchParams: Promise<{ category?: string }>;
 }) {
   const { category } = await searchParams;
-  const active = readFilter(category);
+  const active = readCategory(category, productFilters);
   const products = filterProducts(getProducts(), active);
 
   return (

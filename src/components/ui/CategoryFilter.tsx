@@ -1,5 +1,25 @@
 import Link from "next/link";
 
+/**
+ * Read a `?category=` value back into a known filter, falling back to "all".
+ *
+ * Lives beside the component that writes those URLs, because the two are one
+ * contract: this is the only thing that decides what the query string is
+ * allowed to say. It was the same five lines copied into the project index
+ * and the product index, differing only in which list they scanned — and an
+ * unrecognised value has to fall back rather than throw, since the query
+ * string is user-editable and a 500 on `?category=nonsense` would be a fine
+ * way to hand out an error page.
+ */
+export function readCategory<T extends string>(
+  value: string | undefined,
+  filters: readonly { value: T | "all" }[],
+): T | "all" {
+  if (!value) return "all";
+  const match = filters.find((f) => f.value === value);
+  return match ? match.value : "all";
+}
+
 export interface CategoryFilterOption {
   /** The query value. `"all"` links back to the bare route. */
   value: string;

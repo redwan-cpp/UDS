@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
-import { CategoryFilter } from "@/components/ui/CategoryFilter";
+import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
 import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid";
 import {
   countPortfolio,
@@ -11,20 +11,12 @@ import {
   getPortfolio,
   portfolioFilters,
 } from "@/data/portfolio";
-import type { ProjectCategory } from "@/types/content";
 
 export const metadata: Metadata = {
   title: "Projects",
   description:
     "The full index of work by Uthan Design Studio, filterable by category. Selected projects are documented in full.",
 };
-
-/** Anything not in the filter set falls back to "all" rather than an error. */
-function readFilter(value: string | undefined): ProjectCategory | "all" {
-  if (!value) return "all";
-  const match = portfolioFilters.find((f) => f.value === value);
-  return match ? match.value : "all";
-}
 
 /**
  * Projects — one index for all the work.
@@ -48,7 +40,7 @@ export default async function ProjectsPage({
   searchParams: Promise<{ category?: string }>;
 }) {
   const { category } = await searchParams;
-  const active = readFilter(category);
+  const active = readCategory(category, portfolioFilters);
   const items = filterPortfolio(getPortfolio(), active);
   const documented = items.filter((item) => item.projectSlug).length;
 
