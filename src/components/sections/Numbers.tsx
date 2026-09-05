@@ -3,7 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Counter } from "@/components/motion/Counter";
 import { Reveal } from "@/components/motion/Reveal";
 import { Eyebrow } from "@/components/typography";
-import { LogoMarquee } from "@/components/brands/LogoMarquee";
+import { LogoStrip } from "@/components/brands/LogoStrip";
 import { TerraceMotif } from "@/components/ui/TerraceMotif";
 import type { Brand, Statistic } from "@/types/content";
 
@@ -82,12 +82,16 @@ export function Numbers({
         </dl>
       </Container>
 
-      {/* Full-bleed, so the names run edge to edge rather than stopping at the
-          container — the band is the slider, not a box inside it. */}
+      {/* Inside the container now, not full-bleed. The row used to run edge to
+          edge because it was a marquee and the band itself was the slider; a
+          scroll container has to align to the grid the rest of the page uses,
+          or its scrollbar starts and ends somewhere no other rule does. The
+          negative gutter margin inside `LogoStrip` still lets the cards bleed
+          to the viewport edge while the bar sits on the measure. */}
       {brands.length > 0 && (
-        <div className="mt-14 border-t border-hairline pt-12">
-          <LogoMarquee brands={brands} />
-        </div>
+        <Container className="relative mt-14 border-t border-hairline pt-12">
+          <LogoStrip brands={brands} />
+        </Container>
       )}
     </Section>
   );

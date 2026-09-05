@@ -799,61 +799,6 @@
     filter: grayscale(1) sepia(0.18) brightness(1.01) contrast(0.92);
   }
 
-  /* --- Collaborator marquee ------------------------------------------------
-     Two identical passes translated by exactly -50% of the track, so the
-     second copy arrives where the first started and the loop is seamless.
-     Transform only, so it composites; `mask-image` fades both ends into the
-     surface instead of cutting names off at a hard edge. */
-  .uds-marquee {
-    overflow: hidden;
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 8%,
-      black 92%,
-      transparent
-    );
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      black 8%,
-      black 92%,
-      transparent
-    );
-  }
-
-  .uds-marquee__track {
-    display: flex;
-    width: max-content;
-    animation: uds-marquee 42s linear infinite;
-    will-change: transform;
-  }
-
-  /* Hovering stops it, so a name can actually be read. */
-  .uds-marquee:hover .uds-marquee__track {
-    animation-play-state: paused;
-  }
-
-  .uds-marquee__pass {
-    display: flex;
-    align-items: center;
-  }
-
-  .uds-marquee__item {
-    display: flex;
-    align-items: center;
-    padding-inline-end: 2.5rem;
-  }
-
-  @keyframes uds-marquee {
-    from {
-      transform: translate3d(0, 0, 0);
-    }
-    to {
-      transform: translate3d(-50%, 0, 0);
-    }
-  }
-
   /* Entry animations for elements that appear on mount rather than on scroll.
      A keyframe rather than a transition, deliberately: a transition needs a
      state to change *after* the element exists, which in React means a
@@ -887,19 +832,6 @@
     .uds-lightbox,
     .uds-lightbox * {
       animation: none !important;
-    }
-  }
-
-  /* Reduced motion: no animation at all, and the strip becomes scrollable so
-     the content behind the loop is still reachable. */
-  @media (prefers-reduced-motion: reduce) {
-    .uds-marquee {
-      overflow-x: auto;
-    }
-
-    .uds-marquee__track {
-      animation: none;
-      will-change: auto;
     }
   }
 
