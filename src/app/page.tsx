@@ -1,7 +1,6 @@
 import { HomeHero } from "@/components/hero/HomeHero";
 import { AboutStatement } from "@/components/sections/AboutStatement";
 import { Numbers } from "@/components/sections/Numbers";
-import { ExpertiseIndex } from "@/components/sections/ExpertiseIndex";
 import { FeaturedProjects } from "@/components/sections/FeaturedProjects";
 import { LatestNews } from "@/components/sections/LatestNews";
 import { ClosingCTA } from "@/components/sections/ClosingCTA";
@@ -12,7 +11,6 @@ import { expertise } from "@/data/expertise";
 import { brands } from "@/data/brands";
 import { getProjects } from "@/data/projects";
 import { getFeaturedNews } from "@/data/news";
-import { img } from "@/data/media";
 import { heroVideo } from "@/data/hero";
 
 /**
@@ -41,19 +39,16 @@ export default function HomePage() {
         services={studio.services}
       />
 
+      {/* One spread: what the studio is on the left, what it does on the
+          right. These were two full-width bands with the figures between
+          them — see AboutStatement for why they merged. */}
       <AboutStatement
         statement={studio.statement}
         approach={studio.approach}
-        image={img(
-          "about",
-          1,
-          "A stone spiral staircase, viewed straight down through the full height of its cylindrical void",
-        )}
+        areas={expertise}
       />
 
       <Numbers statistics={statistics} brands={brands} />
-
-      <ExpertiseIndex areas={expertise} />
 
       <FeaturedProjects projects={featuredProjects} />
 

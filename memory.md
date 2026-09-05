@@ -22,9 +22,11 @@ it deliberately and say why — reversing something in this file is a decision, 
   index uses. Two lines and two categories is a thin filter and that is the honest state of
   it — inventing a third category to make the row look busier would be claiming a capability
   the studio has not.
-- Homepage section order is client-specified. **Revised by the studio:** Hero → About →
-  Numbers (+ collaborator marquee) → Expertise → Major Projects → Latest News → Closing CTA
-  → Footer. The Management Team band was removed from the homepage and now lives only on
+- Homepage section order is client-specified. **Revised by the studio:** Hero → the opening
+  spread (About statement + expertise browser, one section) → Numbers (+ collaborator
+  marquee) → Major Projects → Latest News → Closing CTA → Footer. About and Expertise were
+  two separate bands with the figures between them until the studio asked for them merged;
+  see Layout decisions. The Management Team band was removed from the homepage and lives on
   About (`/about`), which already carried a fuller version — the homepage was showing a
   truncated second copy. The collaborator names survive on the homepage as the marquee
   under the figures.
@@ -174,6 +176,28 @@ it deliberately and say why — reversing something in this file is a decision, 
 ---
 
 ## Layout decisions
+
+- **The About statement and the expertise index are one spread**, not two bands with the
+  figures between them. They answered one question in two places across roughly three
+  screens; merged, the statement holds the left and the nine areas become a browsable
+  column on the right, divided by a vertical hairline at `lg` and stacked below it.
+  `ExpertiseIndex` is gone; `ExpertiseBrowser` replaces it.
+  - The right panel is a real tablist — hover opens a row on a fine pointer, Up/Down, Home
+    and End work from the keyboard, roving `tabindex` keeps it to one tab stop. The old
+    rows were deliberately *not* focusable on the reasoning that a tab stop swapping a
+    decorative image is a trap with no payoff; that stopped being true the moment the
+    description travelled with the image, since a keyboard user who cannot reach the rail
+    cannot reach eight ninths of the content.
+  - The rail carries **titles, not bare numerals**. The first attempt was a row of nine
+    numbers, which hid what the areas are and gave a 16×25px target — under the WCAG 2.2
+    floor and under this site's own 44px rule. Caught by the audit, not by review. Rows
+    fix both structurally rather than by padding a too-small control.
+  - The columns are 7/4 rather than 6/5, with a 16:9 frame rather than 4:3, because the
+    first split left the right column 360px taller than the left — bare ground under the
+    statement, bounded by the divider, which reads as a hole rather than as negative space.
+    Now 166px, which reads as a panel running slightly longer than its neighbour.
+  - The homepage About photograph went with it. That frame is still curated elsewhere, so
+    nothing is orphaned; the spread carries nine photographs now instead of one.
 
 - **Vertical rhythm and display type are fluid on both axes, not on width alone.** Section
   padding was fixed breakpoint steps, which made it a function of viewport *width* and

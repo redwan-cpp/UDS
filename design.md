@@ -346,6 +346,25 @@ supplied file is drawn for a light page and the footer is always ink.
 fixed header on top of the same mark at scale in the footer meant it read twice on every
 page; the header's job is to hold the name and get out of the way of the work behind it.
 
+### The opening spread
+
+The About statement and the expertise index are one section, not two bands: two panels on
+one light ground, each with its own index and eyebrow, divided by a **vertical hairline**
+rather than a box. They were answering one question in two places and taking three screens
+to do it — the statement says what the studio is, the areas say what it does.
+
+The rule appears only at `lg`, where the two are genuinely side by side. Below that they
+stack, and the divider becomes the horizontal rule each panel already carries under its own
+label, so the separation survives the reflow without being restated.
+
+The right panel is a **tablist**, not a list: the open area's photograph and description
+show, and the nine titles stay visible as a hairline-separated index you run down. Hover
+opens a row on a fine pointer — the same gesture the site index uses to preview a route —
+and Up/Down, Home and End do it from the keyboard, with a roving tab stop so the index
+costs one stop rather than nine. The rows carry titles rather than bare numerals for two
+reasons: a numeral hides what the area actually is, and a two-digit target is 16×25px,
+under both the WCAG 2.2 floor and this site's own 44px rule.
+
 ### Cards — used sparingly, and only where they earn it
 
 A card is permitted only where the content is genuinely a discrete, repeated, linked object:
