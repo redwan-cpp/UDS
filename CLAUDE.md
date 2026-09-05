@@ -40,6 +40,12 @@ anything under `public/` is publicly downloadable as-is, which defeats transcodi
 `scripts/audit.js` is pasted into the browser console to check contrast, heading order,
 accessible names, target sizes and horizontal overflow. It must report zero HIGH findings.
 
+`node scripts/check-robots.mjs` (dev server running) checks that the crawl rules still
+block the rough-work sheets and still leave the finished photography indexable. Run it
+after touching `src/app/robots.ts`, the `process-*` assets, or how `ProcessGallery` renders
+them — the failure it guards against is silent, because the markup references those images
+through the optimizer (`/_next/image?url=…`) and never by the path a rule names first.
+
 ## The five rules broken most often
 
 1. **Only routes read `src/data/**`.** Components take typed props.
