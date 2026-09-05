@@ -9,6 +9,7 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { Flip, gsap, prefersReducedMotion } from "@/lib/gsap";
 import type { TeamMember } from "@/types/content";
+import { CloseIcon } from "@/components/ui/Button";
 
 /**
  * A team member, expanding in place to a detail view on click.
@@ -135,10 +136,7 @@ function TeamMemberCard({
                 className="group/close absolute top-6 right-6 -m-2 flex size-11 items-center justify-center text-secondary transition-colors hover:text-accent sm:top-8 sm:right-8"
               >
                 <span className="sr-only">Close</span>
-                <span aria-hidden="true" className="relative block size-4">
-                  <span className="absolute top-1/2 left-0 block h-px w-full rotate-45 bg-current" />
-                  <span className="absolute top-1/2 left-0 block h-px w-full -rotate-45 bg-current" />
-                </span>
+                <CloseIcon />
               </button>
             )}
 

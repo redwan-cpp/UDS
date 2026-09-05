@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 
-import { Arrow } from "@/components/ui/Button";
+import { Arrow, CloseIcon } from "@/components/ui/Button";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import type { MediaAsset } from "@/types/content";
@@ -127,10 +127,7 @@ export function Lightbox({
           className="group/close -mr-2 flex min-h-11 items-center gap-3 px-2 text-nav uppercase transition-colors duration-[var(--dur-fast)] hover:text-accent"
         >
           Close
-          <span aria-hidden="true" className="relative block size-4">
-            <span className="absolute top-1/2 left-0 block h-px w-full rotate-45 bg-current" />
-            <span className="absolute top-1/2 left-0 block h-px w-full -rotate-45 bg-current" />
-          </span>
+          <CloseIcon />
         </button>
       </div>
 

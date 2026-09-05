@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Media } from "@/components/ui/Media";
+import { Arrow } from "@/components/ui/Button";
 import { ProjectSymbol } from "./ProjectSymbol";
 import { categoryLabels } from "@/lib/labels";
 import type { Project } from "@/types/content";
@@ -98,19 +99,7 @@ export function WorkCard({
 
               <span className="ml-auto inline-flex items-center gap-2 text-meta uppercase text-paper">
                 View
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  className="size-3.5 transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-1 motion-reduce:transition-none"
-                >
-                  <path
-                    d="M3 8h10M9 4l4 4-4 4"
-                    stroke="currentColor"
-                    strokeWidth="1.25"
-                    strokeLinecap="square"
-                  />
-                </svg>
+                <Arrow className="transition-transform duration-[var(--dur-base)] ease-out-soft group-hover:translate-x-1 motion-reduce:transition-none" />
               </span>
             </div>
           </div>

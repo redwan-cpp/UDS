@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import type { SearchEntry, SearchKind } from "@/types/content";
+import { CloseIcon } from "@/components/ui/Button";
 
 const KIND_LABELS: Record<SearchKind, string> = {
   page: "Page",
@@ -201,10 +202,7 @@ export function SearchPanel({
               className="-mr-1 flex size-9 shrink-0 items-center justify-center text-secondary transition-colors hover:text-accent"
             >
               <span className="sr-only">Clear search</span>
-              <span aria-hidden="true" className="relative block size-3.5">
-                <span className="absolute top-1/2 left-0 block h-px w-full rotate-45 bg-current" />
-                <span className="absolute top-1/2 left-0 block h-px w-full -rotate-45 bg-current" />
-              </span>
+              <CloseIcon className="size-3.5" />
             </button>
           )}
         </div>

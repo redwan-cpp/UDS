@@ -4,6 +4,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { Media } from "@/components/ui/Media";
 import { Lightbox } from "@/components/ui/Lightbox";
+import { Arrow } from "@/components/ui/Button";
 import type { MediaAsset } from "@/types/content";
 
 /** Past this much horizontal travel, a drag counts as a change of slide. */
@@ -347,24 +348,14 @@ function SlideButton({
       className="group/nav flex size-11 items-center justify-center border border-hairline transition-colors duration-[var(--dur-base)] hover:border-accent hover:text-accent"
     >
       <span className="sr-only">{label}</span>
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 16 16"
-        fill="none"
+      <Arrow
         className={[
-          "size-4 transition-transform duration-[var(--dur-base)] ease-out-soft motion-reduce:transition-none",
+          "transition-transform duration-[var(--dur-base)] ease-out-soft motion-reduce:transition-none",
           direction === "prev"
             ? "rotate-180 group-hover/nav:-translate-x-0.5"
             : "group-hover/nav:translate-x-0.5",
         ].join(" ")}
-      >
-        <path
-          d="M3 8h10M9 4l4 4-4 4"
-          stroke="currentColor"
-          strokeWidth="1.25"
-          strokeLinecap="square"
-        />
-      </svg>
+      />
     </button>
   );
 }

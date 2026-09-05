@@ -75,6 +75,30 @@ export function Button({
   );
 }
 
+/**
+ * The close cross: two hairlines, drawn rather than a glyph, at the same
+ * weight as every other rule on the site.
+ *
+ * Lived as four hand-copied pairs of rotated spans — in the menu overlay, the
+ * search panel, the expanded team card and the image viewer. Identical markup
+ * every time, differing only in size, which is exactly how an icon set drifts
+ * out of one stroke weight.
+ *
+ * The size arrives as the whole `className` rather than being appended to a
+ * default, deliberately: Tailwind resolves competing `size-*` utilities by
+ * stylesheet order, not by the order they appear in the attribute, so a
+ * built-in `size-4` plus a caller's `size-3.5` is a coin toss rather than an
+ * override.
+ */
+export function CloseIcon({ className = "size-4" }: { className?: string }) {
+  return (
+    <span aria-hidden="true" className={`relative block ${className}`}>
+      <span className="absolute top-1/2 left-0 block h-px w-full rotate-45 bg-current" />
+      <span className="absolute top-1/2 left-0 block h-px w-full -rotate-45 bg-current" />
+    </span>
+  );
+}
+
 /** The arrow used on quiet links and index rows. Decorative — never the only cue. */
 export function Arrow({ className = "" }: { className?: string }) {
   return (
