@@ -1023,6 +1023,64 @@
      Firefox takes `scrollbar-width`/`scrollbar-color`; WebKit and Blink take
      the pseudo-elements. Both are declared, because the two families do not
      read each other's syntax. */
+  /* --- The collaborator strip ----------------------------------------------
+     A scroller that moves on its own until someone reaches for it.
+
+     The scrollbar is present at all times and simply has no colour until the
+     row is hovered or focused — rather than appearing on hover, which would
+     mean the track claiming 3px of height it did not have a moment earlier and
+     shunting the whole band down as the pointer arrives. Reserving the space
+     and fading the ink is the same idea without the shift.
+
+     Both edges fade rather than the single right-hand fade `.uds-scroll-fade`
+     draws. That one marks "there is more this way" on a row that starts at a
+     known left edge; this row has no start and no end, so an unfaded left edge
+     would show names arriving out of a hard vertical cut. */
+  .uds-strip {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color var(--dur-base) var(--ease-out-soft);
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 6%,
+      #000 94%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 6%,
+      #000 94%,
+      transparent
+    );
+  }
+
+  .uds-strip:hover,
+  .uds-strip:focus-within {
+    scrollbar-color: var(--color-secondary) var(--color-hairline);
+  }
+
+  .uds-strip::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .uds-strip::-webkit-scrollbar-track,
+  .uds-strip::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+
+  .uds-strip:hover::-webkit-scrollbar-track,
+  .uds-strip:focus-within::-webkit-scrollbar-track {
+    background: var(--color-hairline);
+  }
+
+  .uds-strip:hover::-webkit-scrollbar-thumb,
+  .uds-strip:focus-within::-webkit-scrollbar-thumb {
+    background: var(--color-secondary);
+  }
+
   .uds-scroll-x {
     overflow-x: auto;
     scrollbar-width: thin;
