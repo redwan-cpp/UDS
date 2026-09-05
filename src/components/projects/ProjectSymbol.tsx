@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import type { ProjectSymbol as ProjectSymbolContent } from "@/types/content";
 
 /**
@@ -18,8 +16,14 @@ import type { ProjectSymbol as ProjectSymbolContent } from "@/types/content";
  * project without one — a different invented glyph per project would be
  * asserting a design idea for that project that nobody at the studio chose.
  *
- * `currentColor` throughout, so an uploaded SVG picks up the accent on hover
- * the same way the drawn fallback does.
+ * `currentColor` throughout — and for an uploaded mark that takes a CSS mask
+ * to actually be true. This component rendered supplied artwork with `<Image>`,
+ * where the SVG is a separate document and its `currentColor` has nothing to
+ * inherit from, so it resolved to black. The one mark in the content is stroked
+ * entirely in `currentColor` and the project index is a dark section, so it was
+ * painting black on #0A0A0A: present in the DOM, invisible on the page, since
+ * the day it shipped. Masked, it takes the surface's colour and lifts to the
+ * accent on hover exactly as the drawn fallback beside it does.
  */
 export function ProjectSymbol({
   symbol,
@@ -30,12 +34,11 @@ export function ProjectSymbol({
 }) {
   if (symbol) {
     return (
-      <Image
-        src={symbol.asset.src}
-        alt={symbol.label}
-        width={symbol.asset.width}
-        height={symbol.asset.height}
-        className={`h-6 w-auto object-contain ${className}`}
+      <span
+        role="img"
+        aria-label={symbol.label}
+        className={`uds-mark block size-6 ${className}`}
+        style={{ "--mark": `url(${symbol.asset.src})` } as React.CSSProperties}
       />
     );
   }

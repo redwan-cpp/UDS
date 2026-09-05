@@ -1023,6 +1023,34 @@
      Firefox takes `scrollbar-width`/`scrollbar-color`; WebKit and Blink take
      the pseudo-elements. Both are declared, because the two families do not
      read each other's syntax. */
+  /* --- Monochrome marks ----------------------------------------------------
+     A supplied SVG mark, painted in the surface's own text colour.
+
+     Not an `<img>`. An SVG referenced by `<img src>` is an independent
+     document, so `currentColor` inside it has nothing to inherit from and
+     resolves to its own initial value — black. Measured, not assumed: the one
+     mark already in the content (`courtyard-house.svg`, stroked entirely in
+     `currentColor`) draws rgb(0,0,0) when rasterised, and the project index it
+     appears on is a `surface="dark"` section, so it was painting black on
+     #0A0A0A and had been effectively invisible since it shipped.
+
+     Masking is what makes the promise true. The artwork becomes an alpha
+     stencil over a `currentColor` fill, so a mark inherits the surface's text
+     colour, flips with `surface-dark` / `surface-light`, and lifts to the
+     accent on hover exactly like the drawn fallbacks beside it.
+
+     The trade is that a mark is monochrome by construction — a supplied logo
+     in brand colours is flattened to one tone. That is the correct default
+     here rather than a limitation: this site has one accent and it belongs to
+     ink, and a row of collaborator logos each in its own palette is precisely
+     the "agency template" the anti-brief rules out. A mark that must keep its
+     own colours wants an `<img>` and a decision to go with it. */
+  .uds-mark {
+    background-color: currentColor;
+    -webkit-mask: var(--mark) center / contain no-repeat;
+    mask: var(--mark) center / contain no-repeat;
+  }
+
   /* --- The collaborator strip ----------------------------------------------
      A scroller that moves on its own until someone reaches for it.
 

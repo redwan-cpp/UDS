@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 
 import { prefersReducedMotion } from "@/lib/gsap";
 import type { Brand } from "@/types/content";
@@ -40,11 +39,16 @@ const SPEED = 26;
  * strip degrades to the plain scroller it was, which is a complete way to read
  * the list rather than a lesser one.
  *
- * `Brand.logo` is the CMS field. A collaborator without one shows the name
- * alone — no invented mark, and no placeholder box either. The struck-through
- * plate that used to hold the slot was the least minimal thing in the row and
- * it repeated eight times; a name set on its own is how architecture practices
- * list consultants anyway, and the mark simply joins it when there is one.
+ * `Brand.logo` is the CMS field, and it is painted through `.uds-mark` rather
+ * than an `<img>` — see that rule for why, but briefly: an SVG inside an
+ * `<img>` is a separate document whose `currentColor` resolves to black, which
+ * is how the one mark already in this codebase had been invisible on a dark
+ * surface since it shipped. As a mask the artwork takes the surface's colour.
+ *
+ * A collaborator without a logo shows the name alone. The struck-through
+ * placeholder plate that used to hold the slot is gone: it was the least
+ * minimal thing in the row and it repeated eight times, and a name set on its
+ * own is how practices list consultants anyway.
  */
 export function LogoStrip({ brands }: { brands: Brand[] }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -145,18 +149,28 @@ export function LogoStrip({ brands }: { brands: Brand[] }) {
           {pass.items.map((brand) => (
             <li
               key={`${i}-${brand.id}`}
-              className="flex shrink-0 items-center gap-4 pr-12 lg:pr-16"
+              // `text-secondary` on the row, not on the name: the mark paints in
+              // `currentColor`, so setting the colour here is what keeps mark and
+              // name at one weight instead of an ink glyph beside mute type.
+              className="flex shrink-0 items-center gap-4 pr-12 text-secondary lg:pr-16"
             >
               {brand.logo && (
-                <Image
-                  src={brand.logo.src}
-                  alt=""
-                  width={brand.logo.width}
-                  height={brand.logo.height}
-                  className="h-7 w-auto max-w-[7rem] object-contain"
+                // `.uds-mark`, not `<img>`: an SVG in an `<img>` is a separate
+                // document and its `currentColor` resolves to black, which is
+                // how the one mark already in the content ended up invisible
+                // on a dark surface. As a mask it takes the surface's colour.
+                <span
+                  aria-hidden="true"
+                  className="uds-mark block h-7 shrink-0"
+                  style={
+                    {
+                      "--mark": `url(${brand.logo.src})`,
+                      width: `${(brand.logo.width / brand.logo.height) * 1.75}rem`,
+                    } as React.CSSProperties
+                  }
                 />
               )}
-              <span className="text-h3 whitespace-nowrap text-secondary">
+              <span className="text-h3 whitespace-nowrap">
                 {brand.name}
               </span>
               {/* The interval mark. A hairline rule rather than a filled dot:
