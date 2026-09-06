@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
 
 import {
-  editorAccess,
+  publishedOnlyAccess,
   isDemoField,
   labelValueRows,
   orderField,
@@ -28,7 +28,7 @@ export const Products: CollectionConfig = {
     defaultColumns: ["title", "category", "order"],
     group: "Work",
   },
-  access: editorAccess,
+  access: publishedOnlyAccess,
   fields: [
     {
       type: "row",

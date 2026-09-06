@@ -47,8 +47,34 @@ if (!secret) {
   );
 }
 
+/**
+ * The site's own origin in production.
+ *
+ * Empty in development, which is correct — Payload derives what it needs from
+ * the request. In production it has to be set, and two things depend on it
+ * rather than one: absolute URLs in transactional email, and the CSRF
+ * allowlist below. A deploy that forgets it gets working pages and a login
+ * that fails from a browser, which is a confusing way to find out.
+ */
+const serverURL = process.env.NEXT_PUBLIC_SERVER_URL ?? "";
+
 export default buildConfig({
   secret,
+  serverURL,
+
+  /**
+   * Cookie-authenticated requests are accepted only from these origins.
+   *
+   * Payload's default is an empty list, which is safe by accident rather than
+   * by design: with no origins allowed, cross-site requests are refused, and a
+   * foreign origin asking for `/api/projects` gets no
+   * `access-control-allow-origin` back — verified against a request carrying
+   * `Origin: https://evil.example`. Naming the site's own origin keeps that
+   * true once the app is not on localhost, instead of someone later widening
+   * it to `*` to make a deploy work.
+   */
+  cors: serverURL ? [serverURL] : [],
+  csrf: serverURL ? [serverURL] : [],
 
   admin: {
     user: Users.slug,

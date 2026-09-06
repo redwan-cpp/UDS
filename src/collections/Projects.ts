@@ -1,5 +1,7 @@
 import type { CollectionConfig } from "payload";
 
+import { publishedOnlyAccess } from "./fields";
+
 /**
  * Major Projects — the publication-grade case study.
  *
@@ -25,12 +27,7 @@ export const Projects: CollectionConfig = {
     defaultColumns: ["title", "category", "year", "status", "featured"],
     group: "Work",
   },
-  access: {
-    read: () => true,
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => req.user?.role === "admin",
-  },
+  access: publishedOnlyAccess,
   fields: [
     {
       type: "row",

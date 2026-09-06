@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
 
 import {
-  editorAccess,
+  publishedOnlyAccess,
   isDemoField,
   paragraphs,
   seoGroup,
@@ -29,7 +29,7 @@ export const News: CollectionConfig = {
     defaultColumns: ["title", "kind", "date", "featured"],
     group: "Studio",
   },
-  access: editorAccess,
+  access: publishedOnlyAccess,
   fields: [
     {
       type: "row",

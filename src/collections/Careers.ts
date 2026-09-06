@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 
-import { editorAccess, indexField, stringList } from "./fields";
+import { publishedOnlyAccess, indexField, stringList } from "./fields";
 
 /**
  * Open roles.
@@ -23,7 +23,7 @@ export const Careers: CollectionConfig = {
     group: "Studio",
     description: "Open roles. Unpublish rather than delete when a role closes.",
   },
-  access: editorAccess,
+  access: publishedOnlyAccess,
   defaultSort: "index",
   fields: [
     {
