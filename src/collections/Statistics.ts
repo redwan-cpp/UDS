@@ -5,7 +5,7 @@ import {
   revalidateCollectionDelete,
 } from "./hooks/revalidate";
 
-import { editorAccess, isDemoField, orderField } from "./fields";
+import { publishedOnlyAccess, isDemoField, orderField } from "./fields";
 
 /**
  * The figures band.
@@ -17,6 +17,12 @@ import { editorAccess, isDemoField, orderField } from "./fields";
  */
 export const Statistics: CollectionConfig = {
   slug: "statistics",
+  // Autosave, because losing typing is the complaint that makes people stop
+  // trusting a CMS. Payload only offers autosave on a drafts-enabled
+  // collection, so drafts are on everywhere rather than on the four that
+  // happened to have them — a consistent rule beats a remembered exception.
+  // The interval is short: it is saving a row of a form, not a document.
+  versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateCollection("statistics")],
     afterDelete: [revalidateCollectionDelete("statistics")],
@@ -26,7 +32,7 @@ export const Statistics: CollectionConfig = {
     defaultColumns: ["label", "value", "order"],
     group: "Studio",
   },
-  access: editorAccess,
+  access: publishedOnlyAccess,
   defaultSort: "order",
   fields: [
     {

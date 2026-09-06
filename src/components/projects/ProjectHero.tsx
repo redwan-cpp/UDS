@@ -3,7 +3,7 @@ import { Media } from "@/components/ui/Media";
 import { Reveal } from "@/components/motion/Reveal";
 import { RevealText } from "@/components/motion/RevealText";
 import { Eyebrow } from "@/components/typography";
-import { categoryLabels, statusLabels } from "@/lib/labels";
+import { categoryLine, statusLabels } from "@/lib/labels";
 import type { Project } from "@/types/content";
 
 /**
@@ -77,7 +77,7 @@ export function ProjectHero({ project }: { project: Project }) {
 
         {/* The facts that belong with the title, on the rule beneath it. */}
         <div className="flex flex-wrap items-baseline gap-x-10 gap-y-3 pt-5 pb-12">
-          <Eyebrow>{categoryLabels[project.category]}</Eyebrow>
+          <Eyebrow>{categoryLine(project.category)}</Eyebrow>
           <span className="text-meta uppercase text-secondary">
             {project.location}
           </span>

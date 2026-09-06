@@ -1,4 +1,4 @@
-import type { ProjectCategory, ProjectStatus } from "@/types/content";
+import type { Category, ProjectStatus } from "@/types/content";
 
 /**
  * Display strings for enum values.
@@ -7,16 +7,21 @@ import type { ProjectCategory, ProjectStatus } from "@/types/content";
  * so translating the site later is a change to one file rather than a hunt
  * through JSX.
  */
-export const categoryLabels: Record<ProjectCategory, string> = {
-  residential: "Residential",
-  commercial: "Commercial",
-  hospitality: "Hospitality",
-  interior: "Interior",
-  institutional: "Institutional",
-  urban: "Urban",
-  landscape: "Landscape",
-  other: "Other",
-};
+/**
+ * The categories an item is filed under, as one line.
+ *
+ * Replaces a `Record<ProjectCategory, string>` that mapped slugs to display
+ * names. That map could only work while the set of categories was closed and a
+ * developer owned it; the studio owns categories now, and each one carries its
+ * own label, so the lookup would have been a second place to edit — and the
+ * place that silently rendered `undefined` for anything added in the CMS.
+ *
+ * Joined with a middot rather than a comma: an item is in several categories at
+ * once, not in a list of them, and the separator should not read as prose.
+ */
+export function categoryLine(categories: Category[]): string {
+  return categories.map((c) => c.label).join(" · ");
+}
 
 export const statusLabels: Record<ProjectStatus, string> = {
   completed: "Completed",

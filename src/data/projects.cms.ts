@@ -5,6 +5,7 @@ import {
   client,
   toAsset,
   toAssets,
+  toCategories,
   toParagraphs,
   toRows,
   toSymbol,
@@ -41,7 +42,7 @@ function toProject(d: Doc): Project {
     isDemo: Boolean(d.isDemo),
     title: d.title,
     location: d.location,
-    category: d.category,
+    category: toCategories(d.category),
     year: d.year,
     status: d.status,
     summary: d.summary,
@@ -116,8 +117,11 @@ export const getRelatedProjects = cache(
     if (!current) return all.slice(0, limit);
 
     const others = all.filter((p) => p.slug !== slug);
-    const sameCategory = others.filter((p) => p.category === current.category);
-    const rest = others.filter((p) => p.category !== current.category);
+    // Shares any category, not all of them — an item in several should still
+    // surface under each.
+    const slugs = new Set(current.category.map((c) => c.slug));
+    const sameCategory = others.filter((p) => p.category.some((c) => slugs.has(c.slug)));
+    const rest = others.filter((p) => !p.category.some((c) => slugs.has(c.slug)));
 
     return [...sameCategory, ...rest].slice(0, limit);
   },

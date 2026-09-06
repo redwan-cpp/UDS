@@ -2,7 +2,7 @@ import { cache } from "react";
 import { getPayload } from "payload";
 import config from "@payload-config";
 
-import type { MediaAsset } from "@/types/content";
+import type { Category, MediaAsset } from "@/types/content";
 
 /**
  * The seam between Payload and the site.
@@ -116,6 +116,36 @@ export const toRows = (
   (rows ?? [])
     .map((r) => ({ label: r.label ?? "", value: r.value ?? "" }))
     .filter((r) => r.label || r.value);
+
+/**
+ * The categories an item is filed under.
+ *
+ * Unpopulated entries — a bare id, which is what a `depth: 0` query returns —
+ * are dropped rather than passed through. An id leaking into `?category=` would
+ * produce a filter matching nothing and a URL nobody can read, so an item with
+ * no resolvable category reads as uncategorised instead.
+ *
+ * Each carries its own label, so nothing downstream maps a slug to a display
+ * name from a table it has to keep in step.
+ */
+export function toCategories(
+  value:
+    | ({ slug?: string | null; label?: string | null } | number | string)[]
+    | { slug?: string | null; label?: string | null }
+    | number
+    | string
+    | null
+    | undefined,
+): Category[] {
+  const list = Array.isArray(value) ? value : value == null ? [] : [value];
+  return list
+    .filter(
+      (v): v is { slug?: string | null; label?: string | null } =>
+        typeof v === "object" && v !== null,
+    )
+    .map((v) => ({ slug: v.slug ?? "", label: v.label ?? v.slug ?? "" }))
+    .filter((c) => c.slug !== "");
+}
 
 /** A `symbol` group, or undefined when no mark has been supplied. */
 export function toSymbol(

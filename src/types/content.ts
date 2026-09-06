@@ -65,15 +65,27 @@ export interface ContentBase {
   seo?: Seo;
 }
 
-export type ProjectCategory =
-  | "residential"
-  | "commercial"
-  | "hospitality"
-  | "interior"
-  | "institutional"
-  | "urban"
-  | "landscape"
-  | "other";
+/**
+ * A category, as the studio defined it.
+ *
+ * Carries its own label rather than a slug the site maps to a display name from
+ * memory. There used to be such a map in `src/lib/labels.ts`, and it was a
+ * second place to edit every time a category changed — the kind of duplication
+ * that stays right until the day it does not.
+ */
+export interface Category {
+  /** The value used in the URL, e.g. `?category=residential`. */
+  slug: string;
+  label: string;
+}
+
+/**
+ * A category slug.
+ *
+ * A string rather than a union, because categories are the studio's to create
+ * and a union is a promise that only a developer may add one.
+ */
+export type ProjectCategory = string;
 
 export type ProjectStatus = "completed" | "in-progress" | "concept";
 
@@ -94,7 +106,8 @@ export interface ProjectFact {
 export interface Project extends ContentBase {
   title: string;
   location: string;
-  category: ProjectCategory;
+  /** An item can sit in several at once — a hospitality interior is both. */
+  category: Category[];
   year: string;
   status: ProjectStatus;
   /** One line. Used on cards and in the index. */
@@ -130,7 +143,7 @@ export interface PortfolioItem extends ContentBase {
   summary: string;
   location: string;
   areaSize: string;
-  category: ProjectCategory;
+  category: Category[];
   year: string;
   image: MediaAsset;
   /** Set when this item also exists as a full Project case study. */
@@ -173,11 +186,12 @@ export interface ProductSpec {
  * empty page, which is worse than not offering the filter at all. Extend this
  * when the studio adds a line, not in anticipation of one.
  */
-export type ProductCategory = "doors" | "metalwork";
+/** A product category slug. See `ProjectCategory` — same reasoning. */
+export type ProductCategory = string;
 
 export interface Product extends ContentBase {
   title: string;
-  category: ProductCategory;
+  category: Category[];
   /** One line, sits under the title. */
   summary: string;
   description: string[];

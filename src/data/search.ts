@@ -20,7 +20,7 @@ import { getNews, newsKindLabels } from "./news";
 import { expertise } from "./expertise";
 import { openings } from "./careers";
 import { studio } from "./studio";
-import { categoryLabels, statusLabels } from "@/lib/labels";
+import { statusLabels } from "@/lib/labels";
 
 /**
  * Short descriptions for the routes that are pages rather than content
@@ -90,7 +90,7 @@ export function getSearchIndex(): SearchEntry[] {
       keywords: [
         project.location,
         project.year,
-        categoryLabels[project.category],
+        ...project.category.map((c) => c.label),
         statusLabels[project.status],
         ...(project.services ?? []),
       ],
@@ -105,13 +105,17 @@ export function getSearchIndex(): SearchEntry[] {
       id: `work:${item.slug}`,
       title: item.title,
       kind: "project",
-      href: `/projects?category=${item.category}`,
+      // An item in several categories still needs one destination; the
+      // first is the one the editor put first.
+      href: item.category.length
+        ? `/projects?category=${item.category[0].slug}`
+        : "/projects",
       summary: item.summary,
       keywords: [
         item.location,
         item.year,
         item.areaSize,
-        categoryLabels[item.category],
+        ...item.category.map((c) => c.label),
       ],
     });
   }

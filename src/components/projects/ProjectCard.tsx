@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Media } from "@/components/ui/Media";
 import { ProjectSymbol } from "./ProjectSymbol";
-import { categoryLabels } from "@/lib/labels";
+import { categoryLine } from "@/lib/labels";
 import type { Project } from "@/types/content";
 
 /**
@@ -123,7 +123,7 @@ export function ProjectCard({
           <div>
             <dt className="sr-only">Category</dt>
             <dd className="text-meta uppercase text-secondary">
-              {categoryLabels[project.category]}
+              {categoryLine(project.category)}
             </dd>
           </div>
         </dl>

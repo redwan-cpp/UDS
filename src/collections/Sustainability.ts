@@ -5,7 +5,7 @@ import {
   revalidateCollectionDelete,
 } from "./hooks/revalidate";
 
-import { editorAccess, indexField, isDemoField, stringList } from "./fields";
+import { publishedOnlyAccess, indexField, isDemoField, stringList } from "./fields";
 
 /**
  * Sustainability principles.
@@ -19,6 +19,12 @@ import { editorAccess, indexField, isDemoField, stringList } from "./fields";
  */
 export const Sustainability: CollectionConfig = {
   slug: "sustainability",
+  // Autosave, because losing typing is the complaint that makes people stop
+  // trusting a CMS. Payload only offers autosave on a drafts-enabled
+  // collection, so drafts are on everywhere rather than on the four that
+  // happened to have them — a consistent rule beats a remembered exception.
+  // The interval is short: it is saving a row of a form, not a document.
+  versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateCollection("sustainability")],
     afterDelete: [revalidateCollectionDelete("sustainability")],
@@ -28,7 +34,7 @@ export const Sustainability: CollectionConfig = {
     defaultColumns: ["index", "title"],
     group: "Studio",
   },
-  access: editorAccess,
+  access: publishedOnlyAccess,
   defaultSort: "index",
   fields: [
     {

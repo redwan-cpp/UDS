@@ -60,3 +60,4 @@ next-env.d.ts
 /uthan.db
 /uthan.db-journal
 /media/
+/.users-backup.json

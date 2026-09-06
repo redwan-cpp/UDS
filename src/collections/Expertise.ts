@@ -5,7 +5,7 @@ import {
   revalidateCollectionDelete,
 } from "./hooks/revalidate";
 
-import { editorAccess, indexField, isDemoField } from "./fields";
+import { publishedOnlyAccess, indexField, isDemoField } from "./fields";
 
 /**
  * The areas of work — the nine that fill the homepage expertise browser.
@@ -18,6 +18,12 @@ import { editorAccess, indexField, isDemoField } from "./fields";
  */
 export const Expertise: CollectionConfig = {
   slug: "expertise",
+  // Autosave, because losing typing is the complaint that makes people stop
+  // trusting a CMS. Payload only offers autosave on a drafts-enabled
+  // collection, so drafts are on everywhere rather than on the four that
+  // happened to have them — a consistent rule beats a remembered exception.
+  // The interval is short: it is saving a row of a form, not a document.
+  versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateCollection("expertise")],
     afterDelete: [revalidateCollectionDelete("expertise")],
@@ -28,7 +34,7 @@ export const Expertise: CollectionConfig = {
     group: "Studio",
     description: "Ordered by index. Shown on the homepage and on /about.",
   },
-  access: editorAccess,
+  access: publishedOnlyAccess,
   defaultSort: "index",
   fields: [
     { type: "row", fields: [indexField, { name: "title", type: "text", required: true }] },

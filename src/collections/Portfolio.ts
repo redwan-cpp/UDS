@@ -5,7 +5,7 @@ import {
   revalidateCollectionDelete,
 } from "./hooks/revalidate";
 
-import { editorAccess, isDemoField, seoGroup, slugField } from "./fields";
+import { publishedOnlyAccess, isDemoField, seoGroup, slugField } from "./fields";
 
 /**
  * The portfolio index — the broader body of work.
@@ -20,6 +20,12 @@ import { editorAccess, isDemoField, seoGroup, slugField } from "./fields";
  */
 export const Portfolio: CollectionConfig = {
   slug: "portfolio",
+  // Autosave, because losing typing is the complaint that makes people stop
+  // trusting a CMS. Payload only offers autosave on a drafts-enabled
+  // collection, so drafts are on everywhere rather than on the four that
+  // happened to have them — a consistent rule beats a remembered exception.
+  // The interval is short: it is saving a row of a form, not a document.
+  versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateCollection("portfolio")],
     afterDelete: [revalidateCollectionDelete("portfolio")],
@@ -29,7 +35,7 @@ export const Portfolio: CollectionConfig = {
     defaultColumns: ["title", "category", "year", "location"],
     group: "Work",
   },
-  access: editorAccess,
+  access: publishedOnlyAccess,
   fields: [
     {
       type: "row",
@@ -50,18 +56,15 @@ export const Portfolio: CollectionConfig = {
       fields: [
         {
           name: "category",
-          type: "select",
+          type: "relationship",
+          relationTo: "categories",
+          hasMany: true,
           required: true,
-          options: [
-            "residential",
-            "commercial",
-            "hospitality",
-            "interior",
-            "institutional",
-            "urban",
-            "landscape",
-            "other",
-          ].map((v) => ({ label: v, value: v })),
+          // Only the categories scoped to this side of the site. Without the
+          // filter an editor picking a project category is offered "Custom
+          // doors", which is how a project ends up in a filter row that does
+          // not render it.
+          filterOptions: { scope: { equals: "project" } },
         },
         {
           name: "areaSize",

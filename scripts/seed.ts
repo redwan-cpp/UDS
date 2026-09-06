@@ -174,6 +174,56 @@ const note = (c: string) => {
 
 console.log("\nSeeding from src/data …\n");
 
+/* ------------------------------------------------------------ categories --- */
+
+/**
+ * Categories come first, because everything filed under one needs its id.
+ *
+ * Derived from what the legacy content actually uses rather than from a list
+ * written here, so the CMS ends up with exactly the categories the site had —
+ * no invented ones, and none missing. `inFilter` mirrors the visible set the
+ * portfolio filter used to hardcode; the rest stay reachable under "Other".
+ */
+const PROJECT_VISIBLE = ["residential", "commercial", "hospitality", "interior"];
+const categoryIds = new Map<string, number>();
+const usedCategories = new Map<string, { label: string; scope: string }>();
+
+for (const p of [...getProjects(), ...getPortfolio()])
+  for (const c of p.category)
+    usedCategories.set(c.slug, { label: c.label, scope: "project" });
+for (const p of getProducts())
+  for (const c of p.category)
+    usedCategories.set(c.slug, { label: c.label, scope: "product" });
+
+let catOrder = 0;
+for (const [slug, { label, scope }] of usedCategories) {
+  await upsert(
+    "categories",
+    { slug: { equals: slug } },
+    {
+      slug,
+      label,
+      scope,
+      inFilter: scope === "product" ? true : PROJECT_VISIBLE.includes(slug),
+      order: catOrder++,
+      _status: "published",
+    },
+  );
+  const found = await payload.find({
+    collection: "categories",
+    where: { slug: { equals: slug } },
+    limit: 1,
+    depth: 0,
+  });
+  categoryIds.set(slug, Number(found.docs[0].id));
+  note("categories");
+}
+
+/** Category slugs to the ids the relationship field stores. */
+const cats = (list: { slug: string }[]) =>
+  list.map((c) => categoryIds.get(c.slug)).filter((id): id is number => id != null);
+
+
 for (const p of getProjects()) {
   await upsert(
     "projects",
@@ -183,7 +233,7 @@ for (const p of getProjects()) {
       slug: p.slug,
       location: p.location,
       year: p.year,
-      category: p.category,
+      category: cats(p.category),
       status: p.status,
       summary: p.summary,
       description: paras(p.description),
@@ -217,7 +267,7 @@ for (const item of getPortfolio()) {
       slug: item.slug,
       location: item.location,
       year: item.year,
-      category: item.category,
+      category: cats(item.category),
       areaSize: item.areaSize,
       summary: item.summary,
       image: await upload(item.image),
@@ -226,6 +276,7 @@ for (const item of getPortfolio()) {
         ? { asset: await upload(item.symbol.asset), label: item.symbol.label }
         : undefined,
       isDemo: item.isDemo,
+      _status: "published",
     },
   );
   note("portfolio");
@@ -238,7 +289,7 @@ for (const p of getProducts()) {
     {
       title: p.title,
       slug: p.slug,
-      category: p.category,
+      category: cats(p.category),
       summary: p.summary,
       description: paras(p.description),
       materials: values(p.materials),
@@ -292,6 +343,7 @@ for (const m of team) {
       linkedin: m.linkedin,
       order: m.order,
       isDemo: m.isDemo,
+      _status: "published",
     },
   );
   note("team");
@@ -307,6 +359,7 @@ for (const a of expertise) {
       description: a.description,
       image: await upload(a.image),
       isDemo: a.isDemo,
+      _status: "published",
     },
   );
   note("expertise");
@@ -323,6 +376,7 @@ for (const p of getSustainabilityPrinciples()) {
       measures: values(p.measures),
       image: await upload(p.image),
       isDemo: p.isDemo,
+      _status: "published",
     },
   );
   note("sustainability");
@@ -339,6 +393,7 @@ for (const [i, s] of statistics.entries()) {
       suffix: s.suffix,
       order: i,
       isDemo: s.isDemo,
+      _status: "published",
     },
   );
   note("statistics");
@@ -354,6 +409,7 @@ for (const [i, b] of brands.entries()) {
       logo: await upload(b.logo),
       order: i,
       isDemo: b.isDemo,
+      _status: "published",
     },
   );
   note("brands");

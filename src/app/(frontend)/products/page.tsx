@@ -8,10 +8,8 @@ import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
 import { ProductCard } from "@/components/products/ProductCard";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
-import { getProducts } from "@/data/content.cms";
-// Pure functions over an array — no database involved, so they stay where they
-// were rather than following the accessor into the CMS module.
-import { countProducts, filterProducts, productFilters } from "@/data/products";
+import { getProducts, getCategoryFilters } from "@/data/content.cms";
+
 
 export const metadata: Metadata = {
   title: "Products",
@@ -25,8 +23,15 @@ export default async function ProductsPage({
   searchParams: Promise<{ category?: string }>;
 }) {
   const { category } = await searchParams;
-  const active = readCategory(category, productFilters);
-  const products = filterProducts(await getProducts(), active);
+  const [all, filters] = await Promise.all([
+    getProducts(),
+    getCategoryFilters("product"),
+  ]);
+  const active = readCategory(category, filters);
+  const products =
+    active === "all"
+      ? all
+      : all.filter((p) => p.category.some((c) => c.slug === active));
 
   return (
     <>
@@ -62,10 +67,17 @@ export default async function ProductsPage({
 
           <div className="flex flex-col gap-4 border-b border-hairline pb-3 md:flex-row md:items-baseline md:justify-between md:gap-8">
             <CategoryFilter
-              filters={productFilters.map((f) => ({
+              filters={filters.map((f) => ({
                 value: f.value,
                 label: f.label,
-                count: countProducts(f.value),
+                // Counted from what was actually loaded rather than by a
+                // second query per button: the full list is already in hand.
+                count:
+                  f.value === "all"
+                    ? all.length
+                    : all.filter((p) =>
+                        p.category.some((c) => c.slug === f.value),
+                      ).length,
               }))}
               active={active}
               basePath="/products"

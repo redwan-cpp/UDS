@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Media } from "@/components/ui/Media";
 import { Reveal } from "@/components/motion/Reveal";
 import { ProjectSymbol } from "@/components/projects/ProjectSymbol";
-import { categoryLabels } from "@/lib/labels";
+import { categoryLine } from "@/lib/labels";
 import type { PortfolioItem } from "@/types/content";
 
 /**
@@ -121,7 +121,7 @@ function PortfolioEntry({ item }: { item: PortfolioItem }) {
         <div className="ml-auto flex gap-2">
           <dt className="sr-only">Category</dt>
           <dd className="text-meta uppercase text-accent">
-            {categoryLabels[item.category]}
+            {categoryLine(item.category)}
           </dd>
         </div>
       </dl>

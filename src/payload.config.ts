@@ -7,6 +7,7 @@ import { buildConfig } from "payload";
 import sharp from "sharp";
 
 import { Brands } from "./collections/Brands";
+import { Categories } from "./collections/Categories";
 import { Careers } from "./collections/Careers";
 import { Expertise } from "./collections/Expertise";
 import { Media } from "./collections/Media";
@@ -97,6 +98,7 @@ export default buildConfig({
     Statistics,
     Brands,
     Careers,
+    Categories,
     Media,
     Users,
   ],

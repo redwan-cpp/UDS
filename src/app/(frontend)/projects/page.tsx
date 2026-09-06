@@ -7,9 +7,12 @@ import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
 import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
-import { getPortfolio } from "@/data/content.cms";
-// Pure functions over an array — no database involved.
-import { countPortfolio, filterPortfolio, portfolioFilters } from "@/data/portfolio";
+import {
+  getPortfolio,
+  getCategoryFilters,
+  getVisibleCategorySlugs,
+} from "@/data/content.cms";
+
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -39,8 +42,21 @@ export default async function ProjectsPage({
   searchParams: Promise<{ category?: string }>;
 }) {
   const { category } = await searchParams;
-  const active = readCategory(category, portfolioFilters);
-  const items = filterPortfolio(await getPortfolio(), active);
+  const [all, filters, visible] = await Promise.all([
+    getPortfolio(),
+    getCategoryFilters("project"),
+    getVisibleCategorySlugs("project"),
+  ]);
+  const active = readCategory(category, filters);
+  // Matching happens here rather than in a helper over a static array: the
+  // visible set is now a studio decision, so "Other" has to be computed
+  // against what they actually chose to show.
+  const items =
+    active === "all"
+      ? all
+      : active === "other"
+        ? all.filter((i) => !i.category.some((c) => visible.includes(c.slug)))
+        : all.filter((i) => i.category.some((c) => c.slug === active));
   const documented = items.filter((item) => item.projectSlug).length;
 
   return (
@@ -74,10 +90,19 @@ export default async function ProjectsPage({
 
           <div className="flex flex-col gap-4 border-b border-hairline pb-3 md:flex-row md:items-baseline md:justify-between md:gap-8">
             <CategoryFilter
-              filters={portfolioFilters.map((f) => ({
+              filters={filters.map((f) => ({
                 value: f.value,
                 label: f.label,
-                count: countPortfolio(f.value),
+                count:
+                  f.value === "all"
+                    ? all.length
+                    : f.value === "other"
+                      ? all.filter(
+                          (i) => !i.category.some((c) => visible.includes(c.slug)),
+                        ).length
+                      : all.filter((i) =>
+                          i.category.some((c) => c.slug === f.value),
+                        ).length,
               }))}
               active={active}
               basePath="/projects"

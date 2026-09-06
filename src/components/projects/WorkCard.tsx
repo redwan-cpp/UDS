@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Media } from "@/components/ui/Media";
 import { Arrow } from "@/components/ui/Button";
 import { ProjectSymbol } from "./ProjectSymbol";
-import { categoryLabels } from "@/lib/labels";
+import { categoryLine } from "@/lib/labels";
 import type { Project } from "@/types/content";
 
 /**
@@ -88,7 +88,7 @@ export function WorkCard({
                 {project.location}
               </span>
               <span className="text-meta uppercase text-accent">
-                {categoryLabels[project.category]}
+                {categoryLine(project.category)}
               </span>
               <span
                 data-numeric

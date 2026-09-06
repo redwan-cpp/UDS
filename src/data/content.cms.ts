@@ -15,6 +15,7 @@ import {
   client,
   toAsset,
   toAssets,
+  toCategories,
   toParagraphs,
   toRows,
   toSymbol,
@@ -52,6 +53,50 @@ const find = async (collection: string, opts: Record<string, unknown> = {}) => {
   return docs as Doc[];
 };
 
+/* ----------------------------------------------------------------- categories */
+
+/**
+ * The filter row for one side of the site.
+ *
+ * Built from the CMS rather than a hardcoded array, which is the whole point of
+ * the categories collection — a studio adding "Adaptive reuse" gets a button
+ * without a deploy.
+ *
+ * "All" leads, and "Other" is appended only when something is actually filed
+ * outside the visible buttons. Offering "Other" when it would match nothing is
+ * a dead control, and offering no "Other" when categories are hidden makes
+ * those items unreachable — `memory.md` records that as a real decision.
+ */
+export const getCategoryFilters = cache(
+  async (scope: "project" | "product"): Promise<{ value: string; label: string }[]> => {
+    const all = await find("categories", {
+      depth: 0,
+      where: { scope: { equals: scope } },
+      sort: "order",
+    });
+    const visible = all.filter((c) => c.inFilter);
+    const hidden = all.filter((c) => !c.inFilter);
+
+    return [
+      { value: "all", label: "All" },
+      ...visible.map((c) => ({ value: c.slug as string, label: c.label as string })),
+      ...(hidden.length ? [{ value: "other", label: "Other" }] : []),
+    ];
+  },
+);
+
+/** The slugs that earn their own button — everything else falls under "Other". */
+export const getVisibleCategorySlugs = cache(
+  async (scope: "project" | "product"): Promise<string[]> =>
+    (
+      await find("categories", {
+        depth: 0,
+        where: { scope: { equals: scope }, inFilter: { equals: true } },
+        sort: "order",
+      })
+    ).map((c) => c.slug as string),
+);
+
 /* ------------------------------------------------------------------ portfolio */
 
 const toPortfolio = (d: Doc): PortfolioItem => ({
@@ -62,7 +107,7 @@ const toPortfolio = (d: Doc): PortfolioItem => ({
   summary: d.summary,
   location: d.location,
   areaSize: d.areaSize,
-  category: d.category,
+  category: toCategories(d.category),
   year: d.year,
   image: toAsset(d.image),
   projectSlug: d.projectSlug ?? undefined,
@@ -80,7 +125,7 @@ const toProduct = (d: Doc): Product => ({
   slug: d.slug,
   isDemo: Boolean(d.isDemo),
   title: d.title,
-  category: d.category,
+  category: toCategories(d.category),
   summary: d.summary,
   description: toParagraphs(d.description),
   materials: toValues(d.materials),

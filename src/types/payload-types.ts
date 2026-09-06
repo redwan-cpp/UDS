@@ -77,6 +77,7 @@ export interface Config {
     statistics: Statistic;
     brands: Brand;
     careers: Career;
+    categories: Category;
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
@@ -96,6 +97,7 @@ export interface Config {
     statistics: StatisticsSelect<false> | StatisticsSelect<true>;
     brands: BrandsSelect<false> | BrandsSelect<true>;
     careers: CareersSelect<false> | CareersSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -158,8 +160,7 @@ export interface Project {
   slug: string;
   location: string;
   year: string;
-  category:
-    'residential' | 'commercial' | 'hospitality' | 'interior' | 'institutional' | 'urban' | 'landscape' | 'other';
+  category: (number | Category)[];
   status: 'completed' | 'in-progress' | 'concept';
   /**
    * One line. Used on cards and in the index.
@@ -231,6 +232,35 @@ export interface Project {
    * Placeholder content, not the studio's real work. Drives the demo notices.
    */
   isDemo?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * The categories projects and products can be filed under. Used by the filter rows on /projects and /products.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  label: string;
+  /**
+   * The value used in the URL, e.g. ?category=residential. Changing it breaks any link already shared with that address.
+   */
+  slug: string;
+  /**
+   * Which filter row this appears in.
+   */
+  scope: 'project' | 'product';
+  /**
+   * Show as its own button in the filter row. Unticked, items in this category are still reachable — they fall under Other.
+   */
+  inFilter?: boolean | null;
+  /**
+   * Lower sorts first.
+   */
+  order: number;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -319,8 +349,7 @@ export interface Portfolio {
   slug: string;
   location: string;
   year: string;
-  category:
-    'residential' | 'commercial' | 'hospitality' | 'interior' | 'institutional' | 'urban' | 'landscape' | 'other';
+  category: (number | Category)[];
   /**
    * As written, including the unit.
    */
@@ -359,6 +388,7 @@ export interface Portfolio {
   };
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -371,7 +401,7 @@ export interface Product {
    * The URL segment: /products/<slug>.
    */
   slug: string;
-  category: 'doors' | 'metalwork';
+  category: (number | Category)[];
   /**
    * One line, sits under the title.
    */
@@ -538,6 +568,7 @@ export interface Team {
   };
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * Ordered by index. Shown on the homepage and on /about.
@@ -560,6 +591,7 @@ export interface Expertise {
   isDemo?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -589,6 +621,7 @@ export interface Sustainability {
   isDemo?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -619,6 +652,7 @@ export interface Statistic {
   isDemo?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -645,6 +679,7 @@ export interface Brand {
   isDemo?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * Open roles. Unpublish rather than delete when a role closes.
@@ -766,6 +801,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'careers';
         value: number | Career;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
       } | null)
     | ({
         relationTo: 'media';
@@ -909,6 +948,7 @@ export interface PortfolioSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1026,6 +1066,7 @@ export interface TeamSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1039,6 +1080,7 @@ export interface ExpertiseSelect<T extends boolean = true> {
   isDemo?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1058,6 +1100,7 @@ export interface SustainabilitySelect<T extends boolean = true> {
   isDemo?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1072,6 +1115,7 @@ export interface StatisticsSelect<T extends boolean = true> {
   isDemo?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1085,6 +1129,7 @@ export interface BrandsSelect<T extends boolean = true> {
   isDemo?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1102,6 +1147,20 @@ export interface CareersSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  label?: T;
+  slug?: T;
+  scope?: T;
+  inFilter?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

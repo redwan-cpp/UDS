@@ -5,7 +5,7 @@ import {
   revalidateCollectionDelete,
 } from "./hooks/revalidate";
 
-import { editorAccess, isDemoField, orderField, seoGroup, slugField } from "./fields";
+import { publishedOnlyAccess, isDemoField, orderField, seoGroup, slugField } from "./fields";
 
 /**
  * The people.
@@ -24,6 +24,12 @@ import { editorAccess, isDemoField, orderField, seoGroup, slugField } from "./fi
  */
 export const Team: CollectionConfig = {
   slug: "team",
+  // Autosave, because losing typing is the complaint that makes people stop
+  // trusting a CMS. Payload only offers autosave on a drafts-enabled
+  // collection, so drafts are on everywhere rather than on the four that
+  // happened to have them — a consistent rule beats a remembered exception.
+  // The interval is short: it is saving a row of a form, not a document.
+  versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
     afterChange: [revalidateCollection("team")],
     afterDelete: [revalidateCollectionDelete("team")],
@@ -33,7 +39,7 @@ export const Team: CollectionConfig = {
     defaultColumns: ["name", "role", "order"],
     group: "Studio",
   },
-  access: editorAccess,
+  access: publishedOnlyAccess,
   fields: [
     {
       type: "row",

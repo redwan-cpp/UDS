@@ -25,7 +25,12 @@ export const Careers: CollectionConfig = {
     afterChange: [revalidateCollection("careers")],
     afterDelete: [revalidateCollectionDelete("careers")],
   },
-  versions: { drafts: true },
+  // Autosave, because losing typing is the complaint that makes people stop
+  // trusting a CMS. Payload only offers autosave on a drafts-enabled
+  // collection, so drafts are on everywhere rather than on the four that
+  // happened to have them — a consistent rule beats a remembered exception.
+  // The interval is short: it is saving a row of a form, not a document.
+  versions: { drafts: { autosave: { interval: 800 } } },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["index", "title", "discipline", "commitment"],

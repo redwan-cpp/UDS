@@ -21,7 +21,7 @@ const products: Product[] = [
     slug: "custom-doors",
     isDemo: true,
     title: "Custom Doors",
-    category: "doors",
+    category: [{ slug: "doors", label: "Custom doors" }],
     summary: "Doors made to the opening, not to a catalogue.",
     description: [
       "A door is the part of a building people touch every day, and the one place where the difference between made and bought is immediately obvious in the hand.",
@@ -62,7 +62,7 @@ const products: Product[] = [
     slug: "fabricated-sheet-work",
     isDemo: true,
     title: "Fabricated Sheet Work",
-    category: "metalwork",
+    category: [{ slug: "metalwork", label: "Fabricated sheet work" }],
     summary: "Folded, perforated and patinated metal, drawn as part of the building.",
     description: [
       "Sheet metal is where a lot of architecture is quietly decided: the soffit, the reveal, the balustrade infill, the screen that makes a facade read as one surface instead of a collection of openings.",
@@ -134,7 +134,7 @@ export function filterProducts(
   filter: ProductCategory | "all",
 ): Product[] {
   if (filter === "all") return items;
-  return items.filter((p) => p.category === filter);
+  return items.filter((p) => p.category.some((c) => c.slug === filter));
 }
 
 export function countProducts(filter: ProductCategory | "all"): number {

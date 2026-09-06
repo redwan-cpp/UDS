@@ -30,7 +30,12 @@ export const Projects: CollectionConfig = {
     afterChange: [revalidateCollection("projects")],
     afterDelete: [revalidateCollectionDelete("projects")],
   },
-  versions: { drafts: true },
+  // Autosave, because losing typing is the complaint that makes people stop
+  // trusting a CMS. Payload only offers autosave on a drafts-enabled
+  // collection, so drafts are on everywhere rather than on the four that
+  // happened to have them — a consistent rule beats a remembered exception.
+  // The interval is short: it is saving a row of a form, not a document.
+  versions: { drafts: { autosave: { interval: 800 } } },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "category", "year", "status", "featured"],
@@ -64,19 +69,15 @@ export const Projects: CollectionConfig = {
       fields: [
         {
           name: "category",
-          type: "select",
+          type: "relationship",
+          relationTo: "categories",
+          hasMany: true,
           required: true,
-          // Mirrors `ProjectCategory`. Adding one here means adding it there.
-          options: [
-            "residential",
-            "commercial",
-            "hospitality",
-            "interior",
-            "institutional",
-            "urban",
-            "landscape",
-            "other",
-          ].map((v) => ({ label: v, value: v })),
+          // Only the categories scoped to this side of the site. Without the
+          // filter an editor picking a project category is offered "Custom
+          // doors", which is how a project ends up in a filter row that does
+          // not render it.
+          filterOptions: { scope: { equals: "project" } },
         },
         {
           name: "status",
