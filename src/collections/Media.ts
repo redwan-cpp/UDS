@@ -1,3 +1,5 @@
+import path from "path";
+
 import type { CollectionConfig } from "payload";
 
 import { revalidateMedia } from "./hooks/revalidate";
@@ -31,10 +33,23 @@ export const Media: CollectionConfig = {
     delete: ({ req }) => req.user?.role === "admin",
   },
   upload: {
-    // Kept out of `public/`. Anything under `public/` is served verbatim, which
-    // is the rule the raw video masters already follow (see CLAUDE.md) — an
-    // uploaded 30MB original should never be publicly fetchable at full size.
-    staticDir: "media",
+    // An absolute path, and that is not fussiness.
+    //
+    // Next's standalone server calls `process.chdir(__dirname)` on boot, so the
+    // working directory becomes `.next/standalone` no matter where the process
+    // was started or what systemd's `WorkingDirectory` says. A relative
+    // `"media"` therefore resolves *inside the build output* in production —
+    // where every deploy would delete the studio's uploaded photographs. Caught
+    // by running the standalone build rather than by reading it.
+    //
+    // `MEDIA_DIR` is set in the server's `.env`; locally the default is right
+    // because `next dev` does not move the working directory.
+    //
+    // Kept out of `public/` either way. Anything under `public/` is served
+    // verbatim, which is the rule the raw video masters already follow (see
+    // CLAUDE.md) — an uploaded 30MB original should never be publicly
+    // fetchable at full size.
+    staticDir: process.env.MEDIA_DIR || path.resolve(process.cwd(), "media"),
     mimeTypes: ["image/*"],
     imageSizes: [
       { name: "thumbnail", width: 384, height: undefined, position: "centre" },

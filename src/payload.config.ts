@@ -1,6 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 
+import { postgresAdapter } from "@payloadcms/db-postgres";
 import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
@@ -59,6 +60,9 @@ if (!secret) {
  */
 const serverURL = process.env.NEXT_PUBLIC_SERVER_URL ?? "";
 
+/** Postgres when a Postgres URL is given, SQLite otherwise. See `db` below. */
+const dbURI = process.env.DATABASE_URI || "file:./uthan.db";
+
 export default buildConfig({
   secret,
   serverURL,
@@ -107,9 +111,24 @@ export default buildConfig({
 
   editor: lexicalEditor(),
 
-  db: sqliteAdapter({
-    client: { url: process.env.DATABASE_URI || "file:./uthan.db" },
-  }),
+  /**
+   * Postgres in production, SQLite in development — chosen by the connection
+   * string rather than by an environment name.
+   *
+   * `architecture.md` §3.2 specifies PostgreSQL, and the deployed server runs
+   * it. SQLite stays the local default because there is no Postgres on the
+   * development machine and requiring one would mean nobody can run the site
+   * without provisioning a database first.
+   *
+   * Keyed off the URL rather than `NODE_ENV` deliberately: the thing that
+   * decides which driver can read a database is the database, and a machine
+   * with `DATABASE_URI` pointing at Postgres wants the Postgres adapter
+   * whether or not it thinks it is in production. Setting the variable is the
+   * whole switch.
+   */
+  db: dbURI.startsWith("postgres")
+    ? postgresAdapter({ pool: { connectionString: dbURI } })
+    : sqliteAdapter({ client: { url: dbURI } }),
 
   // Generated types land beside the hand-written contract so the two can be
   // diffed. `src/types/content.ts` stays the type the site renders against;

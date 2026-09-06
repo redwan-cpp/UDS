@@ -2,6 +2,16 @@ import type { NextConfig } from "next";
 import { withPayload } from "@payloadcms/next/withPayload";
 
 const nextConfig: NextConfig = {
+  /**
+   * A self-contained server bundle, for the VPS.
+   *
+   * Without this, running the site in production needs the whole 900MB
+   * `node_modules` tree on the server. `standalone` traces what the server
+   * actually imports and copies only that, which matters on a 20GB disk and
+   * shortens every deploy. `deployment.md` Part 8 runs the output directly.
+   */
+  output: "standalone",
+
   // The practice page moved from /studio to /about. Permanent, so a search
   // engine or a bookmark from before the rename lands on the current page
   // instead of a 404.
