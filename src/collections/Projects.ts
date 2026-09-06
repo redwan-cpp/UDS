@@ -1,5 +1,10 @@
 import type { CollectionConfig } from "payload";
 
+import {
+  revalidateCollection,
+  revalidateCollectionDelete,
+} from "./hooks/revalidate";
+
 import { publishedOnlyAccess } from "./fields";
 
 /**
@@ -21,6 +26,10 @@ import { publishedOnlyAccess } from "./fields";
  */
 export const Projects: CollectionConfig = {
   slug: "projects",
+  hooks: {
+    afterChange: [revalidateCollection("projects")],
+    afterDelete: [revalidateCollectionDelete("projects")],
+  },
   versions: { drafts: true },
   admin: {
     useAsTitle: "title",

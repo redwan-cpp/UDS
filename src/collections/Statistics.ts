@@ -1,5 +1,10 @@
 import type { CollectionConfig } from "payload";
 
+import {
+  revalidateCollection,
+  revalidateCollectionDelete,
+} from "./hooks/revalidate";
+
 import { editorAccess, isDemoField, orderField } from "./fields";
 
 /**
@@ -12,6 +17,10 @@ import { editorAccess, isDemoField, orderField } from "./fields";
  */
 export const Statistics: CollectionConfig = {
   slug: "statistics",
+  hooks: {
+    afterChange: [revalidateCollection("statistics")],
+    afterDelete: [revalidateCollectionDelete("statistics")],
+  },
   admin: {
     useAsTitle: "label",
     defaultColumns: ["label", "value", "order"],

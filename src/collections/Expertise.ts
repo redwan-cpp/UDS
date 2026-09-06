@@ -1,5 +1,10 @@
 import type { CollectionConfig } from "payload";
 
+import {
+  revalidateCollection,
+  revalidateCollectionDelete,
+} from "./hooks/revalidate";
+
 import { editorAccess, indexField, isDemoField } from "./fields";
 
 /**
@@ -13,6 +18,10 @@ import { editorAccess, indexField, isDemoField } from "./fields";
  */
 export const Expertise: CollectionConfig = {
   slug: "expertise",
+  hooks: {
+    afterChange: [revalidateCollection("expertise")],
+    afterDelete: [revalidateCollectionDelete("expertise")],
+  },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["index", "title"],

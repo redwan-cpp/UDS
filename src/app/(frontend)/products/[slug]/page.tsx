@@ -12,7 +12,7 @@ import {
   getProductBySlug,
   getProductSlugs,
   getProducts,
-} from "@/data/products";
+} from "@/data/content.cms";
 
 /**
  * Statically rendered per product line, the same as every project and news
@@ -20,8 +20,8 @@ import {
  * listing page. In Phase 2 this reads the CMS instead; the shape does not
  * change.
  */
-export function generateStaticParams() {
-  return getProductSlugs().map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  return (await getProductSlugs()).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -30,7 +30,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return {};
 
   return {
@@ -45,10 +45,10 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const other = getProducts().find((p) => p.slug !== product.slug);
+  const other = await (await getProducts()).find((p) => p.slug !== product.slug);
   const frames = product.gallery.length > 0 ? product.gallery : [product.hero];
 
   return (

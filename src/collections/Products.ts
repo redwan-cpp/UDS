@@ -1,6 +1,11 @@
 import type { CollectionConfig } from "payload";
 
 import {
+  revalidateCollection,
+  revalidateCollectionDelete,
+} from "./hooks/revalidate";
+
+import {
   publishedOnlyAccess,
   isDemoField,
   labelValueRows,
@@ -22,6 +27,10 @@ import {
  */
 export const Products: CollectionConfig = {
   slug: "products",
+  hooks: {
+    afterChange: [revalidateCollection("products")],
+    afterDelete: [revalidateCollectionDelete("products")],
+  },
   versions: { drafts: true },
   admin: {
     useAsTitle: "title",

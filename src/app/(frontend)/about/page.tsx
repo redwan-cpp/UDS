@@ -9,9 +9,9 @@ import { SectionHead, Statement, Prose } from "@/components/typography";
 import { TeamGrid } from "@/components/team/TeamGrid";
 import { Numbers } from "@/components/sections/Numbers";
 import { studio } from "@/data/studio";
-import { team } from "@/data/team";
-import { statistics } from "@/data/statistics";
-import { expertise } from "@/data/expertise";
+import { getTeam, getExpertise, getStatistics } from "@/data/content.cms";
+
+
 import { img } from "@/data/media";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
@@ -23,7 +23,16 @@ export const metadata: Metadata = {
     "Uthan Design Studio — an architecture and design practice working across architecture, interiors and spatial strategy.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  // Hoisted rather than awaited inline in the JSX: three collections read once
+  // each, and the reader can see at the top of the component exactly what this
+  // page costs.
+  const [areas, members, figures] = await Promise.all([
+    getExpertise(),
+    getTeam(),
+    getStatistics(),
+  ]);
+
   return (
     <>
       <PageHero
@@ -71,7 +80,7 @@ export default function AboutPage() {
       {/* Same interactive figures band as the homepage — a hover-responsive
           rule and lift, not a static dl. Two places showing the same numbers
           two different ways would read as an inconsistency, not a variation. */}
-      <Numbers statistics={statistics} />
+      <Numbers statistics={figures} />
 
       <Section
         id="expertise"
@@ -90,7 +99,7 @@ export default function AboutPage() {
           </Reveal>
 
           <ul className="grid grid-cols-1 gap-x-(--grid-gap) pt-12 sm:grid-cols-2 lg:grid-cols-3">
-            {expertise.map((area) => (
+            {areas.map((area) => (
               <li
                 key={area.id}
                 className="flex items-baseline gap-4 border-t border-hairline py-5"
@@ -122,7 +131,7 @@ export default function AboutPage() {
             />
           </Reveal>
           <div className="pt-12">
-            <TeamGrid members={team} />
+            <TeamGrid members={members} />
           </div>
         </Container>
       </Section>

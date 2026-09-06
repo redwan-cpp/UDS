@@ -5,7 +5,7 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal";
 import { NewsCard } from "@/components/news/NewsCard";
-import { getNews } from "@/data/news";
+import { getNews } from "@/data/content.cms";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
 
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
     "Collaborations, events, memoranda, announcements and publications from Uthan Design Studio.",
 };
 
-export default function NewsPage() {
-  const items = getNews();
+export default async function NewsPage() {
+  const items = await getNews();
 
   return (
     <>

@@ -1,5 +1,7 @@
 import type { Field, GlobalConfig } from "payload";
 
+import { revalidateEverything } from "../collections/hooks/revalidate";
+
 /**
  * Every heading, label and standfirst the site displays that is not part of a
  * content entity.
@@ -39,6 +41,7 @@ const head = (name: string, label: string, extra: Field[] = []): Field => ({
 
 export const SiteCopy: GlobalConfig = {
   slug: "copy",
+  hooks: { afterChange: [revalidateEverything] },
   admin: {
     group: "Settings",
     description:

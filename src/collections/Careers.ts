@@ -1,5 +1,10 @@
 import type { CollectionConfig } from "payload";
 
+import {
+  revalidateCollection,
+  revalidateCollectionDelete,
+} from "./hooks/revalidate";
+
 import { publishedOnlyAccess, indexField, stringList } from "./fields";
 
 /**
@@ -16,6 +21,10 @@ import { publishedOnlyAccess, indexField, stringList } from "./fields";
  */
 export const Careers: CollectionConfig = {
   slug: "careers",
+  hooks: {
+    afterChange: [revalidateCollection("careers")],
+    afterDelete: [revalidateCollectionDelete("careers")],
+  },
   versions: { drafts: true },
   admin: {
     useAsTitle: "title",

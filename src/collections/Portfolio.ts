@@ -1,5 +1,10 @@
 import type { CollectionConfig } from "payload";
 
+import {
+  revalidateCollection,
+  revalidateCollectionDelete,
+} from "./hooks/revalidate";
+
 import { editorAccess, isDemoField, seoGroup, slugField } from "./fields";
 
 /**
@@ -15,6 +20,10 @@ import { editorAccess, isDemoField, seoGroup, slugField } from "./fields";
  */
 export const Portfolio: CollectionConfig = {
   slug: "portfolio",
+  hooks: {
+    afterChange: [revalidateCollection("portfolio")],
+    afterDelete: [revalidateCollectionDelete("portfolio")],
+  },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "category", "year", "location"],

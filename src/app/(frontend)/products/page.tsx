@@ -8,12 +8,10 @@ import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
 import { ProductCard } from "@/components/products/ProductCard";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
-import {
-  countProducts,
-  filterProducts,
-  getProducts,
-  productFilters,
-} from "@/data/products";
+import { getProducts } from "@/data/content.cms";
+// Pure functions over an array — no database involved, so they stay where they
+// were rather than following the accessor into the CMS module.
+import { countProducts, filterProducts, productFilters } from "@/data/products";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -28,7 +26,7 @@ export default async function ProductsPage({
 }) {
   const { category } = await searchParams;
   const active = readCategory(category, productFilters);
-  const products = filterProducts(getProducts(), active);
+  const products = filterProducts(await getProducts(), active);
 
   return (
     <>

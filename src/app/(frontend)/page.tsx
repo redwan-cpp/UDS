@@ -6,11 +6,14 @@ import { LatestNews } from "@/components/sections/LatestNews";
 import { ClosingCTA } from "@/components/sections/ClosingCTA";
 
 import { studio } from "@/data/studio";
-import { statistics } from "@/data/statistics";
-import { expertise } from "@/data/expertise";
-import { brands } from "@/data/brands";
+
+import {
+  getExpertise,
+  getBrands,
+  getFeaturedNews,
+  getStatistics,
+} from "@/data/content.cms";
 import { getProjects } from "@/data/projects.cms";
-import { getFeaturedNews } from "@/data/news";
 import { heroVideo } from "@/data/hero";
 import { homeCopy, actionCopy } from "@/data/copy";
 
@@ -27,7 +30,7 @@ export default async function HomePage() {
   // is the studio's body of work, and the full index (which also carries the
   // work without a case study) is one click away.
   const featuredProjects = await getProjects();
-  const latestNews = getFeaturedNews(3);
+  const latestNews = await getFeaturedNews(3);
 
   return (
     <>
@@ -46,7 +49,7 @@ export default async function HomePage() {
       <AboutStatement
         statement={studio.statement}
         approach={studio.approach}
-        areas={expertise}
+        areas={await getExpertise()}
         copy={homeCopy.about}
         expertiseCopy={homeCopy.expertise}
         readMoreLabel={actionCopy.aboutPractice}
@@ -60,7 +63,7 @@ export default async function HomePage() {
 
       {/* Below the work, not above it: the figures are evidence for what has
           just been shown rather than a claim made before showing anything. */}
-      <Numbers statistics={statistics} brands={brands} />
+      <Numbers statistics={await getStatistics()} brands={await getBrands()} />
 
       {/* The management team and the collaborator index used to sit here. Both
           now live on About (/about), where they already had fuller sections —

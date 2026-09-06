@@ -1,5 +1,7 @@
 import type { CollectionConfig } from "payload";
 
+import { revalidateMedia } from "./hooks/revalidate";
+
 /**
  * The media library.
  *
@@ -20,6 +22,7 @@ import type { CollectionConfig } from "payload";
  */
 export const Media: CollectionConfig = {
   slug: "media",
+  hooks: { afterChange: [revalidateMedia] },
   admin: { group: "Library" },
   access: {
     read: () => true,

@@ -28,7 +28,7 @@ export const metadata: Metadata = {
  * this build has none (Phase 1) — a form that silently drops an application is
  * a worse outcome than an email address that works.
  */
-export default function CareersPage() {
+export default async function CareersPage() {
   return (
     <>
       <PageHero

@@ -6,7 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Media } from "@/components/ui/Media";
 import { Reveal } from "@/components/motion/Reveal";
 import { Statement, Eyebrow } from "@/components/typography";
-import { getSustainabilityPrinciples } from "@/data/sustainability";
+import { getSustainabilityPrinciples } from "@/data/content.cms";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
 
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
     "How Uthan Design Studio approaches material responsibility, passive design, reuse and the long life of a building.",
 };
 
-export default function SustainabilityPage() {
-  const principles = getSustainabilityPrinciples();
+export default async function SustainabilityPage() {
+  const principles = await getSustainabilityPrinciples();
 
   return (
     <>

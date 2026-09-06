@@ -1,5 +1,7 @@
 import type { GlobalConfig } from "payload";
 
+import { revalidateEverything } from "../collections/hooks/revalidate";
+
 import { paragraphs, stringList } from "../collections/fields";
 
 /**
@@ -24,6 +26,7 @@ import { paragraphs, stringList } from "../collections/fields";
  */
 export const Studio: GlobalConfig = {
   slug: "studio",
+  hooks: { afterChange: [revalidateEverything] },
   admin: {
     group: "Settings",
     description:

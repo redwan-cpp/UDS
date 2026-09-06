@@ -1,5 +1,10 @@
 import type { CollectionConfig } from "payload";
 
+import {
+  revalidateCollection,
+  revalidateCollectionDelete,
+} from "./hooks/revalidate";
+
 import { editorAccess, indexField, isDemoField, stringList } from "./fields";
 
 /**
@@ -14,6 +19,10 @@ import { editorAccess, indexField, isDemoField, stringList } from "./fields";
  */
 export const Sustainability: CollectionConfig = {
   slug: "sustainability",
+  hooks: {
+    afterChange: [revalidateCollection("sustainability")],
+    afterDelete: [revalidateCollectionDelete("sustainability")],
+  },
   admin: {
     useAsTitle: "title",
     defaultColumns: ["index", "title"],

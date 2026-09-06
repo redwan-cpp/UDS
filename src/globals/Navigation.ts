@@ -1,5 +1,7 @@
 import type { GlobalConfig } from "payload";
 
+import { revalidateEverything } from "../collections/hooks/revalidate";
+
 /**
  * The site index.
  *
@@ -15,6 +17,7 @@ import type { GlobalConfig } from "payload";
  */
 export const Navigation: GlobalConfig = {
   slug: "navigation",
+  hooks: { afterChange: [revalidateEverything] },
   admin: {
     group: "Settings",
     description:

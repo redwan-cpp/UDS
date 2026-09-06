@@ -1,5 +1,10 @@
 import type { CollectionConfig } from "payload";
 
+import {
+  revalidateCollection,
+  revalidateCollectionDelete,
+} from "./hooks/revalidate";
+
 import { editorAccess, isDemoField, orderField, seoGroup, slugField } from "./fields";
 
 /**
@@ -19,6 +24,10 @@ import { editorAccess, isDemoField, orderField, seoGroup, slugField } from "./fi
  */
 export const Team: CollectionConfig = {
   slug: "team",
+  hooks: {
+    afterChange: [revalidateCollection("team")],
+    afterDelete: [revalidateCollectionDelete("team")],
+  },
   admin: {
     useAsTitle: "name",
     defaultColumns: ["name", "role", "order"],

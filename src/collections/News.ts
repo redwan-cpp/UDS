@@ -1,6 +1,11 @@
 import type { CollectionConfig } from "payload";
 
 import {
+  revalidateCollection,
+  revalidateCollectionDelete,
+} from "./hooks/revalidate";
+
+import {
   publishedOnlyAccess,
   isDemoField,
   paragraphs,
@@ -23,6 +28,10 @@ import {
  */
 export const News: CollectionConfig = {
   slug: "news",
+  hooks: {
+    afterChange: [revalidateCollection("news")],
+    afterDelete: [revalidateCollectionDelete("news")],
+  },
   versions: { drafts: true },
   admin: {
     useAsTitle: "title",

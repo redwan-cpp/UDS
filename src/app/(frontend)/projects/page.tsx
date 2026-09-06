@@ -7,12 +7,9 @@ import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
 import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
-import {
-  countPortfolio,
-  filterPortfolio,
-  getPortfolio,
-  portfolioFilters,
-} from "@/data/portfolio";
+import { getPortfolio } from "@/data/content.cms";
+// Pure functions over an array — no database involved.
+import { countPortfolio, filterPortfolio, portfolioFilters } from "@/data/portfolio";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -43,7 +40,7 @@ export default async function ProjectsPage({
 }) {
   const { category } = await searchParams;
   const active = readCategory(category, portfolioFilters);
-  const items = filterPortfolio(getPortfolio(), active);
+  const items = filterPortfolio(await getPortfolio(), active);
   const documented = items.filter((item) => item.projectSlug).length;
 
   return (

@@ -12,10 +12,11 @@ import { NewsCard } from "@/components/news/NewsCard";
 import { Arrow } from "@/components/ui/Button";
 import { DemoNotice } from "@/components/hero/PageHero";
 import { formatDate } from "@/lib/labels";
-import { getNews, getNewsBySlug, getNewsSlugs, newsKindLabels } from "@/data/news";
+import { getNews, getNewsBySlug, getNewsSlugs } from "@/data/content.cms";
+import { newsKindLabels } from "@/data/news";
 
-export function generateStaticParams() {
-  return getNewsSlugs().map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  return (await getNewsSlugs()).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -24,7 +25,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const item = getNewsBySlug(slug);
+  const item = await getNewsBySlug(slug);
   if (!item) return {};
   return { title: item.title, description: item.summary };
 }
@@ -35,10 +36,10 @@ export default async function NewsArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const item = getNewsBySlug(slug);
+  const item = await getNewsBySlug(slug);
   if (!item) notFound();
 
-  const more = getNews()
+  const more = (await getNews())
     .filter((n) => n.slug !== slug)
     .slice(0, 3);
 
