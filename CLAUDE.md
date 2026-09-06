@@ -30,7 +30,15 @@ admin panel together. The panel is at `/admin`; there is no separate process to 
 ```bash
 npm run generate:types      # after changing any collection or global
 npm run generate:importmap  # after adding a custom admin component
+
+npx payload run scripts/seed.ts         # load src/data into the CMS (idempotent)
+npx payload run scripts/counts.ts       # what is in the CMS; fails on duplicate media
+npx payload run scripts/reset-media.ts  # empty the media library, then re-seed
 ```
+
+`seed.ts` is safe to re-run: documents are matched on their natural key and media on
+filename. Re-running used to add 35 media rows a pass because the upload cache was
+in-memory only — `counts.ts` now asserts filename uniqueness so that regression fails loudly.
 
 `generate:types` rewrites `src/types/payload-types.ts`, which is what Payload believes it
 is storing. `src/types/content.ts` stays the contract the site renders against. **They must

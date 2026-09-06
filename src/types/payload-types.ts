@@ -508,7 +508,10 @@ export interface Team {
    * The longer read, shown only when the card is opened. Do not repeat the bio here — if both say the same thing, opening the card gains nothing.
    */
   detail?: string | null;
-  portrait: number | Media;
+  /**
+   * Leave empty until the studio supplies a real portrait — the card shows a designed pending state rather than a placeholder face.
+   */
+  portrait?: (number | null) | Media;
   /**
    * Full profile URL. Leave empty rather than guessing — an unsupplied link renders as plain text, never as a link that goes nowhere.
    */

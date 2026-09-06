@@ -47,7 +47,20 @@ export const Team: CollectionConfig = {
           "The longer read, shown only when the card is opened. Do not repeat the bio here — if both say the same thing, opening the card gains nothing.",
       },
     },
-    { name: "portrait", type: "upload", relationTo: "media", required: true },
+    {
+      // NOT required, and that is the content telling the model what to be.
+      // The studio has not supplied portraits, so every demo member carries an
+      // empty one and `TeamGrid` ships a designed portrait-pending state rather
+      // than a broken image. Requiring it here would make the CMS refuse the
+      // site's own current content — which is how the first seed failed.
+      name: "portrait",
+      type: "upload",
+      relationTo: "media",
+      admin: {
+        description:
+          "Leave empty until the studio supplies a real portrait — the card shows a designed pending state rather than a placeholder face.",
+      },
+    },
     {
       name: "linkedin",
       type: "text",
