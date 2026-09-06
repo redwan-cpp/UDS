@@ -6,9 +6,21 @@ import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
-import { Users } from "./collections/Users";
+import { Brands } from "./collections/Brands";
+import { Careers } from "./collections/Careers";
+import { Expertise } from "./collections/Expertise";
 import { Media } from "./collections/Media";
+import { News } from "./collections/News";
+import { Portfolio } from "./collections/Portfolio";
+import { Products } from "./collections/Products";
 import { Projects } from "./collections/Projects";
+import { Statistics } from "./collections/Statistics";
+import { Sustainability } from "./collections/Sustainability";
+import { Team } from "./collections/Team";
+import { Users } from "./collections/Users";
+import { Navigation } from "./globals/Navigation";
+import { SiteCopy } from "./globals/SiteCopy";
+import { Studio } from "./globals/Studio";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -45,7 +57,25 @@ export default buildConfig({
     },
   },
 
-  collections: [Projects, Media, Users],
+  // Grouped in the admin sidebar by what an editor is doing: Work is the
+  // portfolio, Studio is everything about the practice, Library is media,
+  // Settings holds the two globals that change how the whole site reads.
+  collections: [
+    Projects,
+    Portfolio,
+    Products,
+    News,
+    Team,
+    Expertise,
+    Sustainability,
+    Statistics,
+    Brands,
+    Careers,
+    Media,
+    Users,
+  ],
+
+  globals: [Studio, Navigation, SiteCopy],
 
   editor: lexicalEditor(),
 

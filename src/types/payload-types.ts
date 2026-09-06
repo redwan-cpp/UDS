@@ -68,6 +68,15 @@ export interface Config {
   blocks: {};
   collections: {
     projects: Project;
+    portfolio: Portfolio;
+    products: Product;
+    news: News;
+    team: Team;
+    expertise: Expertise;
+    sustainability: Sustainability;
+    statistics: Statistic;
+    brands: Brand;
+    careers: Career;
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
@@ -78,6 +87,15 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    portfolio: PortfolioSelect<false> | PortfolioSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    news: NewsSelect<false> | NewsSelect<true>;
+    team: TeamSelect<false> | TeamSelect<true>;
+    expertise: ExpertiseSelect<false> | ExpertiseSelect<true>;
+    sustainability: SustainabilitySelect<false> | SustainabilitySelect<true>;
+    statistics: StatisticsSelect<false> | StatisticsSelect<true>;
+    brands: BrandsSelect<false> | BrandsSelect<true>;
+    careers: CareersSelect<false> | CareersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -89,8 +107,16 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    studio: Studio;
+    navigation: Navigation;
+    copy: Copy;
+  };
+  globalsSelect: {
+    studio: StudioSelect<false> | StudioSelect<true>;
+    navigation: NavigationSelect<false> | NavigationSelect<true>;
+    copy: CopySelect<false> | CopySelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -282,6 +308,370 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolio".
+ */
+export interface Portfolio {
+  id: number;
+  title: string;
+  /**
+   * The URL segment: /portfolio/<slug>.
+   */
+  slug: string;
+  location: string;
+  year: string;
+  category:
+    'residential' | 'commercial' | 'hospitality' | 'interior' | 'institutional' | 'urban' | 'landscape' | 'other';
+  /**
+   * As written, including the unit.
+   */
+  areaSize: string;
+  summary: string;
+  image: number | Media;
+  /**
+   * Set when this also exists as a full case study, so the card links to it.
+   */
+  projectSlug?: string | null;
+  /**
+   * The entry's own mark. Leave empty and the card draws a section mark instead. Monochrome SVG — marks are masked to the surface colour.
+   */
+  symbol?: {
+    asset?: (number | null) | Media;
+    /**
+     * What the mark depicts.
+     */
+    label?: string | null;
+  };
+  /**
+   * Placeholder content, not the studio's real work or details. Drives the demo notices.
+   */
+  isDemo?: boolean | null;
+  /**
+   * Leave blank to derive from the title and summary. Only fill these in to override.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    /**
+     * Ask search engines not to index this page.
+     */
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  title: string;
+  /**
+   * The URL segment: /products/<slug>.
+   */
+  slug: string;
+  category: 'doors' | 'metalwork';
+  /**
+   * One line, sits under the title.
+   */
+  summary: string;
+  description: {
+    text: string;
+    id?: string | null;
+  }[];
+  materials: {
+    value: string;
+    id?: string | null;
+  }[];
+  applications: {
+    value: string;
+    id?: string | null;
+  }[];
+  /**
+   * Order is meaningful — it is the order these appear on the page.
+   */
+  specs: {
+    label: string;
+    value: string;
+    id?: string | null;
+  }[];
+  hero: number | Media;
+  gallery: (number | Media)[];
+  /**
+   * Lower sorts first.
+   */
+  order: number;
+  /**
+   * Placeholder content, not the studio's real work or details. Drives the demo notices.
+   */
+  isDemo?: boolean | null;
+  /**
+   * Leave blank to derive from the title and summary. Only fill these in to override.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    /**
+     * Ask search engines not to index this page.
+     */
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news".
+ */
+export interface News {
+  id: number;
+  title: string;
+  /**
+   * The URL segment: /news/<slug>.
+   */
+  slug: string;
+  kind: 'collaboration' | 'event' | 'mou' | 'announcement' | 'award' | 'publication';
+  date: string;
+  /**
+   * The other party, where there is one.
+   */
+  organisation?: string | null;
+  location?: string | null;
+  /**
+   * One line. Used on cards and in the index.
+   */
+  summary: string;
+  body: {
+    text: string;
+    id?: string | null;
+  }[];
+  image: number | Media;
+  gallery?: (number | Media)[] | null;
+  /**
+   * MoUs and supporting documentation.
+   */
+  documents?:
+    | {
+        label: string;
+        kind: 'pdf' | 'link';
+        /**
+         * A URL, or the path to an uploaded file. Never leave this empty — ruler.md forbids a link that goes nowhere; an unsupplied destination is set as text instead.
+         */
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Show on the homepage news band.
+   */
+  featured?: boolean | null;
+  /**
+   * Placeholder content, not the studio's real work or details. Drives the demo notices.
+   */
+  isDemo?: boolean | null;
+  /**
+   * Leave blank to derive from the title and summary. Only fill these in to override.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    /**
+     * Ask search engines not to index this page.
+     */
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team".
+ */
+export interface Team {
+  id: number;
+  name: string;
+  role: string;
+  /**
+   * The URL segment: /about/<slug>.
+   */
+  slug: string;
+  /**
+   * One sentence. Shown on the card at rest.
+   */
+  bio?: string | null;
+  /**
+   * The longer read, shown only when the card is opened. Do not repeat the bio here — if both say the same thing, opening the card gains nothing.
+   */
+  detail?: string | null;
+  portrait: number | Media;
+  /**
+   * Full profile URL. Leave empty rather than guessing — an unsupplied link renders as plain text, never as a link that goes nowhere.
+   */
+  linkedin?: string | null;
+  /**
+   * Lower sorts first.
+   */
+  order: number;
+  /**
+   * Placeholder content, not the studio's real work or details. Drives the demo notices.
+   */
+  isDemo?: boolean | null;
+  /**
+   * Leave blank to derive from the title and summary. Only fill these in to override.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    /**
+     * Ask search engines not to index this page.
+     */
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Ordered by index. Shown on the homepage and on /about.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "expertise".
+ */
+export interface Expertise {
+  id: number;
+  /**
+   * Two digits, e.g. "01". Shown beside the title.
+   */
+  index: string;
+  title: string;
+  description: string;
+  image: number | Media;
+  /**
+   * Placeholder content, not the studio's real work or details. Drives the demo notices.
+   */
+  isDemo?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sustainability".
+ */
+export interface Sustainability {
+  id: number;
+  /**
+   * Two digits, e.g. "01". Shown beside the title.
+   */
+  index: string;
+  title: string;
+  description: string;
+  /**
+   * Concrete, verifiable practice. Leave empty rather than writing something the studio cannot stand behind.
+   */
+  measures?:
+    | {
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  image?: (number | null) | Media;
+  /**
+   * Placeholder content, not the studio's real work or details. Drives the demo notices.
+   */
+  isDemo?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "statistics".
+ */
+export interface Statistic {
+  id: number;
+  label: string;
+  /**
+   * The number alone. The counter animates to it.
+   */
+  value: number;
+  /**
+   * Before the numeral, e.g. "$".
+   */
+  prefix?: string | null;
+  /**
+   * After the numeral, e.g. "+" or "%".
+   */
+  suffix?: string | null;
+  /**
+   * Lower sorts first.
+   */
+  order: number;
+  /**
+   * Placeholder content, not the studio's real work or details. Drives the demo notices.
+   */
+  isDemo?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brands".
+ */
+export interface Brand {
+  id: number;
+  name: string;
+  /**
+   * What they did, e.g. "Structure", "Lighting".
+   */
+  relationship: string;
+  /**
+   * Monochrome SVG. Painted through a mask so it takes the surface colour — a full-colour logo will be flattened. Leave empty to show the name alone.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Lower sorts first.
+   */
+  order: number;
+  /**
+   * Placeholder content, not the studio's real work or details. Drives the demo notices.
+   */
+  isDemo?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Open roles. Unpublish rather than delete when a role closes.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers".
+ */
+export interface Career {
+  id: number;
+  /**
+   * Two digits, e.g. "01". Shown beside the title.
+   */
+  index: string;
+  title: string;
+  discipline: string;
+  /**
+   * Such as Full time. Not a salary, not a closing date.
+   */
+  commitment: string;
+  summary: string;
+  requirements: {
+    value: string;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -337,6 +727,42 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'projects';
         value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'portfolio';
+        value: number | Portfolio;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'news';
+        value: number | News;
+      } | null)
+    | ({
+        relationTo: 'team';
+        value: number | Team;
+      } | null)
+    | ({
+        relationTo: 'expertise';
+        value: number | Expertise;
+      } | null)
+    | ({
+        relationTo: 'sustainability';
+        value: number | Sustainability;
+      } | null)
+    | ({
+        relationTo: 'statistics';
+        value: number | Statistic;
+      } | null)
+    | ({
+        relationTo: 'brands';
+        value: number | Brand;
+      } | null)
+    | ({
+        relationTo: 'careers';
+        value: number | Career;
       } | null)
     | ({
         relationTo: 'media';
@@ -445,6 +871,234 @@ export interface ProjectsSelect<T extends boolean = true> {
   featured?: T;
   order?: T;
   isDemo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolio_select".
+ */
+export interface PortfolioSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  location?: T;
+  year?: T;
+  category?: T;
+  areaSize?: T;
+  summary?: T;
+  image?: T;
+  projectSlug?: T;
+  symbol?:
+    | T
+    | {
+        asset?: T;
+        label?: T;
+      };
+  isDemo?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        noIndex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  category?: T;
+  summary?: T;
+  description?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  materials?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  applications?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  specs?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  hero?: T;
+  gallery?: T;
+  order?: T;
+  isDemo?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        noIndex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news_select".
+ */
+export interface NewsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  kind?: T;
+  date?: T;
+  organisation?: T;
+  location?: T;
+  summary?: T;
+  body?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  image?: T;
+  gallery?: T;
+  documents?:
+    | T
+    | {
+        label?: T;
+        kind?: T;
+        href?: T;
+        id?: T;
+      };
+  featured?: T;
+  isDemo?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        noIndex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team_select".
+ */
+export interface TeamSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  slug?: T;
+  bio?: T;
+  detail?: T;
+  portrait?: T;
+  linkedin?: T;
+  order?: T;
+  isDemo?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        noIndex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "expertise_select".
+ */
+export interface ExpertiseSelect<T extends boolean = true> {
+  index?: T;
+  title?: T;
+  description?: T;
+  image?: T;
+  isDemo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sustainability_select".
+ */
+export interface SustainabilitySelect<T extends boolean = true> {
+  index?: T;
+  title?: T;
+  description?: T;
+  measures?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  image?: T;
+  isDemo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "statistics_select".
+ */
+export interface StatisticsSelect<T extends boolean = true> {
+  label?: T;
+  value?: T;
+  prefix?: T;
+  suffix?: T;
+  order?: T;
+  isDemo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brands_select".
+ */
+export interface BrandsSelect<T extends boolean = true> {
+  name?: T;
+  relationship?: T;
+  logo?: T;
+  order?: T;
+  isDemo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers_select".
+ */
+export interface CareersSelect<T extends boolean = true> {
+  index?: T;
+  title?: T;
+  discipline?: T;
+  commitment?: T;
+  summary?: T;
+  requirements?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -574,6 +1228,357 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Facts about the studio. Nothing here may be invented to fill a layout — leave a field empty rather than guessing.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "studio".
+ */
+export interface Studio {
+  id: number;
+  name: string;
+  /**
+   * The hero setting. Short — it is display type, not a paragraph.
+   */
+  tagline: string;
+  disciplines: {
+    value: string;
+    id?: string | null;
+  }[];
+  /**
+   * Set along the hero's baseline rule. Each carries where it goes — which work stands for which service is a content decision, so the destination lives here rather than in the component.
+   */
+  services: {
+    label: string;
+    href: string;
+    id?: string | null;
+  }[];
+  /**
+   * The editorial About statement. Set in the serif.
+   */
+  statement: {
+    text: string;
+    id?: string | null;
+  }[];
+  /**
+   * Supporting paragraphs below the statement.
+   */
+  approach: {
+    text: string;
+    id?: string | null;
+  }[];
+  /**
+   * The homepage's closing line, immediately before the footer. Kept apart from the statement because it does a different job: those introduce the studio, this closes the page.
+   */
+  closing: string;
+  contact: {
+    email: string;
+    phone: string;
+    addressLines: {
+      value: string;
+      id?: string | null;
+    }[];
+    hours?: string | null;
+    /**
+     * The canonical location record. Kept alongside the embed URL, which is an opaque Google string that cannot be read back for a directions link or structured data.
+     */
+    coordinates?: {
+      lat?: number | null;
+      lon?: number | null;
+    };
+    /**
+     * Google Maps embed URL. THIS LOADS GOOGLE CONTENT AND SETS GOOGLE COOKIES — the privacy page discloses it as the site's only third-party content, so changing or clearing this means revisiting that page. Leave empty and the panel states that the location is pending rather than dropping a pin somewhere plausible.
+     */
+    mapEmbedUrl?: string | null;
+  };
+  /**
+   * Leave the URL empty until the studio supplies a real profile — the label then renders as plain text instead of a link that goes nowhere.
+   */
+  social?:
+    | {
+        label: string;
+        href?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  legal?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The menu, and the source of the site's page numbering. Renumber the whole set when adding or removing an item — a gap here shows up on the pages.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: number;
+  items: {
+    /**
+     * Two digits, e.g. "01".
+     */
+    index: string;
+    label: string;
+    /**
+     * The route, e.g. /projects.
+     */
+    href: string;
+    /**
+     * Shown in the desktop menu overlay on hover. Decorative — the panel is hidden from assistive technology, so this only has to feel right, not describe the destination.
+     */
+    image?: (number | null) | Media;
+    id?: string | null;
+  }[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Headings and labels across the site. Content that belongs to a project, product or news item lives on that item instead.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "copy".
+ */
+export interface Copy {
+  id: number;
+  home?: {
+    about?: {
+      eyebrow?: string | null;
+      title?: string | null;
+    };
+    expertise?: {
+      eyebrow?: string | null;
+      title?: string | null;
+    };
+    projects?: {
+      eyebrow?: string | null;
+      title?: string | null;
+      /**
+       * Sits opposite the title on wide screens.
+       */
+      aside?: string | null;
+    };
+    news?: {
+      eyebrow?: string | null;
+      title?: string | null;
+    };
+    closing?: {
+      eyebrow?: string | null;
+      title?: string | null;
+    };
+  };
+  heroes?:
+    | {
+        /**
+         * e.g. /projects
+         */
+        route: string;
+        eyebrow?: string | null;
+        title?: string | null;
+        /**
+         * The standfirst. Leave empty where the page builds it from content instead — About opens with the studio statement.
+         */
+        intro?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  sections?:
+    | {
+        /**
+         * e.g. about.team
+         */
+        key: string;
+        eyebrow?: string | null;
+        title?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  footer?: {
+    index?: string | null;
+    contact?: string | null;
+    location?: string | null;
+    follow?: string | null;
+  };
+  actions?: {
+    allProjects?: string | null;
+    allNews?: string | null;
+    aboutPractice?: string | null;
+    startConversation?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "studio_select".
+ */
+export interface StudioSelect<T extends boolean = true> {
+  name?: T;
+  tagline?: T;
+  disciplines?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  services?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  statement?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  approach?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  closing?: T;
+  contact?:
+    | T
+    | {
+        email?: T;
+        phone?: T;
+        addressLines?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+        hours?: T;
+        coordinates?:
+          | T
+          | {
+              lat?: T;
+              lon?: T;
+            };
+        mapEmbedUrl?: T;
+      };
+  social?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  legal?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation_select".
+ */
+export interface NavigationSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        index?: T;
+        label?: T;
+        href?: T;
+        image?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "copy_select".
+ */
+export interface CopySelect<T extends boolean = true> {
+  home?:
+    | T
+    | {
+        about?:
+          | T
+          | {
+              eyebrow?: T;
+              title?: T;
+            };
+        expertise?:
+          | T
+          | {
+              eyebrow?: T;
+              title?: T;
+            };
+        projects?:
+          | T
+          | {
+              eyebrow?: T;
+              title?: T;
+              aside?: T;
+            };
+        news?:
+          | T
+          | {
+              eyebrow?: T;
+              title?: T;
+            };
+        closing?:
+          | T
+          | {
+              eyebrow?: T;
+              title?: T;
+            };
+      };
+  heroes?:
+    | T
+    | {
+        route?: T;
+        eyebrow?: T;
+        title?: T;
+        intro?: T;
+        id?: T;
+      };
+  sections?:
+    | T
+    | {
+        key?: T;
+        eyebrow?: T;
+        title?: T;
+        id?: T;
+      };
+  footer?:
+    | T
+    | {
+        index?: T;
+        contact?: T;
+        location?: T;
+        follow?: T;
+      };
+  actions?:
+    | T
+    | {
+        allProjects?: T;
+        allNews?: T;
+        aboutPractice?: T;
+        startConversation?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
