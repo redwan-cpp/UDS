@@ -16,7 +16,7 @@ import {
   getProjectBySlug,
   getProjectSlugs,
   getRelatedProjects,
-} from "@/data/projects";
+} from "@/data/projects.cms";
 import { sectionCopy } from "@/data/copy";
 
 /**
@@ -24,8 +24,8 @@ import { sectionCopy } from "@/data/copy";
  * crawlable and cacheable. In Phase 2 this reads the CMS instead; the shape of
  * the page does not change.
  */
-export function generateStaticParams() {
-  return getProjectSlugs().map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  return (await getProjectSlugs()).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -34,7 +34,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) return {};
 
   return {
@@ -97,10 +97,10 @@ export default async function ProjectPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) notFound();
 
-  const related = getRelatedProjects(slug, 3);
+  const related = await getRelatedProjects(slug, 3);
 
   return (
     <article>

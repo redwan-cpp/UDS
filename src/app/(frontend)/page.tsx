@@ -9,7 +9,7 @@ import { studio } from "@/data/studio";
 import { statistics } from "@/data/statistics";
 import { expertise } from "@/data/expertise";
 import { brands } from "@/data/brands";
-import { getProjects } from "@/data/projects";
+import { getProjects } from "@/data/projects.cms";
 import { getFeaturedNews } from "@/data/news";
 import { heroVideo } from "@/data/hero";
 import { homeCopy, actionCopy } from "@/data/copy";
@@ -22,11 +22,11 @@ import { homeCopy, actionCopy } from "@/data/copy";
  * lands in Phase 2, the imports here become awaited fetches and nothing else in
  * the tree changes.
  */
-export default function HomePage() {
+export default async function HomePage() {
   // All of the major projects, not a selection of four: the homepage grid
   // is the studio's body of work, and the full index (which also carries the
   // work without a case study) is one click away.
-  const featuredProjects = getProjects();
+  const featuredProjects = await getProjects();
   const latestNews = getFeaturedNews(3);
 
   return (
