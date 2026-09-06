@@ -252,7 +252,7 @@ mobile version is a separately authored composition, not a reflow.
 
 ## 3. Future architecture — PLANNED, NOT IMPLEMENTED IN PHASE 1
 
-### 3.1 CMS — PLANNED, NOT IMPLEMENTED IN PHASE 1
+### 3.1 CMS — ADOPTED, PHASE 2 IN PROGRESS
 
 Decision framework, to be executed and confirmed at the start of Phase 2. Candidates carried
 forward: **Payload CMS**, **Directus**, **Strapi Community Edition**, **Sanity (free tier)**,
@@ -263,13 +263,19 @@ non-technical editor experience · media management · image handling · rich te
 draft/publish workflow · authentication · roles · SEO fields · API quality · Next.js
 compatibility · security posture · maintenance activity · deployment complexity.
 
-**Provisional recommendation — to be confirmed, not yet adopted: Payload CMS.** It is
+**Confirmed and adopted by the studio on 2026-09-06: Payload CMS** (`payload@3.88.0`,
+supported against this project's Next 16.3.3). The scoring framework above was not run to
+completion — the studio took the provisional recommendation as it stood, which is their call
+to make and is recorded here so nobody later mistakes it for the output of the comparison.
+Directus remains the fallback. It is
 MIT-licensed and free when self-hosted, runs inside the same Next.js application (one deploy
 target rather than two), is TypeScript-native so the `src/types/content.ts` contract can be
 generated from the same definitions, and ships drafts, versions, roles, media handling and
 SEO fields without paid tiers. The main risk is that it couples CMS availability to the web
-app; Directus is the fallback if the studio prefers a fully decoupled service. **No CMS code
-may be written until this is confirmed in Phase 2 and recorded in `memory.md`.**
+app; Directus is the fallback if the studio prefers a fully decoupled service. That risk is
+now accepted rather than hypothetical: if Payload cannot boot, neither does the marketing
+site. The accessor boundary in §2.5 is what keeps the fallback available, so it is
+load-bearing from here rather than merely tidy.
 
 ### 3.2 Database — PLANNED, NOT IMPLEMENTED IN PHASE 1
 PostgreSQL, driven by whichever CMS is selected. No direct database access from route

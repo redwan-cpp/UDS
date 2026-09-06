@@ -2,7 +2,7 @@
 
 ```
 CURRENT PHASE:
-PHASE 1 — UI/UX
+PHASE 2 — CMS
 ```
 
 Durable decisions only. Not a log, not a changelog. If a line here stops being true, change
@@ -525,16 +525,45 @@ it deliberately and say why — reversing something in this file is a decision, 
 
 ---
 
-## CMS decision — PROVISIONAL, NOT ADOPTED
+## CMS decision — ADOPTED
 
-**Provisional recommendation: Payload CMS.** MIT-licensed, free self-hosted, runs inside the
-same Next.js app (one deploy target), TypeScript-native so the `src/types/content.ts`
-contract can be shared, and ships drafts, versions, roles, media and SEO fields without a
-paid tier. Risk: couples CMS availability to the web app. Fallback if the studio wants a
-fully decoupled service: **Directus**.
+**Payload CMS, confirmed by the studio on 2026-09-06.** MIT-licensed, free self-hosted, runs
+inside the same Next.js app (one deploy target), TypeScript-native so the
+`src/types/content.ts` contract can be shared, and ships drafts, versions, roles, media and
+SEO fields without a paid tier.
 
-**Status: not confirmed. No CMS code may be written until Phase 2 is approved and this line
-is updated to say ADOPTED.**
+Version at adoption: `payload@3.88.0`, whose `@payloadcms/next` peer range is
+`>=16.2.6 <17.0.0`. This project runs Next 16.3.3, so it is inside the supported range —
+checked before installing, not after.
+
+**The accepted risk, restated rather than buried:** this couples CMS availability to the web
+app. If Payload cannot boot, the marketing site does not boot either. **Directus** remains
+the documented fallback if the studio later wants a decoupled service; the content layer is
+what makes that switch survivable, so the accessor boundary in §2.5 of `architecture.md` is
+now load-bearing rather than tidy.
+
+### Dependency exemption — ruler.md §5
+
+The five-runtime-dependency cap (`next`, `react`, `react-dom`, `gsap`, `lenis`) required a
+written answer before a sixth. Here it is.
+
+- **What does it do that we cannot?** Draft/publish workflow, versioning, role-based auth,
+  a media library with alt text, and a generated admin UI for non-technical editors. Writing
+  those is a project, not a component, and `project-requirement.md` §9 explicitly rejects
+  building a bespoke CMS without a compelling architectural reason.
+- **What does it cost in kilobytes?** On the public site, nothing — and this is the
+  condition of the exemption, not a hope. Payload's admin bundle is served from its own
+  route group; the marketing pages must keep shipping the same five runtime dependencies to
+  the browser. That is a claim to verify with a bundle check, and it is the thing to
+  re-verify whenever Payload is upgraded.
+- **Is it maintained?** Actively; 3.88.0 is current at adoption.
+- **What is the removal path?** Routes call accessors in `src/data/**`, never Payload. The
+  accessor bodies become `async` fetches and the return types do not move. Reverting means
+  restoring the typed arrays behind those same signatures — which is exactly what the file
+  layout was built for in Phase 1.
+
+**Anything that breaks the public site's dependency profile is not covered by this
+exemption.** A sixth *client* dependency still needs its own answer.
 
 ---
 
