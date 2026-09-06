@@ -1,11 +1,111 @@
-/* Admin panel overrides.
+/* The admin panel, in the studio's own material.
  *
- * Deliberately almost empty. The temptation is to skin the CMS in the site's
- * ink-and-paper palette, and it is the wrong instinct: the admin is a tool the
- * studio works in, not a page it publishes, and a familiar unmodified Payload
- * is easier to get help with than a bespoke one. The only thing set here is the
- * accent, so the panel reads as belonging to this project without pretending to
- * be the website. */
+ * An earlier version of this file argued against skinning the CMS: a familiar
+ * unmodified Payload is easier to get help with, and the admin is a tool the
+ * studio works in rather than a page it publishes. The studio asked for it
+ * anyway, which settles it — this note stays only so the trade is on the
+ * record rather than rediscovered.
+ *
+ * **What is themed and what is not.** Only Payload's own design tokens are
+ * reassigned: the elevation ramp, the type, the accent and the state colours.
+ * No component internals are overridden and no layout is touched, because
+ * those are the parts that change between Payload versions — a panel restyled
+ * through its tokens survives an upgrade, and one restyled by reaching into
+ * `.nav__link > span` does not.
+ *
+ * **The elevation ramp is the whole job.** Payload lays the interface out in
+ * steps from `elevation-0` (the deepest ground) to `elevation-1000` (the
+ * highest contrast, which is text). Getting those right themes almost
+ * everything for free; getting them wrong makes text vanish into panels. The
+ * ramp below runs from the site's warm paper up to its ink rather than through
+ * neutral greys, so the panel is made of the same material as the website
+ * instead of being grey with green buttons.
+ *
+ * Payload ships light and dark. Both are defined, because an editor working at
+ * night gets whichever their system asks for and a half-themed dark mode is
+ * worse than none. */
+
+/* --- Light: the site's paper ground -------------------------------------- */
 :root {
+  --theme-bg: #f3f1e8; /* paper */
+  --theme-input-bg: #ffffff;
+  --theme-text: #0a0a0a; /* ink — 17.5:1 on paper */
+
+  /* Warm neutrals stepping from paper to ink. Payload's own ramp is cool grey;
+     these are the site's tones, so panels sit on the same ground as the page. */
+  --theme-elevation-0: #f3f1e8;
+  --theme-elevation-50: #eae8de;
+  --theme-elevation-100: #e2e0d5;
+  --theme-elevation-150: #d9d7cb;
+  --theme-elevation-200: #d3d0c2; /* line-light — the site's hairline */
+  --theme-elevation-250: #c4c1b3;
+  --theme-elevation-300: #b5b2a4;
+  --theme-elevation-400: #9b9889;
+  --theme-elevation-500: #8a8a82; /* mute */
+  --theme-elevation-600: #6e6e68; /* mute-deep — 4.5:1 on paper */
+  --theme-elevation-700: #55554f;
+  --theme-elevation-800: #3b3b37;
+  --theme-elevation-900: #2a2a28; /* line */
+  --theme-elevation-1000: #0a0a0a; /* ink */
+
+  /* Barlow carries structure on the site; it carries it here too. The variables
+     are set by next/font in the layout, with a real fallback stack in case the
+     font request fails — an admin panel that waits on a webfont to become
+     legible is a worse tool than one in Helvetica. */
+  --font-body: var(--font-barlow), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+
+  /* Zero radius, as everywhere else on this project. */
+  --style-radius-s: 0px;
+  --style-radius-m: 0px;
+  --style-radius-l: 0px;
+}
+
+/* --- Dark: the site's ink ground ------------------------------------------ */
+[data-theme="dark"] {
+  --theme-bg: #0a0a0a; /* ink */
+  --theme-input-bg: #111111; /* ink-soft */
+  --theme-text: #f3f1e8; /* paper */
+
+  --theme-elevation-0: #0a0a0a;
+  --theme-elevation-50: #111111; /* ink-soft */
+  --theme-elevation-100: #171716; /* ink-raised */
+  --theme-elevation-150: #1f1f1d;
+  --theme-elevation-200: #2a2a28; /* line */
+  --theme-elevation-250: #35352f;
+  --theme-elevation-300: #43433c;
+  --theme-elevation-400: #5c5c54;
+  --theme-elevation-500: #7a7a72;
+  --theme-elevation-600: #8a8a82; /* mute — 5.7:1 on ink */
+  --theme-elevation-700: #a5a59d;
+  --theme-elevation-800: #c6c4ba;
+  --theme-elevation-900: #dedbd0;
+  --theme-elevation-1000: #f3f1e8; /* paper */
+}
+
+/* --- The accent -----------------------------------------------------------
+ * Pistachio is the site's accent and it belongs to ink: 12.3:1 on #0A0A0A and
+ * 1.4:1 on paper, which the colour contract marks PROHIBITED. So it is used
+ * here only where it lands on a dark fill — Payload puts white text on its
+ * primary button, and pistachio behind white text would be the same illegal
+ * pairing wearing a different hat.
+ *
+ * The light theme's accent is therefore ink, which is what the website itself
+ * does: on paper the surface goes monochrome and emphasis is a tonal step
+ * rather than a hue. */
+:root {
+  --theme-success-500: #4e5d2a;
+  --theme-success-600: #3e4a22;
+}
+
+[data-theme="dark"] {
   --theme-success-500: #b7d77a;
+  --theme-success-600: #a3c566;
+}
+
+/* Focus, everywhere, at the site's own weight. Payload's default focus ring is
+ * fine; this only aligns its colour with the ramp above so it stays visible on
+ * both grounds. */
+:focus-visible {
+  outline-color: var(--theme-elevation-1000);
 }
