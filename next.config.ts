@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withPayload } from "@payloadcms/next/withPayload";
 
 const nextConfig: NextConfig = {
   // The practice page moved from /studio to /about. Permanent, so a search
@@ -25,4 +26,9 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+/* `withPayload` is what lets the admin panel live inside this app: it wires
+   Payload's server-only packages through the bundler and keeps them out of the
+   marketing pages' client graph. The public site's dependency profile is the
+   condition of the ruler.md §5 exemption, so that separation is the thing to
+   re-check on every Payload upgrade. */
+export default withPayload(nextConfig);

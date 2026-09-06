@@ -51,3 +51,12 @@ next-env.d.ts
 
 # Impeccable design-skill runtime state (transient; the critique snapshots are kept)
 .impeccable/live/
+
+# Payload (Phase 2)
+# The SQLite database and uploaded originals are local state, not source. The
+# uploads directory is deliberately outside `public/` — anything under public is
+# served verbatim, which would make a 30MB original publicly fetchable at full
+# size (the same rule the raw video masters follow).
+/uthan.db
+/uthan.db-journal
+/media/

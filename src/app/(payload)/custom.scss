@@ -1,0 +1,11 @@
+/* Admin panel overrides.
+ *
+ * Deliberately almost empty. The temptation is to skin the CMS in the site's
+ * ink-and-paper palette, and it is the wrong instinct: the admin is a tool the
+ * studio works in, not a page it publishes, and a familiar unmodified Payload
+ * is easier to get help with than a bespoke one. The only thing set here is the
+ * accent, so the panel reads as belonging to this project without pretending to
+ * be the website. */
+:root {
+  --theme-success-500: #b7d77a;
+}

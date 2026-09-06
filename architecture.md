@@ -277,9 +277,19 @@ now accepted rather than hypothetical: if Payload cannot boot, neither does the 
 site. The accessor boundary in §2.5 is what keeps the fallback available, so it is
 load-bearing from here rather than merely tidy.
 
-### 3.2 Database — PLANNED, NOT IMPLEMENTED IN PHASE 1
+### 3.2 Database — SQLITE IN DEVELOPMENT, POSTGRESQL STILL THE TARGET
 PostgreSQL, driven by whichever CMS is selected. No direct database access from route
 handlers; all reads go through the content layer.
+
+**Deviation, recorded rather than quietly taken (2026-09-06).** Phase 2 runs on SQLite via
+`@payloadcms/db-sqlite`. There is no PostgreSQL on the development machine and no Docker to
+run one — checked before choosing: neither binary installed, nothing listening on 5432 — so
+the Postgres adapter would have produced a CMS that could not boot on the machine it is
+being built on. Payload's adapters are a config swap plus a migration, so this defers the
+infrastructure decision rather than replacing it. **Production is still PostgreSQL**, and
+switching is a Phase 3 task, not a rewrite. The database file (`uthan.db`) and the uploads
+directory (`media/`) are gitignored: both are local state, and `media/` is deliberately
+outside `public/`, which is served verbatim.
 
 ### 3.3 Authentication — PLANNED, NOT IMPLEMENTED IN PHASE 1
 CMS-owned. Editor / Author / Admin roles. No public authentication surface exists on the
