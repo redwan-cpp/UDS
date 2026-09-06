@@ -24,6 +24,23 @@ npm run lint       # eslint — must pass clean
 npm run typecheck  # tsc --noEmit
 ```
 
+The CMS (Payload) runs inside this same app — `npm run dev` serves the site and the
+admin panel together. The panel is at `/admin`; there is no separate process to start.
+
+```bash
+npm run generate:types      # after changing any collection or global
+npm run generate:importmap  # after adding a custom admin component
+```
+
+`generate:types` rewrites `src/types/payload-types.ts`, which is what Payload believes it
+is storing. `src/types/content.ts` stays the contract the site renders against. **They must
+agree** — where they disagree, the collection is the bug, not the type.
+
+The database (`uthan.db`) and the uploads directory (`media/`) are gitignored local state.
+Deleting `uthan.db` resets the CMS to empty, including the admin user. `media/` sits outside
+`public/` on purpose: anything under `public/` is served verbatim, which would make an
+uploaded original publicly fetchable at full size.
+
 Media tooling (development only, never shipped):
 
 ```bash
