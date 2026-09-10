@@ -805,3 +805,155 @@ Guessing at a fix without the log is how a small problem becomes a rebuild.
 | `chmod 600 FILE` | Make a file readable only by its owner |
 | `q` | Leave a paged output that will not return to the prompt |
 | `Ctrl+C` | Stop whatever is currently running |
+
+---
+
+# SERVER REFERENCE
+
+What ends up on the box, why each piece is there, and which settings are
+deliberate. The runbook above is the *how*; this is the *what*.
+
+## The machine
+
+| | |
+|---|---|
+| Provider | BDIX VPS |
+| Plan | 2 vCPU · 4 GB RAM · 20 GB NVMe · 500 GB transfer |
+| Network | 1 Gbps on BDIX, 1 IPv4 + 1 IPv6 |
+| Cost | TK 499/month is the 1 vCPU tier; take the 2 vCPU tier above it |
+| OS | **Ubuntu 24.04 LTS** |
+
+**Why Ubuntu 24.04.** LTS means five years of security updates, so the box does
+not need reinstalling to stay patched. It is also the distribution nearly every
+tutorial, Node install script and Payload issue assumes — which matters when
+something breaks at an awkward hour and you are searching for an answer.
+
+**Why the 2 vCPU tier.** Not for traffic. A studio site serves static pages and
+the 1 vCPU plan would carry that easily. It is for `npm run build`, the most
+demanding thing this server ever does, which on one core takes long enough to
+make every deploy unpleasant.
+
+## What runs, and what each thing is for
+
+| Service | Version | Listens on | Job |
+|---|---|---|---|
+| Caddy | 2.x | `:80`, `:443` — public | HTTPS, certificates, reverse proxy |
+| Node (the app) | 22 LTS | `127.0.0.1:3000` | The site and the admin panel |
+| PostgreSQL | 16 | `127.0.0.1:5432` | Content |
+| systemd | — | — | Starts and restarts the app |
+| fail2ban | — | — | Bans repeated failed logins |
+| unattended-upgrades | — | — | Applies security patches |
+
+**Only Caddy faces the internet.** The app and the database bind to localhost,
+so neither is reachable from outside the machine even if the firewall were
+misconfigured. That is defence in depth rather than belt and braces: a mistake
+in one layer does not expose the database.
+
+**Node 22** because Next 16 requires 20.9 or newer and 22 is the current LTS.
+Ubuntu's own Node package is too old, so it comes from NodeSource.
+
+## Ports
+
+| Port | Open to | Why |
+|---|---|---|
+| 22 | The internet | SSH. Key only — passwords are disabled |
+| 80 | The internet | HTTP. Caddy redirects it to 443 and answers certificate challenges |
+| 443 | The internet | HTTPS. Everything real |
+| 3000 | localhost only | The app. Caddy proxies to it |
+| 5432 | localhost only | PostgreSQL |
+
+Everything else is closed by `ufw`.
+
+## Accounts
+
+| Account | Purpose |
+|---|---|
+| `root` | Exists, but cannot log in over SSH |
+| `uthan` | Yours. Owns the app, uses `sudo` when needed |
+| `postgres` | The system account PostgreSQL runs as |
+| `uthan` (database role) | The app's database login. Owns only its own database |
+
+## Where things live
+
+```
+/srv/uthan/                  the repository
+  .env                       secrets — never committed, chmod 600
+  .next/standalone/          the built server that systemd runs
+  media/                     uploaded images. NOT in git, NOT in public/
+  backup.sh                  nightly database and media dump
+/srv/backups/                two weeks of backups, then pruned
+/etc/systemd/system/uthan.service
+/etc/caddy/Caddyfile
+/swapfile                    4 GB
+```
+
+**`media/` sits outside `public/` on purpose.** Anything under `public/` is
+served verbatim at full size, which would make an uploaded 30 MB original
+publicly downloadable. Payload serves uploads through its own route instead,
+with a `script-src 'none'` content security policy — which is what neutralises
+script inside an uploaded SVG.
+
+## Environment variables
+
+All four live in `/srv/uthan/.env`, read by systemd through `EnvironmentFile`.
+
+| Variable | Example | What breaks without it |
+|---|---|---|
+| `PAYLOAD_SECRET` | 64 hex characters | The app refuses to start. Deliberate — there is no default, because a deploy that boots with a secret taken from the repository is worse than one that fails |
+| `DATABASE_URI` | `postgres://uthan:PASSWORD@localhost:5432/uthan` | No content. It also **selects the driver** — a `postgres://` URL switches the app from SQLite to PostgreSQL |
+| `NEXT_PUBLIC_SERVER_URL` | `https://uthandesignstudio.com` | Social share cards lose their image, and the CSRF allowlist is empty so admin login fails from a browser |
+| `MEDIA_DIR` | `/srv/uthan/media` | Uploads land inside the build output and are deleted on the next deploy |
+
+## Resource budget
+
+**Memory, 4 GB.** Idle is roughly 1 GB: Ubuntu around 300 MB, PostgreSQL around
+200 MB, the Node app around 300 MB, Caddy around 20 MB. The remaining 3 GB plus
+the 4 GB swapfile is headroom for builds, which are the only thing that needs
+it.
+
+**Disk, 20 GB.** About 9 to 10 GB is committed before any content: Ubuntu ~4 GB,
+`node_modules` ~0.9 GB, the build ~0.7 GB, swap 4 GB, PostgreSQL a few hundred
+megabytes. That leaves roughly **10 GB for uploads**, and at about 2.6 MB per
+photograph including its derivatives, that is **around 3,500 more images**.
+
+The number that grows faster than it looks is the file *count* — 18 source
+photographs already produce 304 files once Payload's three sizes and Next's
+optimiser cache are counted. That is why the monthly cache-clearing cron in
+Part 10.3 is maintenance rather than housekeeping.
+
+**Transfer, 500 GB.** A page carrying 3 MB of photography at 50,000 views is
+about 150 GB. Comfortable for a studio site.
+
+## Security settings applied
+
+- SSH: key authentication only, root login refused, passwords disabled
+- `ufw`: default deny, three ports open
+- `fail2ban`: bans an IP after repeated failed logins
+- `unattended-upgrades`: security patches without you
+- PostgreSQL: localhost only, its own role, its own password
+- Caddy: automatic TLS, HSTS, `nosniff`, a strict referrer policy
+- Payload: five login attempts then a ten-minute lock; unpublished drafts are
+  not readable by anonymous requests; uploads served with `script-src 'none'`
+- `.env` is `chmod 600` and gitignored
+
+## What is safe to change later, and what is not
+
+**Safe.** Anything in the admin panel. The Caddyfile — reload with
+`sudo systemctl reload caddy`, and a syntax error will not take the running
+site down. Backup timing.
+
+**Careful.** `.env` — a typo in `DATABASE_URI` means the site boots with no
+content. Restart after any change: `sudo systemctl restart uthan`.
+
+**Do not.** Delete `/srv/uthan/media`; those are the studio's uploads and they
+are not in git. Move the app out of `/srv/uthan` without updating both the
+systemd unit and `MEDIA_DIR`. Open port 5432 to the internet.
+
+## What this server will not have yet
+
+| Missing | Consequence | When it matters |
+|---|---|---|
+| Email adapter | "Forgot password" writes to the server log instead of sending | The day a studio person gets their own account |
+| Off-site backups | Backups sit on the same disk they protect until you copy them | Immediately |
+| Staging | Code goes from your laptop straight to the live site | When a bad deploy would embarrass someone |
+| Monitoring | Nobody is told if the site goes down at 3am | Before the studio depends on it |
