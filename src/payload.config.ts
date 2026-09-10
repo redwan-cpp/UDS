@@ -11,6 +11,7 @@ import { Brands } from "./collections/Brands";
 import { Categories } from "./collections/Categories";
 import { Careers } from "./collections/Careers";
 import { Expertise } from "./collections/Expertise";
+import { Knowledge } from "./collections/Knowledge";
 import { Media } from "./collections/Media";
 import { News } from "./collections/News";
 import { Portfolio } from "./collections/Portfolio";
@@ -96,6 +97,7 @@ export default buildConfig({
     Portfolio,
     Products,
     News,
+    Knowledge,
     Team,
     Expertise,
     Sustainability,

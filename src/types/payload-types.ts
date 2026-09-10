@@ -71,6 +71,7 @@ export interface Config {
     portfolio: Portfolio;
     products: Product;
     news: News;
+    knowledge: Knowledge;
     team: Team;
     expertise: Expertise;
     sustainability: Sustainability;
@@ -91,6 +92,7 @@ export interface Config {
     portfolio: PortfolioSelect<false> | PortfolioSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     news: NewsSelect<false> | NewsSelect<true>;
+    knowledge: KnowledgeSelect<false> | KnowledgeSelect<true>;
     team: TeamSelect<false> | TeamSelect<true>;
     expertise: ExpertiseSelect<false> | ExpertiseSelect<true>;
     sustainability: SustainabilitySelect<false> | SustainabilitySelect<true>;
@@ -519,6 +521,57 @@ export interface News {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Written pieces — the studio's own thinking, rather than announcements. Shown at /knowledge.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "knowledge".
+ */
+export interface Knowledge {
+  id: number;
+  title: string;
+  /**
+   * The URL segment: /knowledge/<slug>.
+   */
+  slug: string;
+  date: string;
+  /**
+   * One line. Used on cards, in the index, and as the description on the card someone sees when this is shared to Facebook or LinkedIn.
+   */
+  summary: string;
+  body: {
+    text: string;
+    id?: string | null;
+  }[];
+  /**
+   * Also the picture on the social share card. Required for that reason — a shared link with no image is a grey box nobody clicks.
+   */
+  image: number | Media;
+  gallery?: (number | Media)[] | null;
+  /**
+   * Lead the Knowledge index with this piece.
+   */
+  featured?: boolean | null;
+  /**
+   * Placeholder content, not the studio's real work or details. Drives the demo notices.
+   */
+  isDemo?: boolean | null;
+  /**
+   * Leave blank to derive from the title and summary. Only fill these in to override.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    /**
+     * Ask search engines not to index this page.
+     */
+    noIndex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "team".
  */
@@ -779,6 +832,10 @@ export interface PayloadLockedDocument {
         value: number | News;
       } | null)
     | ({
+        relationTo: 'knowledge';
+        value: number | Knowledge;
+      } | null)
+    | ({
         relationTo: 'team';
         value: number | Team;
       } | null)
@@ -1028,6 +1085,37 @@ export interface NewsSelect<T extends boolean = true> {
         href?: T;
         id?: T;
       };
+  featured?: T;
+  isDemo?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        noIndex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "knowledge_select".
+ */
+export interface KnowledgeSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  date?: T;
+  summary?: T;
+  body?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  image?: T;
+  gallery?: T;
   featured?: T;
   isDemo?: T;
   seo?:

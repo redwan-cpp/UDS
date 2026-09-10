@@ -12,6 +12,7 @@ import { navigation } from "@/data/navigation";
 import { studio } from "@/data/studio";
 import { getSearchIndex } from "@/data/search";
 import { footerCopy } from "@/data/copy";
+import { SITE_URL } from "@/lib/share";
 
 import "./globals.css";
 
@@ -45,6 +46,16 @@ const newsreader = Newsreader({
  * Twitter cards and JSON-LD are Phase 5 — see architecture.md §3.7.
  */
 export const metadata: Metadata = {
+  /**
+   * The base every relative URL in metadata resolves against.
+   *
+   * Without it, an OpenGraph image given as `/media/x.jpg` is resolved by
+   * Facebook against `facebook.com` and the share card comes back blank. Next
+   * warns about this in the build log and falls back to localhost, which is
+   * worse than blank — it produces cards pointing at a machine nobody else can
+   * reach. Empty in development, where nothing is scraping anything.
+   */
+  metadataBase: SITE_URL ? new URL(SITE_URL) : undefined,
   title: {
     default: "Uthan Design Studio — Architecture / Design / Space",
     template: "%s — Uthan Design Studio",

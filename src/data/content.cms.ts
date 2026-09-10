@@ -207,6 +207,49 @@ export const getNewsSlugs = cache(async (): Promise<string[]> =>
   (await find("news", { depth: 0 })).map((d) => d.slug as string),
 );
 
+/* ------------------------------------------------------------------ knowledge */
+
+/**
+ * Knowledge posts, mapped to `NewsItem`.
+ *
+ * The same shape, so `/knowledge` reuses the news cards and article layout
+ * rather than growing a parallel set of components. `kind` is fixed to
+ * `publication` because the type requires one and a written piece is exactly
+ * that — the Knowledge collection does not ask an editor to choose, since
+ * there is nothing to choose between.
+ */
+const toKnowledge = (d: Doc): NewsItem => ({
+  id: String(d.id),
+  slug: d.slug,
+  isDemo: Boolean(d.isDemo),
+  title: d.title,
+  kind: "publication",
+  date: typeof d.date === "string" ? d.date.slice(0, 10) : d.date,
+  summary: d.summary,
+  body: toParagraphs(d.body),
+  image: toAsset(d.image),
+  gallery: toAssets(d.gallery).length ? toAssets(d.gallery) : undefined,
+  featured: Boolean(d.featured),
+});
+
+export const getKnowledge = cache(async (): Promise<NewsItem[]> =>
+  (await find("knowledge", { sort: "-date" })).map(toKnowledge),
+);
+
+export const getKnowledgeBySlug = cache(
+  async (slug: string): Promise<NewsItem | undefined> => {
+    const docs = await find("knowledge", {
+      where: { slug: { equals: slug } },
+      limit: 1,
+    });
+    return docs.length ? toKnowledge(docs[0]) : undefined;
+  },
+);
+
+export const getKnowledgeSlugs = cache(async (): Promise<string[]> =>
+  (await find("knowledge", { depth: 0 })).map((d) => d.slug as string),
+);
+
 /* ----------------------------------------------------------------------- team */
 
 export const getTeam = cache(async (): Promise<TeamMember[]> =>

@@ -54,6 +54,7 @@ const PAGES: Record<string, string[]> = {
   portfolio: ["/projects", "/portfolio"],
   products: ["/products"],
   news: ["/", "/news"],
+  knowledge: ["/knowledge"],
   team: ["/about"],
   expertise: ["/", "/about"],
   sustainability: ["/sustainability"],
@@ -67,6 +68,7 @@ const DETAIL_ROUTE: Record<string, string> = {
   projects: "/projects",
   products: "/products",
   news: "/news",
+  knowledge: "/knowledge",
 };
 
 export const revalidateCollection =

@@ -39,7 +39,7 @@ export default async function AboutPage() {
         index={navIndex("/about")}
         eyebrow={heroCopy["/about"].eyebrow}
         title={heroCopy["/about"].title}
-        intro={studio.statement[0]}
+        intro={studio.about.statement[0]}
       />
 
       <Section surface="light" spacing="pivotal">
@@ -48,14 +48,14 @@ export default async function AboutPage() {
             <div className="lg:col-span-6">
               <Reveal>
                 <Statement as="p" className="max-w-[22ch]">
-                  {studio.statement[1] ?? studio.statement[0]}
+                  {studio.about.body[0]}
                 </Statement>
               </Reveal>
               {/* Prose reveals each paragraph on its own trigger — see
                   typography/index.tsx — so it sits outside the Statement's
                   Reveal rather than nested inside it. */}
               <div className="mt-10 border-t border-hairline pt-8">
-                <Prose paragraphs={studio.approach} className="max-w-[54ch]" />
+                <Prose paragraphs={studio.about.body.slice(1)} className="max-w-[54ch]" />
               </div>
             </div>
 

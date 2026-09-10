@@ -3,7 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHead } from "@/components/typography";
 import { ButtonLink, Arrow } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
-import { ProjectLoop } from "@/components/projects/ProjectLoop";
+import { ProjectGrid } from "@/components/projects/ProjectGrid";
 import type { Project, SectionCopy } from "@/types/content";
 
 /**
@@ -14,8 +14,8 @@ import type { Project, SectionCopy } from "@/types/content";
  * projects a page each, which took four screens to say what a practice's
  * homepage should say in one.
  *
- * The grid itself now lives in `ProjectLoop`, which holds two rows on screen
- * and steps through the rest on an endless loop. This section keeps the head,
+ * The grid itself now lives in `ProjectGrid`, which shows four projects and
+ * grows downward when the reader asks for more. This section keeps the head,
  * the surface and the route out to the full index — the parts that are
  * composition rather than behaviour.
  *
@@ -57,21 +57,20 @@ export function FeaturedProjects({
           />
         </Reveal>
 
-        {/* The grid moved into `ProjectLoop`, which windows it to two rows and
-            steps through the rest. The reveal wraps the loop rather than the
-            cards: a per-card stagger belongs to a list that arrives once, and
-            these cards now re-enter on every step, where a staggered cascade
-            would fire again each time a reader pressed an arrow. */}
+        {/* The grid moved into `ProjectGrid`, which shows four and grows
+            downward. The reveal wraps the grid rather than the cards: a
+            per-card stagger belongs to a list that arrives once, and cards
+            added by the control animate themselves on mount. */}
         <Reveal>
-          <ProjectLoop projects={projects} />
+          <ProjectGrid projects={projects} />
         </Reveal>
 
-        {/* Centred under the loop's own down control, and on the same axis as
-            it, so the two read as one column of controls: step through the
-            work here, or leave the loop for the whole list.
+        {/* Centred under the grid's own control, and on the same axis as it,
+            so the two read as one column: expand the work here, or leave for
+            the whole index.
 
-            No rule of its own. The loop already closes with a hairline under
-            the bottom stepper, and a second full-width rule 80px below it made
+            No rule of its own. The grid already closes with a hairline under
+            its control, and a second full-width rule 80px below it made
             a band out of what is a single button. The spacing carries it. */}
         <Reveal className="mt-10 flex justify-center">
           <ButtonLink href="/projects" variant="secondary">

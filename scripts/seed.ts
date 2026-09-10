@@ -29,6 +29,7 @@ import { getProjects } from "@/data/projects";
 import { getPortfolio } from "@/data/portfolio";
 import { getProducts } from "@/data/products";
 import { getNews } from "@/data/news";
+import { knowledge } from "@/data/knowledge";
 import { getSustainabilityPrinciples } from "@/data/sustainability";
 import { team } from "@/data/team";
 import { expertise } from "@/data/expertise";
@@ -327,6 +328,26 @@ for (const n of getNews()) {
     },
   );
   note("news");
+}
+
+for (const k of knowledge) {
+  await upsert(
+    "knowledge",
+    { slug: { equals: k.slug } },
+    {
+      title: k.title,
+      slug: k.slug,
+      date: k.date,
+      summary: k.summary,
+      body: paras(k.body),
+      image: await upload(k.image),
+      gallery: await uploadMany(k.gallery),
+      featured: k.featured,
+      isDemo: k.isDemo,
+      _status: "published",
+    },
+  );
+  note("knowledge");
 }
 
 for (const m of team) {

@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { IS_DEMO_BUILD } from "@/data/studio";
+
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { RevealText } from "@/components/motion/RevealText";
@@ -77,6 +79,12 @@ export function PageHero({ index, eyebrow, title, intro, aside }: PageHeroProps)
  * the studio's real work. Small, set in the interface language, and honest.
  */
 export function DemoNotice({ children }: { children: ReactNode }) {
+  // Gated on the one flag rather than deleted from six pages. The studio has
+  // supplied real details, so these are off — but the projects, products and
+  // photography are still placeholder, and the day someone wants the notices
+  // back it should be one line, not an archaeology exercise across the routes.
+  if (!IS_DEMO_BUILD) return null;
+
   return (
     <p className="flex gap-3 border-l border-accent pl-4 text-caption text-secondary">
       <span className="shrink-0 text-meta uppercase text-accent">Demo</span>

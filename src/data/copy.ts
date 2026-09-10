@@ -101,6 +101,12 @@ export const heroCopy = {
     intro:
       "Four fields and a message. It takes a few seconds, and it reaches the right person first.",
   },
+  "/knowledge": {
+    eyebrow: "Writing",
+    title: "Knowledge",
+    intro:
+      "What the studio is thinking about — notes on material, drawing and practice.",
+  },
   "/careers": { eyebrow: "Careers", title: "Work with us" },
   "/privacy": {
     eyebrow: "Legal",

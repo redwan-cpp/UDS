@@ -82,6 +82,11 @@ export default function ContactPage() {
               <p className="mt-3 text-body text-secondary">
                 {studio.contact.phone}
               </p>
+              {studio.contact.phoneAlt && (
+                <p className="mt-1 text-body text-secondary">
+                  {studio.contact.phoneAlt}
+                </p>
+              )}
             </div>
 
             <div className="border-t border-hairline pt-5">

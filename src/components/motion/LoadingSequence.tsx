@@ -1,27 +1,40 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 
 import { gsap } from "@/lib/gsap";
-import { NeonMark } from "@/components/motion/NeonMark";
 
 /**
  * First-visit reveal.
  *
- * Rules it is held to (design.md §6):
- * - Runs once per session, gated by the boot script's `js-intro` class so there
- *   is never a hydration flash of an overlay that should not be there.
- * - Never runs under `prefers-reduced-motion` or without JavaScript — the CSS
- *   keeps it hidden unless the boot script explicitly enabled it.
- * - Never exceeds 2.4s (lengthened from an earlier 1.6s at the studio's
- *   request — the mark now has to visibly fill rather than just drop in, and
- *   the old ceiling cut that motion short), and shortens when fonts and the
- *   hero poster are ready sooner. It covers ready content; it does not delay it.
+ * **The mark holds still and a measure fills.** This used to animate the mark
+ * itself — a neon fill, then the letters of UTHAN staggering up out of a mask,
+ * then an accent rule dropping in. Four things moving, none of them telling the
+ * reader anything. The studio asked for the opposite and the opposite is
+ * better: the logo is the one element that should not be performing, and a bar
+ * running 0 to 100 is the only part of a preloader that carries information.
+ *
+ * So: the studio's own lockup, static, above a hairline that fills left to
+ * right with a percentage counted alongside it. The numerals are the site's
+ * tabular register, zero-padded, so the count does not reflow as digits change
+ * — the same reason the crosshair's coordinate readout is padded.
+ *
+ * **The percentage is honest about what it measures.** It is the intro's own
+ * progress, not the page's, and it is not pretending to track downloads. Nobody
+ * is misled by that — a preloader bar is a convention for "wait a moment" — but
+ * it is worth not claiming otherwise in the code.
+ *
+ * Rules it is held to (design.md §6), all unchanged:
+ * - Runs once per session, gated by the boot script's `js-intro` class, so
+ *   there is never a hydration flash of an overlay that should not be there.
+ * - Never under `prefers-reduced-motion` or without JavaScript.
+ * - Never exceeds 2.4s, and hands over early if anything stalls.
  * - Skippable with any key or click.
  * - `aria-hidden`, so a screen reader goes straight to the page.
  *
  * On completion it dispatches `uds:ready`, which the hero waits for so the two
- * sequences read as one continuous move rather than two competing ones.
+ * sequences read as one move rather than two competing ones.
  */
 export function LoadingSequence() {
   const root = useRef<HTMLDivElement>(null);
@@ -48,75 +61,50 @@ export function LoadingSequence() {
       window.dispatchEvent(new CustomEvent("uds:ready"));
     };
 
+    const bar = el.querySelector<HTMLElement>("[data-intro-bar]");
+    const count = el.querySelector<HTMLElement>("[data-intro-count]");
+
     const tl = gsap.timeline({ onComplete: finish });
 
-    // The mark lights up before the name arrives — see NeonMark for the
-    // construction. `clip-path` is on `CSSPlugin`'s default tween list, so
-    // this is a plain numeric interpolation between two `inset()` calls with
-    // the same argument shape; nothing beyond core GSAP is needed for it.
-    tl.fromTo(
-      el.querySelector("[data-neon-fill]"),
-      { clipPath: "inset(100% 0 0 0)" },
-      { clipPath: "inset(0% 0 0 0)", duration: 0.75, ease: "power2.out" },
-    )
-      .to("[data-intro-word]", {
-        yPercent: 0,
-        duration: 0.7,
-        ease: "power3.out",
-        stagger: 0.055,
-      }, 0.35)
-      .fromTo(
-        "[data-intro-rule]",
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          duration: 0.7,
-          ease: "power2.inOut",
-          stagger: 0.1,
-          transformOrigin: "left center",
-        },
-        0.4,
-      )
-      .fromTo(
-        "[data-intro-accent]",
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          duration: 0.4,
-          ease: "power2.inOut",
-          transformOrigin: "top center",
-        },
-        0.95,
-      )
-      // The panel lifts while its content moves down by the same amount, so the
-      // wordmark stays put as the surface leaves. Two transforms rather than a
-      // clip-path repaint of the whole viewport — this is the one place a
+    // One tween drives both the bar and the number, so they cannot disagree.
+    // `power1.inOut` rather than a linear ramp: a bar that starts and stops
+    // dead reads as a progress report, and this is a curtain.
+    const progress = { value: 0 };
+    tl.to(progress, {
+      value: 1,
+      duration: 1.25,
+      ease: "power1.inOut",
+      onUpdate: () => {
+        if (bar) bar.style.transform = `scaleX(${progress.value})`;
+        if (count) {
+          count.textContent = String(Math.round(progress.value * 100)).padStart(
+            3,
+            "0",
+          );
+        }
+      },
+    })
+      // A beat at full before the panel leaves, so 100 is actually seen rather
+      // than glimpsed on the way out.
+      .to({}, { duration: 0.18 })
+      // The panel lifts while its content moves down by the same amount, so
+      // the lockup stays put as the surface leaves. Two transforms rather than
+      // a clip-path repaint of the whole viewport — this is the one place a
       // viewport-sized element is in motion, which is exactly the case the
       // reveal contract avoids clip-path for.
-      .to(
-        el,
-        { yPercent: -100, duration: 0.7, ease: "power3.inOut" },
-        1.4,
-      )
+      .to(el, { yPercent: -100, duration: 0.7, ease: "power3.inOut" })
       .to(
         "[data-intro-inner]",
         { yPercent: 100, duration: 0.7, ease: "power3.inOut" },
-        1.4,
+        "<",
       );
 
     // Hard ceiling. If anything stalls, the page is handed over regardless.
     const ceiling = window.setTimeout(() => {
-      // `tl.progress(1)` is asked to render the end state, but this does not
-      // wait to confirm it landed — `finish()` hides the whole container via
-      // `js-intro` regardless (`.uds-intro` is `display: none` without it), so
-      // nothing here is ever visible whether or not the forced render
-      // succeeded. Matches `MotionFailsafe`'s own approach elsewhere: force
-      // the outcome directly rather than trust a stalled tween to render it.
       tl.progress(1);
       finish();
     }, 2400);
 
-    // Skippable.
     const skip = () => {
       tl.timeScale(3.2);
     };
@@ -140,35 +128,39 @@ export function LoadingSequence() {
       className="uds-intro surface-dark fixed inset-0 z-90 place-items-center overflow-hidden bg-ink"
     >
       <div data-intro-inner className="w-full px-(--gutter)">
-        <div className="mx-auto flex w-full max-w-(--container-wide) flex-col gap-6">
-          <span
-            data-intro-rule
-            className="block h-px w-full origin-left bg-line"
+        <div className="mx-auto flex w-full max-w-(--container-wide) flex-col gap-8">
+          {/* The studio's own lockup, on the ink derivative because this panel
+              is always ink. Static — it is the fixed point the measure runs
+              under. `priority` so it is not the thing being waited for. */}
+          <Image
+            src="/brand/uthan-lockup-on-ink.svg"
+            alt=""
+            width={917}
+            height={300}
+            priority
+            unoptimized
+            className="h-auto w-full max-w-[min(13rem,50%)]"
           />
 
-          <div className="flex items-end justify-between gap-6">
-            <span className="flex items-end gap-5">
-              <NeonMark className="h-14 w-auto shrink-0 sm:h-20" />
-              <span className="flex overflow-hidden text-h1 leading-none">
-                {"UTHAN".split("").map((letter, i) => (
-                  <span key={i} className="overflow-hidden">
-                    <span data-intro-word className="block translate-y-full">
-                      {letter}
-                    </span>
-                  </span>
-                ))}
-              </span>
+          <div className="flex items-center gap-5">
+            {/* The track and its fill. `scaleX` from a left origin, so the
+                growth composites on the GPU rather than relaying out a width
+                sixty times a second. */}
+            <span className="relative block h-px flex-1 bg-line">
+              <span
+                data-intro-bar
+                className="absolute inset-0 block origin-left scale-x-0 bg-paper"
+              />
             </span>
-            <span
-              data-intro-accent
-              className="mb-2 block h-10 w-px origin-top bg-pistachio sm:h-16"
-            />
-          </div>
 
-          <span
-            data-intro-rule
-            className="block h-px w-full origin-left bg-line"
-          />
+            <span
+              data-intro-count
+              data-numeric
+              className="shrink-0 text-meta uppercase text-secondary"
+            >
+              000
+            </span>
+          </div>
         </div>
       </div>
     </div>

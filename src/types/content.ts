@@ -329,9 +329,29 @@ export interface StudioProfile {
    * this closes the page.
    */
   closing: string;
+  /**
+   * The About page's own words.
+   *
+   * Separate from `statement`/`approach` because the About page used to render
+   * those, which meant it said the same thing as the homepage in the same
+   * order. The studio supplied distinct copy for it; this is where it lives.
+   */
+  about: {
+    /** Display scale. Short — one line, not a paragraph. */
+    statement: string[];
+    body: string[];
+  };
   contact: {
     email: string;
     phone: string;
+    /**
+     * A second line, where the studio has one.
+     *
+     * Its own field rather than two numbers in `phone`, because `phone` is
+     * rendered inside a `tel:` href and a href carrying two numbers dials
+     * neither of them.
+     */
+    phoneAlt?: string;
     addressLines: string[];
     hours?: string;
     /**

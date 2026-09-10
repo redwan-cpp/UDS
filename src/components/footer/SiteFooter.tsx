@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/typography";
-import { IS_DEMO_BUILD } from "@/data/studio";
+import { DEVELOPER_CREDIT, IS_DEMO_BUILD } from "@/data/studio";
 import type { NavItem, StudioProfile } from "@/types/content";
 
 /**
@@ -125,6 +125,14 @@ export function SiteFooter({
               >
                 <span className={LABEL}>{studio.contact.phone}</span>
               </a>
+              {studio.contact.phoneAlt && (
+                <a
+                  href={`tel:${studio.contact.phoneAlt.replace(/\s/g, "")}`}
+                  className={ROW}
+                >
+                  <span className={LABEL}>{studio.contact.phoneAlt}</span>
+                </a>
+              )}
             </div>
             {studio.contact.hours && (
               <p className="mt-4 text-small text-secondary">
@@ -181,6 +189,10 @@ export function SiteFooter({
           <p>
             &copy; {year} {studio.name}. All rights reserved.
           </p>
+          {/* The build credit. Its own line rather than appended to the
+              copyright, because they are two different claims — one is the
+              studio's ownership of the work, the other is who made the site. */}
+          <p>{DEVELOPER_CREDIT}</p>
           {/* The legal links sit in a horizontal bar, so there is no row
               structure to carry the affordance and they were rendering as mute
               text indistinguishable from the copyright line beside them. An

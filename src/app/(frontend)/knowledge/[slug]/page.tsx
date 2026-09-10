@@ -12,13 +12,13 @@ import { NewsCard } from "@/components/news/NewsCard";
 import { Arrow } from "@/components/ui/Button";
 import { DemoNotice } from "@/components/hero/PageHero";
 import { formatDate } from "@/lib/labels";
-import { getNews, getNewsBySlug, getNewsSlugs } from "@/data/content.cms";
+import { getKnowledge, getKnowledgeBySlug, getKnowledgeSlugs } from "@/data/content.cms";
 import { newsKindLabels } from "@/data/news";
 import { articleMetadata } from "@/lib/share";
 import { ShareLinks } from "@/components/ui/ShareLinks";
 
 export async function generateStaticParams() {
-  return (await getNewsSlugs()).map((slug) => ({ slug }));
+  return (await getKnowledgeSlugs()).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -27,7 +27,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const item = await getNewsBySlug(slug);
+  const item = await getKnowledgeBySlug(slug);
   if (!item) return {};
   // Carries the OpenGraph and Twitter tags Facebook and LinkedIn scrape, so a
   // shared link renders as a card with the article's own photograph and
@@ -35,22 +35,22 @@ export async function generateMetadata({
   return articleMetadata({
     title: item.title,
     description: item.summary,
-    path: `/news/${item.slug}`,
+    path: `/knowledge/${item.slug}`,
     image: item.image,
     publishedTime: item.date,
   });
 }
 
-export default async function NewsArticlePage({
+export default async function KnowledgeArticlePage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const item = await getNewsBySlug(slug);
+  const item = await getKnowledgeBySlug(slug);
   if (!item) notFound();
 
-  const more = (await getNews())
+  const more = (await getKnowledge())
     .filter((n) => n.slug !== slug)
     .slice(0, 3);
 

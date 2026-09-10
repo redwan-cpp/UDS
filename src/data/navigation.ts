@@ -49,6 +49,12 @@ export const navigation: NavItem[] = [
   },
   {
     index: "06",
+    label: "Knowledge",
+    href: "/knowledge",
+    image: img("about", 3, ""),
+  },
+  {
+    index: "07",
     label: "Contact",
     href: "/contact",
     image: img("urban", 0, ""),
