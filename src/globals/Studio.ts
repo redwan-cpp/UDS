@@ -92,6 +92,25 @@ export const Studio: GlobalConfig = {
               description: "Supporting paragraphs below the statement.",
             }),
             {
+              name: "about",
+              type: "group",
+              label: "About page",
+              admin: {
+                description:
+                  "The About page's own words. Kept apart from the statement above because the About page used to render that, which meant it said the same thing as the homepage in the same order.",
+              },
+              fields: [
+                paragraphs("statement", {
+                  required: true,
+                  description: "Display scale. One line — not a paragraph.",
+                }),
+                paragraphs("body", {
+                  required: true,
+                  description: "The read beneath it.",
+                }),
+              ],
+            },
+            {
               name: "closing",
               type: "textarea",
               required: true,
@@ -115,6 +134,14 @@ export const Studio: GlobalConfig = {
                     { name: "email", type: "email", required: true },
                     { name: "phone", type: "text", required: true },
                   ],
+                },
+                {
+                  name: "phoneAlt",
+                  type: "text",
+                  admin: {
+                    description:
+                      "A second line, if the studio has one. Its own field rather than two numbers in the one above — a tel: link carrying two numbers dials neither.",
+                  },
                 },
                 stringList("addressLines", {
                   singular: "Address line",

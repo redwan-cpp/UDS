@@ -1419,12 +1419,35 @@ export interface Studio {
     id?: string | null;
   }[];
   /**
+   * The About page's own words. Kept apart from the statement above because the About page used to render that, which meant it said the same thing as the homepage in the same order.
+   */
+  about: {
+    /**
+     * Display scale. One line — not a paragraph.
+     */
+    statement: {
+      text: string;
+      id?: string | null;
+    }[];
+    /**
+     * The read beneath it.
+     */
+    body: {
+      text: string;
+      id?: string | null;
+    }[];
+  };
+  /**
    * The homepage's closing line, immediately before the footer. Kept apart from the statement because it does a different job: those introduce the studio, this closes the page.
    */
   closing: string;
   contact: {
     email: string;
     phone: string;
+    /**
+     * A second line, if the studio has one. Its own field rather than two numbers in the one above — a tel: link carrying two numbers dials neither.
+     */
+    phoneAlt?: string | null;
     addressLines: {
       value: string;
       id?: string | null;
@@ -1596,12 +1619,29 @@ export interface StudioSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
+  about?:
+    | T
+    | {
+        statement?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        body?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+      };
   closing?: T;
   contact?:
     | T
     | {
         email?: T;
         phone?: T;
+        phoneAlt?: T;
         addressLines?:
           | T
           | {

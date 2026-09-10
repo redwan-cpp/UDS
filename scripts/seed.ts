@@ -465,9 +465,14 @@ await payload.updateGlobal({
     statement: paras(studio.statement),
     approach: paras(studio.approach),
     closing: studio.closing,
+    about: {
+      statement: paras(studio.about.statement),
+      body: paras(studio.about.body),
+    },
     contact: {
       email: studio.contact.email,
       phone: studio.contact.phone,
+      phoneAlt: studio.contact.phoneAlt,
       addressLines: values(studio.contact.addressLines),
       hours: studio.contact.hours,
       coordinates: studio.contact.coordinates,
