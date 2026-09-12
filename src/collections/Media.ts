@@ -51,6 +51,18 @@ export const Media: CollectionConfig = {
     // fetchable at full size.
     staticDir: process.env.MEDIA_DIR || path.resolve(process.cwd(), "media"),
     mimeTypes: ["image/*"],
+    // Payload defaults this to true whenever `imageSizes` is set, adding its
+    // own focal-point picker and a pair of fields for it. Those fields are
+    // named `focalX`/`focalY`, which generate the exact same Postgres column
+    // names (`focal_x`, `focal_y`) as the `focal` group field below — a field
+    // this collection defines on purpose, because it is the shape
+    // `MediaAsset.focal` in src/types/content.ts already expects. SQLite never
+    // surfaced the collision because two fields quietly sharing a column name
+    // did not stop it from working there; Postgres rejected the resulting
+    // INSERT outright, listing `focal_x` twice, the moment content was first
+    // seeded against it. Turning Payload's own copy off is the fix — the site
+    // never used its picker, only ever the field built here.
+    focalPoint: false,
     imageSizes: [
       { name: "thumbnail", width: 384, height: undefined, position: "centre" },
       { name: "card", width: 1080, height: undefined, position: "centre" },
