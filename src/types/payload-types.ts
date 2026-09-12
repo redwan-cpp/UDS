@@ -296,7 +296,7 @@ export interface Media {
   /**
    * Focal point for art-directed crops. Leave blank to centre.
    */
-  focal?: {
+  cropPoint?: {
     x?: number | null;
     y?: number | null;
   };
@@ -1263,7 +1263,7 @@ export interface MediaSelect<T extends boolean = true> {
   credit?: T;
   source?: T;
   licence?: T;
-  focal?:
+  cropPoint?:
     | T
     | {
         x?: T;

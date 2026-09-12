@@ -102,7 +102,8 @@ async function upload(asset: MediaAsset | undefined) {
       credit: asset.credit,
       source: asset.source,
       licence: asset.licence,
-      focal: asset.focal ? { x: asset.focal.x, y: asset.focal.y } : undefined,
+      // Written to `cropPoint`, the CMS-side field name — see Media.ts.
+      cropPoint: asset.focal ? { x: asset.focal.x, y: asset.focal.y } : undefined,
     },
   });
   uploaded.set(asset.src, Number(doc.id));

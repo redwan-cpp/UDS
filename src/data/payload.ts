@@ -36,7 +36,7 @@ type Upload =
       credit?: string | null;
       source?: string | null;
       licence?: string | null;
-      focal?: { x?: number | null; y?: number | null } | null;
+      cropPoint?: { x?: number | null; y?: number | null } | null;
     }
   | number
   | string
@@ -74,9 +74,14 @@ export function toAsset(value: Upload): MediaAsset {
     credit: value.credit ?? undefined,
     source: value.source ?? undefined,
     licence: value.licence ?? undefined,
+    // Read from `cropPoint`, the CMS-side field name, and exposed here as
+    // `focal` — the name the site's own MediaAsset type and every component
+    // reading it already use. Named differently on the Payload side to avoid
+    // colliding with whatever Payload's own upload pipeline calls this
+    // internally; see the note on Media.ts's `focalPoint: false`.
     focal:
-      value.focal?.x != null && value.focal?.y != null
-        ? { x: value.focal.x, y: value.focal.y }
+      value.cropPoint?.x != null && value.cropPoint?.y != null
+        ? { x: value.cropPoint.x, y: value.cropPoint.y }
         : undefined,
   };
 }

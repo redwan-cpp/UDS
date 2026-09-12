@@ -52,16 +52,14 @@ export const Media: CollectionConfig = {
     staticDir: process.env.MEDIA_DIR || path.resolve(process.cwd(), "media"),
     mimeTypes: ["image/*"],
     // Payload defaults this to true whenever `imageSizes` is set, adding its
-    // own focal-point picker and a pair of fields for it. Those fields are
-    // named `focalX`/`focalY`, which generate the exact same Postgres column
-    // names (`focal_x`, `focal_y`) as the `focal` group field below — a field
-    // this collection defines on purpose, because it is the shape
-    // `MediaAsset.focal` in src/types/content.ts already expects. SQLite never
-    // surfaced the collision because two fields quietly sharing a column name
-    // did not stop it from working there; Postgres rejected the resulting
-    // INSERT outright, listing `focal_x` twice, the moment content was first
-    // seeded against it. Turning Payload's own copy off is the fix — the site
-    // never used its picker, only ever the field built here.
+    // own focal-point picker. Turned off because the site never used it —
+    // only the `cropPoint` field below, which the site's own accessor exposes
+    // as `MediaAsset.focal`. Kept off even though it turned out not to be the
+    // actual source of the column collision below: Payload's own upload
+    // pipeline apparently writes a `focal_x`/`focal_y` pair regardless of this
+    // flag whenever `imageSizes` is configured, which the flag's own
+    // description does not suggest — the field was renamed instead of
+    // relying further on undocumented internals.
     focalPoint: false,
     imageSizes: [
       { name: "thumbnail", width: 384, height: undefined, position: "centre" },
@@ -100,9 +98,12 @@ export const Media: CollectionConfig = {
       admin: { description: "e.g. CC BY-SA 4.0. Leave blank for the studio's own work." },
     },
     {
-      // `MediaAsset.focal` — 0–1 in each axis. Payload has its own focal point
-      // UI, but the site reads this shape, so it is stored explicitly.
-      name: "focal",
+      // `MediaAsset.focal` — 0–1 in each axis. Named `cropPoint` rather than
+      // `focal` on the Payload side specifically to avoid colliding with
+      // whatever Payload's own upload pipeline calls it internally — see the
+      // note on `focalPoint` above. The site-facing accessor still exposes
+      // this as `MediaAsset.focal`; only the CMS-internal name changed.
+      name: "cropPoint",
       type: "group",
       admin: {
         description:
