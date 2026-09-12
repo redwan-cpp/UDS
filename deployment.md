@@ -490,7 +490,7 @@ cat .env
 > **The first `>` writes the file; the later `>>` append to it.** Using `>` twice would
 > overwrite. If you get this wrong, delete with `rm .env` and start 7.1 again.
 
-### 7.2 Install and build
+### 7.2 Install dependencies
 
 ```bash
 npm ci
@@ -498,6 +498,32 @@ npm ci
 
 > **What this does.** Installs the exact dependency versions recorded in
 > `package-lock.json`. Takes a few minutes.
+
+### 7.3 Load the content — before building
+
+> **What this does.** Creates the database tables and loads the current demo content — 6
+> projects, 12 portfolio entries, the studio profile, the media library.
+>
+> **This has to run before `npm run build`, not after — order matters here.** The build
+> statically generates pages like `/news/[slug]` and `/projects/[slug]`, which means it
+> queries the CMS directly while it builds. If PostgreSQL has no tables yet, the build gets
+> partway through — compiling and type-checking successfully — then fails with something like
+> `relation "news" does not exist` once it tries to collect page data. That is a wasted 5 to
+> 15 minutes of build time for a problem this ordering avoids entirely.
+
+```bash
+npx payload run scripts/seed.ts
+```
+
+> **You should see** a table ending in `media files 35`.
+
+```bash
+npx payload run scripts/counts.ts
+```
+
+> **You should see** `total 98` or similar, and `no duplicates`.
+
+### 7.4 Build
 
 ```bash
 npm run build
@@ -510,28 +536,16 @@ npm run build
 > **You should see** a route table listing `/`, `/about`, `/projects` and so on, and no red
 > error text.
 >
-> **If it is killed** you ran out of memory. Check swap is on with `free -h`.
+> **If it is killed or your SSH connection drops mid-build**, that is almost always memory
+> pressure. Check `free -h` — you want to see `4.0Gi` of swap. If `fallocate` reported success
+> earlier but swap shows far less than 4Gi, that command silently under-allocated on this
+> filesystem; recreate the swapfile with `dd` instead (see Part 2). Running the build inside
+> `screen` (`screen -S build`) means a dropped SSH connection does not kill the build with it —
+> reconnect and run `screen -r build` to resume watching it.
 >
 > Worth knowing: **this is the last time build speed matters much.** Editing content in the
 > panel never requires a rebuild — saving revalidates the affected pages directly. Only code
 > changes need this.
-
-### 7.3 Load the content
-
-```bash
-npx payload run scripts/seed.ts
-```
-
-> **What this does.** Creates the database tables and loads the current demo content — 6
-> projects, 12 portfolio entries, the studio profile, the media library.
->
-> **You should see** a table ending in `media files 35`.
-
-```bash
-npx payload run scripts/counts.ts
-```
-
-> **You should see** `total 98` or similar, and `no duplicates`.
 
 ---
 
