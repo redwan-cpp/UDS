@@ -84,6 +84,16 @@ export const Projects: CollectionConfig = {
           type: "select",
           required: true,
           defaultValue: "completed",
+          // Payload auto-names a select field's Postgres enum type from the
+          // field name — "status" collided with the enum it generates for its
+          // own internal `_status` draft/publish field (versions.drafts adds
+          // that automatically), landing both on `enum_projects_status`. SQLite
+          // has no native enum type, so this only ever surfaced against real
+          // Postgres: the very first deploy failed with
+          // `invalid input value for enum enum_projects_status: "completed"`,
+          // because the shared type had been built for draft/published values.
+          // An explicit name is the fix Payload documents for exactly this.
+          enumName: "project_status",
           options: ["completed", "in-progress", "concept"].map((v) => ({
             label: v,
             value: v,
