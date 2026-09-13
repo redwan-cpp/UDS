@@ -9,7 +9,7 @@ import { PageTransition } from "@/components/motion/PageTransition";
 import { MotionFailsafe } from "@/components/motion/MotionFailsafe";
 import { CrosshairCursor } from "@/components/ui/CrosshairCursor";
 import { navigation } from "@/data/navigation";
-import { studio } from "@/data/studio";
+import { getStudio } from "@/data/content.cms";
 import { getSearchIndex } from "@/data/search";
 import { footerCopy } from "@/data/copy";
 import { SITE_URL } from "@/lib/share";
@@ -87,9 +87,15 @@ d.classList.add('js-motion');
 if(!sessionStorage.getItem('uds-intro'))d.classList.add('js-intro');
 }catch(e){}})();`;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // The footer, the menu overlay and the wordmark all read the studio profile,
+  // and the layout is the one place above all three — so it is fetched once
+  // here rather than three times below. `cache` would dedupe it anyway; this
+  // also keeps the header a client component that is handed its data.
+  const studio = await getStudio();
+
   // suppressHydrationWarning on <html>: the boot script deliberately adds
   // `js-motion` / `js-intro` before React hydrates — that is the entire point
   // of it — so server and client class lists differ by design.
@@ -113,7 +119,7 @@ export default function RootLayout({
 
         <SiteHeader
           items={navigation}
-          studioName={studio.name}
+          studio={studio}
           searchIndex={getSearchIndex()}
         />
 

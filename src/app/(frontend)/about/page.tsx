@@ -8,7 +8,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { SectionHead, Statement, Prose } from "@/components/typography";
 import { TeamGrid } from "@/components/team/TeamGrid";
 import { Numbers } from "@/components/sections/Numbers";
-import { studio } from "@/data/studio";
+import { getStudio } from "@/data/content.cms";
 import { getTeam, getExpertise, getStatistics } from "@/data/content.cms";
 
 
@@ -27,10 +27,11 @@ export default async function AboutPage() {
   // Hoisted rather than awaited inline in the JSX: three collections read once
   // each, and the reader can see at the top of the component exactly what this
   // page costs.
-  const [areas, members, figures] = await Promise.all([
+  const [areas, members, figures, studio] = await Promise.all([
     getExpertise(),
     getTeam(),
     getStatistics(),
+    getStudio(),
   ]);
 
   return (

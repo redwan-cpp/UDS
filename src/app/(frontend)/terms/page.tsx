@@ -4,7 +4,7 @@ import { PageHero } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/typography";
-import { studio } from "@/data/studio";
+import { getStudio } from "@/data/content.cms";
 import { heroCopy } from "@/data/copy";
 import { sectionCopy } from "@/data/copy";
 
@@ -18,7 +18,9 @@ export const metadata: Metadata = {
  * Placeholder legal page — see the note in `privacy/page.tsx`. It exists so the
  * footer link resolves; the content is a legal document the studio must supply.
  */
-export default function TermsPage() {
+export default async function TermsPage() {
+  const studio = await getStudio();
+
   return (
     <>
       <PageHero

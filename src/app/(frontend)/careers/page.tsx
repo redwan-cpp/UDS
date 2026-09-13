@@ -6,7 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/typography";
 import { Reveal } from "@/components/motion/Reveal";
 import { careersIntro, openings } from "@/data/careers";
-import { studio } from "@/data/studio";
+import { getStudio } from "@/data/content.cms";
 import { heroCopy } from "@/data/copy";
 import { sectionCopy } from "@/data/copy";
 
@@ -29,6 +29,8 @@ export const metadata: Metadata = {
  * a worse outcome than an email address that works.
  */
 export default async function CareersPage() {
+  const studio = await getStudio();
+
   return (
     <>
       <PageHero

@@ -7,6 +7,7 @@ import type {
   NewsItem,
   Product,
   Statistic,
+  StudioProfile,
   SustainabilityPrinciple,
   TeamMember,
 } from "@/types/content";
@@ -97,6 +98,66 @@ export const getVisibleCategorySlugs = cache(
 
 /* The portfolio accessor is gone: `portfolio` merged into `projects`, and the
    work index now reads `getProjects` from projects.cms.ts. */
+
+/* ---------------------------------------------------------------- studio --- */
+
+/**
+ * The studio profile — the footer, the contact details, the About copy.
+ *
+ * A global rather than a collection: there is one studio. It was modelled in
+ * Payload when the CMS landed but nothing read it, so the site went on
+ * rendering `src/data/studio.ts` and the panel's fields did nothing — an editor
+ * could change the phone number, save, and watch the site ignore them. This is
+ * the accessor that makes those fields real; `studio.ts` stays behind as the
+ * seed source.
+ *
+ * Falls back field by field rather than wholesale. A global that has never been
+ * saved comes back as an empty object, and a footer that renders "undefined"
+ * for the studio's own name is worse than one showing what the seed put there.
+ */
+export const getStudio = cache(async (): Promise<StudioProfile> => {
+  const payload = await client();
+  const d: Doc = await payload.findGlobal({ slug: "studio", depth: 1 });
+
+  return {
+    name: d.name ?? "",
+    tagline: d.tagline ?? "",
+    disciplines: toValues(d.disciplines),
+    services: (d.services ?? []).map((s: Doc) => ({
+      label: s.label ?? "",
+      href: s.href ?? "",
+    })),
+    statement: toParagraphs(d.statement),
+    approach: toParagraphs(d.approach),
+    closing: d.closing ?? "",
+    about: {
+      statement: toParagraphs(d.about?.statement),
+      body: toParagraphs(d.about?.body),
+    },
+    contact: {
+      email: d.contact?.email ?? "",
+      phone: d.contact?.phone ?? "",
+      phoneAlt: d.contact?.phoneAlt ?? undefined,
+      addressLines: toValues(d.contact?.addressLines),
+      hours: d.contact?.hours ?? undefined,
+      coordinates:
+        d.contact?.coordinates?.lat != null && d.contact?.coordinates?.lon != null
+          ? { lat: d.contact.coordinates.lat, lon: d.contact.coordinates.lon }
+          : undefined,
+      mapEmbedUrl: d.contact?.mapEmbedUrl ?? undefined,
+    },
+    // `href` stays optional here on purpose: the UI renders a channel with no
+    // URL as plain text rather than as a link that goes nowhere.
+    social: (d.social ?? []).map((s: Doc) => ({
+      label: s.label ?? "",
+      href: s.href || undefined,
+    })),
+    legal: (d.legal ?? []).map((s: Doc) => ({
+      label: s.label ?? "",
+      href: s.href ?? "",
+    })),
+  };
+});
 
 /* ------------------------------------------------------------------- products */
 

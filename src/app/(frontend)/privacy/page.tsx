@@ -4,7 +4,7 @@ import { PageHero } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/typography";
-import { studio } from "@/data/studio";
+import { getStudio } from "@/data/content.cms";
 import { heroCopy } from "@/data/copy";
 import { sectionCopy } from "@/data/copy";
 
@@ -22,7 +22,9 @@ export const metadata: Metadata = {
  * document describing what a specific organisation actually does with data, and
  * drafting a plausible-sounding one would be worse than admitting it is absent.
  */
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const studio = await getStudio();
+
   return (
     <>
       <PageHero

@@ -5,13 +5,12 @@ import { FeaturedProjects } from "@/components/sections/FeaturedProjects";
 import { LatestNews } from "@/components/sections/LatestNews";
 import { ClosingCTA } from "@/components/sections/ClosingCTA";
 
-import { studio } from "@/data/studio";
-
 import {
   getExpertise,
   getBrands,
   getFeaturedNews,
   getStatistics,
+  getStudio,
 } from "@/data/content.cms";
 import { getProjects } from "@/data/projects.cms";
 import { heroVideo } from "@/data/hero";
@@ -31,6 +30,7 @@ export default async function HomePage() {
   // work without a case study) is one click away.
   const featuredProjects = await getProjects();
   const latestNews = await getFeaturedNews(3);
+  const studio = await getStudio();
 
   return (
     <>

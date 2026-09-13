@@ -7,7 +7,7 @@ import { ContactForm } from "@/components/contact/ContactForm";
 import { StudioMap } from "@/components/contact/StudioMap";
 import { SocialIcon } from "@/components/contact/SocialIcon";
 import { Eyebrow } from "@/components/typography";
-import { studio } from "@/data/studio";
+import { getStudio } from "@/data/content.cms";
 import { enquiryTopics } from "@/data/contact";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
@@ -18,7 +18,9 @@ export const metadata: Metadata = {
   description: "Start a conversation with Uthan Design Studio.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const studio = await getStudio();
+
   return (
     <>
       <PageHero

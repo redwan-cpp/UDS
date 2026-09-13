@@ -6,12 +6,16 @@ import { Wordmark } from "./Wordmark";
 import { MenuOverlay } from "./MenuOverlay";
 import { SearchPanel } from "./SearchPanel";
 import { Container } from "@/components/ui/Container";
-import { studio } from "@/data/studio";
-import type { NavItem, SearchEntry } from "@/types/content";
+import type { NavItem, SearchEntry, StudioProfile } from "@/types/content";
 
 interface SiteHeaderProps {
   items: NavItem[];
-  studioName: string;
+  /**
+   * Handed down rather than imported. This is a client component and the
+   * profile now comes from the CMS, which only the server can read — and the
+   * menu overlay below needs the whole thing, not just the name.
+   */
+  studio: StudioProfile;
   searchIndex: SearchEntry[];
 }
 
@@ -33,7 +37,7 @@ interface SiteHeaderProps {
  */
 export function SiteHeader({
   items,
-  studioName,
+  studio,
   searchIndex,
 }: SiteHeaderProps) {
   const [open, setOpen] = useState(false);
@@ -96,7 +100,7 @@ export function SiteHeader({
             the header a rule with two ends, which is what lets it sit as glass
             over the hero without competing with the display type under it. */}
         <Container className="flex items-center justify-between gap-8 py-5 md:py-6">
-          <Wordmark name={studioName} />
+          <Wordmark name={studio.name} />
 
           <div className="flex items-center gap-6 md:gap-8">
             <button
