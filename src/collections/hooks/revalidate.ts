@@ -30,10 +30,10 @@ import type {
  * confusing failure, so the call is allowed to fail quietly when there is no
  * server to tell.
  */
-function invalidate(paths: string[]) {
+function invalidate(paths: string[], type?: "layout" | "page") {
   for (const path of paths) {
     try {
-      revalidatePath(path);
+      revalidatePath(path, type);
     } catch {
       // No Next request context — a script, a migration, a build step.
     }
@@ -71,32 +71,43 @@ const DETAIL_ROUTE: Record<string, string> = {
   knowledge: "/knowledge",
 };
 
+/**
+ * The listing pages, plus the whole detail subtree.
+ *
+ * The subtree is taken as a `layout`, not as the one concrete
+ * `/projects/<slug>` that changed, because three different staleness bugs all
+ * live in the pages that path does not cover:
+ *
+ * - **A deleted document keeps its page.** Invalidating `/projects/test1`
+ *   after deleting it did not stop that URL serving 200 from cache.
+ * - **A renamed slug leaves its old address live**, serving the document that
+ *   moved away from it.
+ * - **Every sibling detail page goes stale.** Each one renders a "related"
+ *   strip listing the others, so a document that changed or was deleted keeps
+ *   appearing — and linking — from pages that were never invalidated. This is
+ *   the one that was found in production: a deleted test project still listed
+ *   on every other project's page, pointing at a URL that no longer existed.
+ *
+ * Taking the base as a layout invalidates the index and every page beneath it
+ * in one call, which covers all three without enumerating slugs.
+ */
+function revalidateFor(slug: string) {
+  invalidate(PAGES[slug] ?? []);
+  const base = DETAIL_ROUTE[slug];
+  if (base) invalidate([base], "layout");
+}
+
 export const revalidateCollection =
   (slug: string): CollectionAfterChangeHook =>
-  ({ doc, previousDoc }) => {
-    const paths = [...(PAGES[slug] ?? [])];
-    const base = DETAIL_ROUTE[slug];
-    if (base) {
-      // Both slugs, when one has changed. Renaming a project otherwise leaves
-      // the page at the old URL cached and live — the deleted address serving
-      // the document that moved away from it.
-      for (const d of [doc, previousDoc]) {
-        const s = (d as { slug?: string })?.slug;
-        if (s) paths.push(`${base}/${s}`);
-      }
-    }
-    invalidate([...new Set(paths)]);
+  ({ doc }) => {
+    revalidateFor(slug);
     return doc;
   };
 
 export const revalidateCollectionDelete =
   (slug: string): CollectionAfterDeleteHook =>
   ({ doc }) => {
-    const paths = [...(PAGES[slug] ?? [])];
-    const base = DETAIL_ROUTE[slug];
-    const s = (doc as { slug?: string })?.slug;
-    if (base && s) paths.push(`${base}/${s}`);
-    invalidate([...new Set(paths)]);
+    revalidateFor(slug);
     return doc;
   };
 
