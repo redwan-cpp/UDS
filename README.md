@@ -58,6 +58,12 @@ not written after the fact, but read and updated through the build:
 repository represents: what was built, what changed from the brief and why, what was
 verified, and what remains a known limitation.
 
+Two further documents cover the live site rather than its construction:
+[`deployment.md`](./deployment.md) is the server runbook — how the VPS is built, how to deploy
+a change, and what to check when something breaks. [`operating.md`](./operating.md) is written
+for the studio rather than for a developer: publishing content, what the panel does, and the
+handful of server facts its owner needs.
+
 ## Stack
 
 | | |
