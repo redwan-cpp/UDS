@@ -61,3 +61,8 @@ next-env.d.ts
 /uthan.db-journal
 /media/
 /.users-backup.json
+
+# Local agent tooling. Machine-specific absolute paths, personal to whoever
+# is working on the repo — committing them breaks the next person.
+/.claude/settings.local.json
+/.codex/
