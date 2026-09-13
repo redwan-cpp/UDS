@@ -182,9 +182,23 @@ it deliberately and say why — reversing something in this file is a decision, 
   rule is what makes the Phase 2 CMS swap a change to one layer instead of a rewrite.
 - `MediaAsset` carries `alt`, `caption`, `credit`, `source`, `licence`, `width`, `height` from
   day one, matching the future media library, so no migration is needed later.
-- Server components by default. `"use client"` only for: menu overlay, portfolio filter,
+- Server components by default. `"use client"` only for: menu overlay, work-index filter,
   contact flow, motion primitives, team card expand.
-- Portfolio filter state lives in the URL, not component state — linkable and shareable.
+- Work-index filter state lives in the URL, not component state — linkable and shareable.
+- **Projects and Portfolio are one collection, 2026-09-13 — reversing the original split, at
+  the studio's request.** Two collections described the same building at two depths: a
+  portfolio entry was the card, a project was the case study, and `projectSlug` tied them
+  together. The routes merged early (`/portfolio` has 308'd to `/projects` since Phase 1) but
+  the collections did not, so every piece of work had to be entered twice and kept in step by
+  hand — which is the part an editor actually feels, and what the studio asked to be rid of.
+  The split was not wrong when it was made: it let the index carry work nobody had written
+  up, without forcing a hero, a gallery, a description and a facts table onto each one. That
+  requirement survives, met differently — those fields are simply no longer required on a
+  Project, and **an empty `description` is now what marks a card**. A project with one gets a
+  page and is linked to; a project without appears in the index and nowhere else.
+  `generateStaticParams`, the detail route, the related strip and the search index all read
+  that same test, so nothing is built, linked or indexed that would 404. The homepage band is
+  unchanged: it was always Projects filtered by `featured`.
 
 ---
 

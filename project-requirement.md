@@ -101,7 +101,7 @@ The finished product must:
 | `/` | Home | Hero → About → Numbers → Expertise → Major Projects → Team → Brands → News → Footer |
 | `/projects` | Major Projects index | Featured architectural work |
 | `/projects/[slug]` | Project detail | Publication-grade long-form project narrative |
-| `/portfolio` | Portfolio | Lighter, filterable index of all work |
+| `/portfolio` | — | Merged into `/projects`; permanently redirects there |
 | `/products` | Products | Custom Doors, Fabricated Sheet Work |
 | `/news` | Collaboration & News | Collaborations, events, MoUs, announcements |
 | `/news/[slug]` | News detail | Article-format entry |
@@ -165,6 +165,14 @@ Concept → Large Gallery → Rough Work / BTS → Project Information summary �
 Residential / Commercial / Hospitality / Interior / Other. Filtering must be elegant,
 minimal and URL-reflected.
 
+> **Superseded 2026-09-13, at the studio's request.** Portfolio is no longer a separate
+> entity. It described the same work as a Project at a shallower depth, so every building had
+> to be entered twice and kept in step by hand. The fields above are now fields of a Project,
+> and the line between a card and a case study is whether anybody has written a description.
+> What this requirement was for — an index that scales to hundreds of works without each one
+> needing a full write-up — is met by projects whose description is empty. F-03 stands
+> unchanged; it now filters projects.
+
 **Products.** Custom Doors, Fabricated Sheet Work. Presented as part of the studio
 ecosystem, not an e-commerce catalogue: no prices, no cart, no retail language.
 
@@ -182,7 +190,7 @@ contact details → review → submit. Phase 1 is UI only; submission is stubbed
 
 ## 9. CMS requirements — PLANNED, NOT IMPLEMENTED IN PHASE 1
 
-The CMS must let non-technical editors manage: Projects, Portfolio, Products, News,
+The CMS must let non-technical editors manage: Projects, Products, News,
 Collaborations, Team, Brands, Expertise, Homepage, Sustainability, SEO, Media and Contact
 information.
 

@@ -62,7 +62,7 @@ src/
 │   ├── projects/              # ProjectCard, WorkCard, ProjectHero, ProjectFacts,
 │   │                          #   ProjectSlideshow, ProcessGallery, ProjectSymbol,
 │   │                          #   RelatedProjects
-│   ├── portfolio/             # PortfolioGrid
+│                          #   WorkIndex
 │   ├── products/              # ProductCard, ProductGallery
 │   ├── news/                  # NewsCard
 │   ├── team/                  # TeamGrid
@@ -149,14 +149,14 @@ Content files ask for a *role*, never a file path. When the CMS lands, only laye
 ### 2.5 Content abstraction — the CMS contract
 
 `src/types/content.ts` defines the shape of every content entity: `Project`,
-`PortfolioItem`, `Product`, `NewsItem`, `TeamMember`, `Brand`, `ExpertiseArea`,
+`Product`, `NewsItem`, `TeamMember`, `Brand`, `ExpertiseArea`,
 `Statistic`, `SustainabilityPrinciple`, `MediaAsset`, `Seo`.
 
 `src/data/*` exports typed arrays plus accessor functions:
 
 ```ts
 getProjects()      getProjectBySlug(slug)   getFeaturedProjects(limit?)
-getPortfolio()     getNews()                getNewsBySlug(slug)
+getNews()          getNewsBySlug(slug)
 getRelatedProjects(slug, limit?)            …
 ```
 
