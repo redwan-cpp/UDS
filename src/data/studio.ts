@@ -103,20 +103,23 @@ export const studio: StudioProfile = {
     hours: "Sunday–Thursday, 9:00 AM – 5:00 PM",
   },
 
-  // PLACEHOLDER — no profile URLs supplied. `href` is deliberately omitted
-  // rather than set to "#", which would ship three dead links on every page.
   /**
-   * The four channels the studio asked for. Deliberately still href-less:
-   * these are real accounts on real platforms and the studio has not supplied
-   * the handles — inventing plausible ones would produce links that either
-   * 404 or, worse, land on somebody else's profile. The UI renders a labelled
-   * entry with no link until a handle exists (see `social` handling below).
+   * The four channels the studio asked for, supplied 2026-09-13.
+   *
+   * WhatsApp is the studio's number as a `wa.me` link rather than the printed
+   * `+880 1929-988139`, because that is the form that opens a conversation from
+   * a phone. `wa.me` wants full international form with no `+`, spaces or
+   * dashes — any of those and the link lands on an error page instead of the
+   * studio.
    */
   social: [
-    { label: "Facebook" },
-    { label: "Instagram" },
-    { label: "WhatsApp" },
-    { label: "LinkedIn" },
+    { label: "Facebook", href: "https://www.facebook.com/UthanDesignStudio/" },
+    { label: "Instagram", href: "https://www.instagram.com/uthan_2610" },
+    { label: "WhatsApp", href: "https://wa.me/8801929988139" },
+    {
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/company/uthan-design-studio/",
+    },
   ],
 
   legal: [
