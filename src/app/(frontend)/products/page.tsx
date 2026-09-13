@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pageMetadata } from "@/lib/share";
+
 import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
@@ -11,11 +13,12 @@ import { heroCopy } from "@/data/copy";
 import { getProducts, getCategoryFilters } from "@/data/content.cms";
 
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Products",
   description:
     "Custom doors and fabricated sheet work, designed and specified by Uthan Design Studio.",
-};
+  path: "/products",
+});
 
 export default async function ProductsPage({
   searchParams,

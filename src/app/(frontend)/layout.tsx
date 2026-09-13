@@ -12,7 +12,7 @@ import { navigation } from "@/data/navigation";
 import { getStudio } from "@/data/content.cms";
 import { getSearchIndex } from "@/data/search";
 import { footerCopy } from "@/data/copy";
-import { SITE_URL } from "@/lib/share";
+import { SITE_URL, SHARE_IMAGE } from "@/lib/share";
 
 import "./globals.css";
 
@@ -42,8 +42,9 @@ const newsreader = Newsreader({
 });
 
 /**
- * Phase 1 carries only the metadata the UI itself needs. Canonicals, Open Graph,
- * Twitter cards and JSON-LD are Phase 5 — see architecture.md §3.7.
+ * Canonicals and Open Graph landed ahead of their phase, because a site that is
+ * live is a site whose links get shared. JSON-LD is still Phase 5 — see
+ * architecture.md §3.7.
  */
 export const metadata: Metadata = {
   /**
@@ -62,6 +63,33 @@ export const metadata: Metadata = {
   },
   description:
     "Uthan Design Studio is an architecture and design practice working across architecture, interior design and spatial strategy.",
+
+  /**
+   * The share card every page starts from.
+   *
+   * Inherited by any route that does not declare its own `openGraph`, which is
+   * what gives the homepage a card and what stops a new page ever shipping
+   * without one. Routes that *do* declare one replace this block wholesale —
+   * Next merges metadata a key at a time, not field by field — which is why
+   * `pageMetadata` in `lib/share.ts` always writes a complete block rather than
+   * expecting to inherit half of this.
+   */
+  openGraph: {
+    type: "website",
+    title: "Uthan Design Studio — Architecture / Design / Space",
+    description:
+      "An architecture and design practice working across architecture, interior design and spatial strategy.",
+    url: SITE_URL || undefined,
+    siteName: "Uthan Design Studio",
+    images: [SHARE_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Uthan Design Studio — Architecture / Design / Space",
+    description:
+      "An architecture and design practice working across architecture, interior design and spatial strategy.",
+    images: [SHARE_IMAGE.url],
+  },
 };
 
 export const viewport: Viewport = {

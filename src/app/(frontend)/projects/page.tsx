@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pageMetadata } from "@/lib/share";
+
 import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
@@ -14,11 +16,12 @@ import {
 } from "@/data/content.cms";
 
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Projects",
   description:
     "The full index of work by Uthan Design Studio, filterable by category. Selected projects are documented in full.",
-};
+  path: "/projects",
+});
 
 /**
  * Projects — one index for all the work.

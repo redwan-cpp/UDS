@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pageMetadata } from "@/lib/share";
+
 import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
@@ -9,11 +11,15 @@ import { getKnowledge } from "@/data/content.cms";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
 
-export const metadata: Metadata = {
+// The description was news's, copied and left behind — which would have put
+// "events, memoranda, announcements" on the share card for a section of
+// writing about building. Replaced with what this section actually is.
+export const metadata: Metadata = pageMetadata({
   title: "Knowledge",
   description:
-    "Collaborations, events, memoranda, announcements and publications from Uthan Design Studio.",
-};
+    "Writing from Uthan Design Studio on material, detail, and how buildings are put together.",
+  path: "/knowledge",
+});
 
 export default async function NewsPage() {
   const items = await getKnowledge();

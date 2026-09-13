@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { StudioMap } from "@/components/contact/StudioMap";
 import { SocialIcon } from "@/components/contact/SocialIcon";
+import { ExternalLink } from "@/components/ui/ExternalLink";
 import { Eyebrow } from "@/components/typography";
 import { getStudio } from "@/data/content.cms";
 import { enquiryTopics } from "@/data/contact";
@@ -127,14 +128,13 @@ export default async function ContactPage() {
                 return (
                   <li key={channel.label}>
                     {channel.href ? (
-                      <a
+                      <ExternalLink
                         href={channel.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        label={channel.label}
                         className="flex min-h-11 items-center gap-2.5 border border-hairline px-4 text-meta uppercase transition-colors duration-[var(--dur-base)] hover:border-accent hover:text-accent"
                       >
                         {content}
-                      </a>
+                      </ExternalLink>
                     ) : (
                       <span className="flex min-h-11 items-center gap-2.5 border border-hairline px-4 text-meta uppercase text-secondary">
                         {content}

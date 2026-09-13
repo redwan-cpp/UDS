@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pageMetadata } from "@/lib/share";
+
 import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
@@ -9,11 +11,12 @@ import { getNews } from "@/data/content.cms";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Collaboration & News",
   description:
     "Collaborations, events, memoranda, announcements and publications from Uthan Design Studio.",
-};
+  path: "/news",
+});
 
 export default async function NewsPage() {
   const items = await getNews();

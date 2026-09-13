@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Media } from "@/components/ui/Media";
 import { Container } from "@/components/ui/Container";
 import { Wordmark } from "./Wordmark";
+import { ExternalLink } from "@/components/ui/ExternalLink";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { gsap, motionSafe } from "@/lib/gsap";
@@ -243,12 +244,12 @@ export function MenuOverlay({
               {studio.social.map((link) => (
                 <li key={link.label}>
                   {link.href ? (
-                    <a
+                    <ExternalLink
                       href={link.href}
                       className="inline-block py-1 underline decoration-1 underline-offset-4 opacity-80 transition-opacity hover:opacity-100"
                     >
                       {link.label}
-                    </a>
+                    </ExternalLink>
                   ) : (
                     <span className="inline-block py-1 text-secondary">{link.label}</span>
                   )}

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/share";
 import { notFound } from "next/navigation";
 
 import { ProjectHero } from "@/components/projects/ProjectHero";
@@ -37,10 +39,15 @@ export async function generateMetadata({
   const project = await getProjectBySlug(slug);
   if (!project) return {};
 
-  return {
+  // The project's own hero, not the site's default picture. A shared project
+  // link is the likeliest thing anybody posts from this site, and the card
+  // should show the building rather than the studio's stock frame.
+  return pageMetadata({
     title: project.title,
     description: project.summary,
-  };
+    path: `/projects/${project.slug}`,
+    image: project.hero,
+  });
 }
 
 /** A narrative band. Renders nothing when the CMS has not filled the section. */

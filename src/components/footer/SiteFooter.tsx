@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { Container } from "@/components/ui/Container";
+import { ExternalLink } from "@/components/ui/ExternalLink";
 import { Eyebrow } from "@/components/typography";
 import { DEVELOPER_CREDIT, IS_DEMO_BUILD } from "@/data/studio";
 import type { NavItem, StudioProfile } from "@/types/content";
@@ -156,9 +157,9 @@ export function SiteFooter({
               {studio.social.map((link) => (
                 <li key={link.label}>
                   {link.href ? (
-                    <a href={link.href} className={ROW}>
+                    <ExternalLink href={link.href} className={ROW} label={link.label}>
                       <span className={LABEL}>{link.label}</span>
-                    </a>
+                    </ExternalLink>
                   ) : (
                     // A pending account is not a link, so it does not get the
                     // hover or the indent — but it keeps the row and the rule

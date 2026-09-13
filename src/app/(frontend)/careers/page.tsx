@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pageMetadata } from "@/lib/share";
+
 import { PageHero } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
@@ -10,11 +12,12 @@ import { getStudio } from "@/data/content.cms";
 import { heroCopy } from "@/data/copy";
 import { sectionCopy } from "@/data/copy";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Careers",
   description:
     "Open roles at Uthan Design Studio — architecture, interior design and fabrication.",
-};
+  path: "/careers",
+});
 
 /**
  * Careers.

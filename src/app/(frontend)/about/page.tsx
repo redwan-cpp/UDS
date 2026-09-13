@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pageMetadata } from "@/lib/share";
+
 import { PageHero } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
@@ -8,8 +10,12 @@ import { Reveal } from "@/components/motion/Reveal";
 import { SectionHead, Statement, Prose } from "@/components/typography";
 import { TeamGrid } from "@/components/team/TeamGrid";
 import { Numbers } from "@/components/sections/Numbers";
-import { getStudio } from "@/data/content.cms";
-import { getTeam, getExpertise, getStatistics } from "@/data/content.cms";
+import {
+  getTeam,
+  getExpertise,
+  getStatistics,
+  getStudio,
+} from "@/data/content.cms";
 
 
 import { img } from "@/data/media";
@@ -17,11 +23,12 @@ import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
 import { sectionCopy } from "@/data/copy";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About",
   description:
     "Uthan Design Studio — an architecture and design practice working across architecture, interiors and spatial strategy.",
-};
+  path: "/about",
+});
 
 export default async function AboutPage() {
   // Hoisted rather than awaited inline in the JSX: three collections read once

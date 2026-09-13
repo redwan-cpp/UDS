@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/share";
 import { notFound } from "next/navigation";
 
 import { Container } from "@/components/ui/Container";
@@ -33,10 +35,12 @@ export async function generateMetadata({
   const product = await getProductBySlug(slug);
   if (!product) return {};
 
-  return {
+  return pageMetadata({
     title: product.title,
     description: product.summary,
-  };
+    path: `/products/${product.slug}`,
+    image: product.hero,
+  });
 }
 
 export default async function ProductPage({

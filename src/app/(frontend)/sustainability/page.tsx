@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pageMetadata } from "@/lib/share";
+
 import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
@@ -10,11 +12,12 @@ import { getSustainabilityPrinciples } from "@/data/content.cms";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Sustainability",
   description:
     "How Uthan Design Studio approaches material responsibility, passive design, reuse and the long life of a building.",
-};
+  path: "/sustainability",
+});
 
 export default async function SustainabilityPage() {
   const principles = await getSustainabilityPrinciples();
