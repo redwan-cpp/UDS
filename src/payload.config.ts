@@ -20,6 +20,7 @@ import { Statistics } from "./collections/Statistics";
 import { Sustainability } from "./collections/Sustainability";
 import { Team } from "./collections/Team";
 import { Users } from "./collections/Users";
+import { Videos } from "./collections/Videos";
 import { Navigation } from "./globals/Navigation";
 import { SiteCopy } from "./globals/SiteCopy";
 import { Studio } from "./globals/Studio";
@@ -104,6 +105,7 @@ export default buildConfig({
     Careers,
     Categories,
     Media,
+    Videos,
     Users,
   ],
 

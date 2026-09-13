@@ -79,6 +79,7 @@ export interface Config {
     careers: Career;
     categories: Category;
     media: Media;
+    videos: Video;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -99,6 +100,7 @@ export interface Config {
     careers: CareersSelect<false> | CareersSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    videos: VideosSelect<false> | VideosSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -719,6 +721,30 @@ export interface Career {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Web-ready video only — WebM and MP4, already compressed. Not camera or phone exports.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos".
+ */
+export interface Video {
+  id: number;
+  /**
+   * What the footage shows. The hero video is decorative — the poster image beneath it carries the description — so a single space is a legitimate answer here, but type it on purpose.
+   */
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -819,6 +845,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'videos';
+        value: number | Video;
       } | null)
     | ({
         relationTo: 'users';
@@ -1237,6 +1267,24 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos_select".
+ */
+export interface VideosSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -1316,6 +1364,23 @@ export interface Studio {
     value: string;
     id?: string | null;
   }[];
+  /**
+   * Optional. Leave all three empty and the homepage keeps the video that ships with the site. Fill all three to replace it — two video files, and the still frame beneath them.
+   */
+  hero?: {
+    /**
+     * VP9 in WebM. Tried first.
+     */
+    webm?: (number | null) | Video;
+    /**
+     * H.264 in MP4, for browsers that cannot decode the WebM. Both are needed.
+     */
+    mp4?: (number | null) | Video;
+    /**
+     * The still shown before the video plays — and instead of it, for anyone on reduced motion or a browser refusing autoplay. Use the video's own first frame: a different photograph means the page visibly jumps the moment playback starts.
+     */
+    poster?: (number | null) | Media;
+  };
   /**
    * Set along the hero's baseline rule. Each carries where it goes — which work stands for which service is a content decision, so the destination lives here rather than in the component.
    */
@@ -1519,6 +1584,13 @@ export interface StudioSelect<T extends boolean = true> {
     | {
         value?: T;
         id?: T;
+      };
+  hero?:
+    | T
+    | {
+        webm?: T;
+        mp4?: T;
+        poster?: T;
       };
   services?:
     | T

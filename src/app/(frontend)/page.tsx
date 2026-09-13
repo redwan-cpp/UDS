@@ -31,6 +31,10 @@ export default async function HomePage() {
   const featuredProjects = await getProjects();
   const latestNews = await getFeaturedNews(3);
   const studio = await getStudio();
+  // The clip in `src/data/hero.ts` ships with the site and is the default; the
+  // CMS only overrides it once the studio has uploaded a complete replacement.
+  // That way the homepage is never waiting on a content decision to have a hero.
+  const hero = studio.hero ?? heroVideo;
 
   return (
     <>
@@ -38,8 +42,8 @@ export default async function HomePage() {
           otherwise the static fallback shows one scene and autoplay swaps to a
           completely different one the moment it starts. */}
       <HomeHero
-        poster={heroVideo.poster}
-        video={heroVideo}
+        poster={hero.poster}
+        video={hero}
         services={studio.services}
       />
 

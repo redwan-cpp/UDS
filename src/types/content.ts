@@ -312,6 +312,15 @@ export interface StudioProfile {
   tagline: string;
   disciplines: string[];
   /**
+   * The homepage hero's motion, when the studio has supplied one.
+   *
+   * Undefined unless all three parts are set in the CMS, in which case the
+   * homepage falls back to the clip that ships with the site. Half a hero —
+   * a WebM with no MP4, or video with no poster — is not a usable state, so
+   * the accessor treats it as absent rather than rendering a gap.
+   */
+  hero?: VideoAsset;
+  /**
    * Service lines, set along the hero's baseline rule. Each carries where it
    * goes: the hero states what the studio does, and a visitor who reads
    * "Interior" and wants to see interiors should not have to go and find the

@@ -119,10 +119,28 @@ export const getStudio = cache(async (): Promise<StudioProfile> => {
   const payload = await client();
   const d: Doc = await payload.findGlobal({ slug: "studio", depth: 1 });
 
+  // All three or none. A WebM with no MP4 fails silently on Safari, and video
+  // with no poster shows nothing at all under reduced motion — so a partly
+  // filled hero falls back to the shipped clip rather than half-rendering.
+  const poster = toAsset(d.hero?.poster);
+  const webm = d.hero?.webm?.url;
+  const mp4 = d.hero?.mp4?.url;
+  const hero =
+    webm && mp4 && poster.src
+      ? {
+          sources: [
+            { src: webm, type: "video/webm" },
+            { src: mp4, type: "video/mp4" },
+          ],
+          poster,
+        }
+      : undefined;
+
   return {
     name: d.name ?? "",
     tagline: d.tagline ?? "",
     disciplines: toValues(d.disciplines),
+    hero,
     services: (d.services ?? []).map((s: Doc) => ({
       label: s.label ?? "",
       href: s.href ?? "",

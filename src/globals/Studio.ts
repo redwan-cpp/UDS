@@ -59,6 +59,46 @@ export const Studio: GlobalConfig = {
               required: true,
             }),
             {
+              name: "hero",
+              type: "group",
+              label: "Hero video",
+              admin: {
+                description:
+                  "Optional. Leave all three empty and the homepage keeps the video that ships with the site. Fill all three to replace it — two video files, and the still frame beneath them.",
+              },
+              fields: [
+                {
+                  type: "row",
+                  fields: [
+                    {
+                      name: "webm",
+                      type: "upload",
+                      relationTo: "videos",
+                      admin: { description: "VP9 in WebM. Tried first." },
+                    },
+                    {
+                      name: "mp4",
+                      type: "upload",
+                      relationTo: "videos",
+                      admin: {
+                        description:
+                          "H.264 in MP4, for browsers that cannot decode the WebM. Both are needed.",
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: "poster",
+                  type: "upload",
+                  relationTo: "media",
+                  admin: {
+                    description:
+                      "The still shown before the video plays — and instead of it, for anyone on reduced motion or a browser refusing autoplay. Use the video's own first frame: a different photograph means the page visibly jumps the moment playback starts.",
+                  },
+                },
+              ],
+            },
+            {
               name: "services",
               type: "array",
               required: true,
