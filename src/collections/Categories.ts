@@ -74,7 +74,7 @@ export const Categories: CollectionConfig = {
           required: true,
           defaultValue: "project",
           options: [
-            { label: "Projects and portfolio", value: "project" },
+            { label: "Projects", value: "project" },
             { label: "Products", value: "product" },
           ],
           admin: {

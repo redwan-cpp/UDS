@@ -26,7 +26,6 @@ import type { Where } from "payload";
 import config from "@payload-config";
 
 import { getProjects } from "@/data/projects";
-import { getPortfolio } from "@/data/portfolio";
 import { getProducts } from "@/data/products";
 import { getNews } from "@/data/news";
 import { knowledge } from "@/data/knowledge";
@@ -190,7 +189,7 @@ const PROJECT_VISIBLE = ["residential", "commercial", "hospitality", "interior"]
 const categoryIds = new Map<string, number>();
 const usedCategories = new Map<string, { label: string; scope: string }>();
 
-for (const p of [...getProjects(), ...getPortfolio()])
+for (const p of getProjects())
   for (const c of p.category)
     usedCategories.set(c.slug, { label: c.label, scope: "project" });
 for (const p of getProducts())
@@ -238,7 +237,10 @@ for (const p of getProjects()) {
       category: cats(p.category),
       status: p.status,
       summary: p.summary,
-      description: paras(p.description),
+      // Card-only projects carry none of these. `undefined` leaves the field
+      // genuinely empty, which is what the site reads to decide whether a
+      // project has a case study at all.
+      description: p.description ? paras(p.description) : undefined,
       uniqueness: paras(p.uniqueness),
       concept: paras(p.concept),
       area: p.area,
@@ -249,7 +251,7 @@ for (const p of getProjects()) {
         ? { asset: await upload(p.symbol.asset), label: p.symbol.label }
         : undefined,
       hero: await upload(p.hero),
-      gallery: await uploadMany(p.gallery),
+      gallery: p.gallery ? await uploadMany(p.gallery) : undefined,
       process: await uploadMany(p.process),
       featured: p.featured,
       order: p.order,
@@ -258,30 +260,6 @@ for (const p of getProjects()) {
     },
   );
   note("projects");
-}
-
-for (const item of getPortfolio()) {
-  await upsert(
-    "portfolio",
-    { slug: { equals: item.slug } },
-    {
-      title: item.title,
-      slug: item.slug,
-      location: item.location,
-      year: item.year,
-      category: cats(item.category),
-      areaSize: item.areaSize,
-      summary: item.summary,
-      image: await upload(item.image),
-      projectSlug: item.projectSlug,
-      symbol: item.symbol
-        ? { asset: await upload(item.symbol.asset), label: item.symbol.label }
-        : undefined,
-      isDemo: item.isDemo,
-      _status: "published",
-    },
-  );
-  note("portfolio");
 }
 
 for (const p of getProducts()) {

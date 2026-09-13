@@ -275,6 +275,114 @@ const projects: Project[] = [
     featured: false,
     order: 6,
   },
+
+  /* ---------------------------------------------------------------------------
+     Card-only work.
+
+     No `description`, and that is the point: these carry no case study, so they
+     appear in the index and nowhere else — no detail page is built for them and
+     nothing links to one. They came from the separate `portfolio` collection,
+     which existed to hold exactly this and has since merged into projects.
+
+     A studio builds far more than it writes up, so this is the ordinary case
+     rather than the exception. Any of these becomes a full case study the day
+     somebody fills in the description.
+     ------------------------------------------------------------------------- */
+  {
+    id: "p7",
+    slug: "brick-workshop",
+    isDemo: true,
+    title: "Brick Workshop",
+    location: "Industrial edge",
+    category: [{ slug: "commercial", label: "Commercial" }],
+    year: "2022",
+    status: "completed",
+    area: "640 m²",
+    summary:
+      "A maker's workshop in load-bearing brick, top-lit along its full length.",
+    hero: img("detail", 0, "Rubble stone wall with a timber lintel"),
+    featured: false,
+    order: 7,
+  },
+  {
+    id: "p8",
+    slug: "garden-studio",
+    isDemo: true,
+    title: "Garden Studio",
+    location: "Suburban garden",
+    category: [{ slug: "residential", label: "Residential" }],
+    year: "2023",
+    status: "completed",
+    area: "34 m²",
+    summary:
+      "A single-room timber studio, built in nine days from a shop-fabricated kit.",
+    hero: img("sustain", 0, "Glazed structure with planting inside"),
+    featured: false,
+    order: 8,
+  },
+  {
+    id: "p9",
+    slug: "restaurant-fit-out",
+    isDemo: true,
+    title: "Restaurant Fit-out",
+    location: "Market street",
+    category: [{ slug: "hospitality", label: "Hospitality" }],
+    year: "2024",
+    status: "completed",
+    area: "220 m²",
+    summary:
+      "Sixty covers arranged around an open kitchen and one long shared table.",
+    hero: img("interior", 2, "Public foyer with an open stair"),
+    featured: false,
+    order: 9,
+  },
+  {
+    id: "p10",
+    slug: "terrace-extension",
+    isDemo: true,
+    title: "Terrace Extension",
+    location: "Victorian terrace",
+    category: [{ slug: "residential", label: "Residential" }],
+    year: "2022",
+    status: "completed",
+    area: "56 m²",
+    summary:
+      "A rear extension detailed so the join to the existing house is invisible from inside.",
+    hero: img("detail", 1, "Weathered timber door set into a rendered wall"),
+    featured: false,
+    order: 10,
+  },
+  {
+    id: "p11",
+    slug: "office-headquarters",
+    isDemo: true,
+    title: "Office Headquarters",
+    location: "Business district",
+    category: [{ slug: "commercial", label: "Commercial" }],
+    year: "2025",
+    status: "in-progress",
+    area: "5,400 m²",
+    summary: "A deep-plan office broken by three full-height atria on a diagonal.",
+    hero: img("urban", 2, "Glass towers seen against an open sky"),
+    featured: false,
+    order: 11,
+  },
+  {
+    id: "p12",
+    slug: "chapel-restoration",
+    isDemo: true,
+    title: "Chapel Restoration",
+    location: "Rural parish",
+    category: [{ slug: "other", label: "Other" }],
+    year: "2021",
+    status: "completed",
+    area: "310 m²",
+    summary:
+      "Fabric repair and a new stone floor, with the nineteenth-century roof left exposed.",
+    hero: img("interior", 3, "Rock-cut concourse with exposed strata"),
+    featured: false,
+    order: 12,
+  },
 ];
 
 /* -------------------------------------------------------------------------- */

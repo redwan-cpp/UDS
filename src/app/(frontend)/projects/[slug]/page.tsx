@@ -98,7 +98,11 @@ export default async function ProjectPage({
 }) {
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
-  if (!project) notFound();
+  // A project with nothing written is a card in the index, not a page. Since
+  // `portfolio` merged into `projects` the collection holds both, and this is
+  // the line between them — `getProjectSlugs` refuses the same set, so nothing
+  // is built that this would then reject.
+  if (!project || !project.description?.length) notFound();
 
   const related = await getRelatedProjects(slug, 3);
 
@@ -121,14 +125,16 @@ export default async function ProjectPage({
       {/* More of the project, before the reading. Someone who wants the images
           gets them without opening anything; someone who wants the argument
           opens the disclosure below. */}
-      <Section surface="dark" spacing="standard">
-        <Container>
-          <ProjectSlideshow
-            images={project.gallery}
-            title={`${project.title} — gallery`}
-          />
-        </Container>
-      </Section>
+      {project.gallery?.length ? (
+        <Section surface="dark" spacing="standard">
+          <Container>
+            <ProjectSlideshow
+              images={project.gallery}
+              title={`${project.title} — gallery`}
+            />
+          </Container>
+        </Section>
+      ) : null}
 
       {/* The writing and the information table sit behind one disclosure. The
           hero already answers "what is this" — the long form is for the reader
@@ -140,7 +146,12 @@ export default async function ProjectPage({
           anything to reach. Only the long-form writing sits behind View more. */}
       <Section surface="light" spacing="standard">
         <Container>
-          <ProjectFacts facts={project.facts} title={sectionCopy["project.facts"].title} />
+          {project.facts?.length ? (
+            <ProjectFacts
+              facts={project.facts}
+              title={sectionCopy["project.facts"].title}
+            />
+          ) : null}
 
           <div className="pt-16 md:pt-20">
             <ViewMore label="View more" openLabel="View less">

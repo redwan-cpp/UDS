@@ -14,7 +14,6 @@ const payload = await getPayload({ config });
 
 const collections = [
   "projects",
-  "portfolio",
   "products",
   "news",
   "team",

@@ -46,7 +46,12 @@ function toProject(d: Doc): Project {
     year: d.year,
     status: d.status,
     summary: d.summary,
-    description: toParagraphs(d.description),
+    // Undefined rather than an empty array when nothing has been written:
+    // "does this have a case study" is read off this field, and `[]` and
+    // `undefined` answer that question differently in a truthiness test.
+    description: toParagraphs(d.description).length
+      ? toParagraphs(d.description)
+      : undefined,
     uniqueness: toParagraphs(d.uniqueness).length
       ? toParagraphs(d.uniqueness)
       : undefined,
@@ -54,10 +59,10 @@ function toProject(d: Doc): Project {
     area: d.area ?? undefined,
     client: d.client ?? undefined,
     services: toValues(d.services).length ? toValues(d.services) : undefined,
-    facts: toRows(d.facts),
+    facts: toRows(d.facts).length ? toRows(d.facts) : undefined,
     symbol: toSymbol(d.symbol),
     hero: toAsset(d.hero),
-    gallery: toAssets(d.gallery),
+    gallery: toAssets(d.gallery).length ? toAssets(d.gallery) : undefined,
     process: toAssets(d.process).length ? toAssets(d.process) : undefined,
     featured: Boolean(d.featured),
     order: d.order ?? 0,
@@ -89,11 +94,17 @@ export const getProjectBySlug = cache(
 );
 
 /**
- * Slugs for `generateStaticParams`.
+ * Slugs for `generateStaticParams` — the written-up projects only.
  *
- * `depth: 0` here on purpose — this needs nothing but the slug, and asking for
- * populated media on every project at build time would fetch the entire library
- * to throw it away.
+ * Not every project has a case study. Since `portfolio` merged into this
+ * collection, the index also carries work that is a card and nothing more, and
+ * building a page for one of those would publish a URL with a hero and no
+ * content beneath it. The detail route refuses the same set (`notFound`), so
+ * what gets built and what can be reached agree.
+ *
+ * `depth: 0` here on purpose — this needs the slug and whether anything is
+ * written, and asking for populated media on every project at build time would
+ * fetch the entire library to throw it away.
  */
 export const getProjectSlugs = cache(async (): Promise<string[]> => {
   const payload = await client();
@@ -103,7 +114,9 @@ export const getProjectSlugs = cache(async (): Promise<string[]> => {
     depth: 0,
     sort: "order",
   });
-  return docs.map((d) => (d as Doc).slug as string);
+  return docs
+    .filter((d) => ((d as Doc).description?.length ?? 0) > 0)
+    .map((d) => (d as Doc).slug as string);
 });
 
 /**
@@ -112,7 +125,9 @@ export const getProjectSlugs = cache(async (): Promise<string[]> => {
  */
 export const getRelatedProjects = cache(
   async (slug: string, limit = 3): Promise<Project[]> => {
-    const all = await getProjects();
+    // Written-up projects only. These render as links, and a card-only project
+    // has no page to link to — it would be a dead end dressed as a next step.
+    const all = (await getProjects()).filter((p) => p.description?.length);
     const current = all.find((p) => p.slug === slug);
     if (!current) return all.slice(0, limit);
 

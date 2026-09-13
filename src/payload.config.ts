@@ -14,7 +14,6 @@ import { Expertise } from "./collections/Expertise";
 import { Knowledge } from "./collections/Knowledge";
 import { Media } from "./collections/Media";
 import { News } from "./collections/News";
-import { Portfolio } from "./collections/Portfolio";
 import { Products } from "./collections/Products";
 import { Projects } from "./collections/Projects";
 import { Statistics } from "./collections/Statistics";
@@ -94,7 +93,6 @@ export default buildConfig({
   // Settings holds the two globals that change how the whole site reads.
   collections: [
     Projects,
-    Portfolio,
     Products,
     News,
     Knowledge,

@@ -45,13 +45,12 @@ function invalidate(paths: string[], type?: "layout" | "page") {
  *
  * Written out rather than derived, because it is a fact about the site's
  * composition that only a person knows: statistics appear on the homepage and
- * on About, brands only on the homepage, portfolio entries on the project
- * index. Getting one wrong means a stale page nobody notices, so the list is
- * explicit and worth re-reading when a section moves.
+ * on About, brands only on the homepage, projects on both the homepage band
+ * and the work index. Getting one wrong means a stale page nobody notices, so
+ * the list is explicit and worth re-reading when a section moves.
  */
 const PAGES: Record<string, string[]> = {
   projects: ["/", "/projects"],
-  portfolio: ["/projects", "/portfolio"],
   products: ["/products"],
   news: ["/", "/news"],
   knowledge: ["/knowledge"],

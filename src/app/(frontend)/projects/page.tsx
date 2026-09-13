@@ -4,11 +4,11 @@ import { PageHero, DemoNotice } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
-import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid";
+import { WorkIndex } from "@/components/projects/WorkIndex";
 import { navIndex } from "@/data/navigation";
 import { heroCopy } from "@/data/copy";
+import { getProjects } from "@/data/projects.cms";
 import {
-  getPortfolio,
   getCategoryFilters,
   getVisibleCategorySlugs,
 } from "@/data/content.cms";
@@ -27,11 +27,14 @@ export const metadata: Metadata = {
  * and `/portfolio` for the full index of everything built. They were two
  * different answers to the same question, and the split forced a visitor to
  * guess which page held the thing they were looking for — while the six case
- * studies appeared on both.
+ * studies appeared on both. `/portfolio` now redirects here.
  *
- * The portfolio data was already a superset (it carried every case study plus
- * the work without one), so the merge is that superset shown once, with a
- * case-study link where a case study exists. `/portfolio` now redirects here.
+ * It was also two *collections* for longer than it was two routes: a portfolio
+ * entry was the card, a project was the case study, and a piece of work that
+ * was both had to be entered twice and kept in step by hand. They have since
+ * merged into `projects`. Everything the studio has built is one document; the
+ * ones somebody has written up carry a description, and those are the ones
+ * that link through.
  *
  * Filtering stays URL-driven rather than client state, so a filtered view is
  * linkable, crawlable and ships no JavaScript.
@@ -43,7 +46,7 @@ export default async function ProjectsPage({
 }) {
   const { category } = await searchParams;
   const [all, filters, visible] = await Promise.all([
-    getPortfolio(),
+    getProjects(),
     getCategoryFilters("project"),
     getVisibleCategorySlugs("project"),
   ]);
@@ -57,7 +60,7 @@ export default async function ProjectsPage({
       : active === "other"
         ? all.filter((i) => !i.category.some((c) => visible.includes(c.slug)))
         : all.filter((i) => i.category.some((c) => c.slug === active));
-  const documented = items.filter((item) => item.projectSlug).length;
+  const documented = items.filter((item) => item.description?.length).length;
 
   return (
     <>
@@ -124,7 +127,7 @@ export default async function ProjectsPage({
           </div>
 
           <div className="pt-14">
-            <PortfolioGrid items={items} />
+            <WorkIndex items={items} />
           </div>
         </Container>
       </Section>

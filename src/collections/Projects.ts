@@ -114,9 +114,11 @@ export const Projects: CollectionConfig = {
       // round trip. A rich-text blob would flatten them into one node.
       name: "description",
       type: "array",
-      required: true,
-      minRows: 1,
       labels: { singular: "Paragraph", plural: "Paragraphs" },
+      admin: {
+        description:
+          "The case study. Leave this empty and the project is a card in the index with no page of its own — which is what most work is until somebody writes it up. Fill it in and the card starts linking to a full project page.",
+      },
       fields: [{ name: "text", type: "textarea", required: true }],
     },
     {
@@ -149,12 +151,10 @@ export const Projects: CollectionConfig = {
     {
       name: "facts",
       type: "array",
-      required: true,
-      minRows: 1,
       labels: { singular: "Fact", plural: "Facts" },
       admin: {
         description:
-          "The project information table. Order is meaningful — it is the order they appear.",
+          "The project information table. Order is meaningful — it is the order they appear. Every row needs both a label and a value; half a row will refuse to publish.",
       },
       fields: [
         {
@@ -187,13 +187,20 @@ export const Projects: CollectionConfig = {
       type: "upload",
       relationTo: "media",
       required: true,
+      admin: {
+        description:
+          "The card image in the index, and the opening image of the project page. Required — a project with no photograph has nothing to show in the grid.",
+      },
     },
     {
       name: "gallery",
       type: "upload",
       relationTo: "media",
       hasMany: true,
-      required: true,
+      admin: {
+        description:
+          "The image sequence on the project page. Leave empty on a project that is only a card.",
+      },
     },
     {
       name: "process",

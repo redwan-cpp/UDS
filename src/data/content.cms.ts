@@ -5,7 +5,6 @@ import type {
   ExpertiseArea,
   JobOpening,
   NewsItem,
-  PortfolioItem,
   Product,
   Statistic,
   SustainabilityPrinciple,
@@ -18,7 +17,6 @@ import {
   toCategories,
   toParagraphs,
   toRows,
-  toSymbol,
   toValues,
 } from "./payload";
 
@@ -97,26 +95,8 @@ export const getVisibleCategorySlugs = cache(
     ).map((c) => c.slug as string),
 );
 
-/* ------------------------------------------------------------------ portfolio */
-
-const toPortfolio = (d: Doc): PortfolioItem => ({
-  id: String(d.id),
-  slug: d.slug,
-  isDemo: Boolean(d.isDemo),
-  title: d.title,
-  summary: d.summary,
-  location: d.location,
-  areaSize: d.areaSize,
-  category: toCategories(d.category),
-  year: d.year,
-  image: toAsset(d.image),
-  projectSlug: d.projectSlug ?? undefined,
-  symbol: toSymbol(d.symbol),
-});
-
-export const getPortfolio = cache(async (): Promise<PortfolioItem[]> =>
-  (await find("portfolio")).map(toPortfolio),
-);
+/* The portfolio accessor is gone: `portfolio` merged into `projects`, and the
+   work index now reads `getProjects` from projects.cms.ts. */
 
 /* ------------------------------------------------------------------- products */
 

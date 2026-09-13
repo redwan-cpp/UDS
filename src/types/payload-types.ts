@@ -68,7 +68,6 @@ export interface Config {
   blocks: {};
   collections: {
     projects: Project;
-    portfolio: Portfolio;
     products: Product;
     news: News;
     knowledge: Knowledge;
@@ -89,7 +88,6 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
-    portfolio: PortfolioSelect<false> | PortfolioSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     news: NewsSelect<false> | NewsSelect<true>;
     knowledge: KnowledgeSelect<false> | KnowledgeSelect<true>;
@@ -168,10 +166,15 @@ export interface Project {
    * One line. Used on cards and in the index.
    */
   summary: string;
-  description: {
-    text: string;
-    id?: string | null;
-  }[];
+  /**
+   * The case study. Leave this empty and the project is a card in the index with no page of its own — which is what most work is until somebody writes it up. Fill it in and the card starts linking to a full project page.
+   */
+  description?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * What makes this project unique. Optional.
    */
@@ -199,13 +202,15 @@ export interface Project {
       }[]
     | null;
   /**
-   * The project information table. Order is meaningful — it is the order they appear.
+   * The project information table. Order is meaningful — it is the order they appear. Every row needs both a label and a value; half a row will refuse to publish.
    */
-  facts: {
-    label: string;
-    value: string;
-    id?: string | null;
-  }[];
+  facts?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * The project's own mark. Leave empty and the card draws a section mark instead. Supply a monochrome SVG — marks are painted through a mask so they take the surface's colour, and a full-colour logo will be flattened.
    */
@@ -216,8 +221,14 @@ export interface Project {
      */
     label?: string | null;
   };
+  /**
+   * The card image in the index, and the opening image of the project page. Required — a project with no photograph has nothing to show in the grid.
+   */
   hero: number | Media;
-  gallery: (number | Media)[];
+  /**
+   * The image sequence on the project page. Leave empty on a project that is only a card.
+   */
+  gallery?: (number | Media)[] | null;
   /**
    * Rough work: sketches, working drawings, site photography. These render in a guarded strip that does not enlarge, and the crawl rules keep them out of image search — see src/app/robots.ts.
    */
@@ -337,60 +348,6 @@ export interface Media {
       filename?: string | null;
     };
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "portfolio".
- */
-export interface Portfolio {
-  id: number;
-  title: string;
-  /**
-   * The URL segment: /portfolio/<slug>.
-   */
-  slug: string;
-  location: string;
-  year: string;
-  category: (number | Category)[];
-  /**
-   * As written, including the unit.
-   */
-  areaSize: string;
-  summary: string;
-  image: number | Media;
-  /**
-   * Set when this also exists as a full case study, so the card links to it.
-   */
-  projectSlug?: string | null;
-  /**
-   * The entry's own mark. Leave empty and the card draws a section mark instead. Monochrome SVG — marks are masked to the surface colour.
-   */
-  symbol?: {
-    asset?: (number | null) | Media;
-    /**
-     * What the mark depicts.
-     */
-    label?: string | null;
-  };
-  /**
-   * Placeholder content, not the studio's real work or details. Drives the demo notices.
-   */
-  isDemo?: boolean | null;
-  /**
-   * Leave blank to derive from the title and summary. Only fill these in to override.
-   */
-  seo?: {
-    title?: string | null;
-    description?: string | null;
-    image?: (number | null) | Media;
-    /**
-     * Ask search engines not to index this page.
-     */
-    noIndex?: boolean | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -820,10 +777,6 @@ export interface PayloadLockedDocument {
         value: number | Project;
       } | null)
     | ({
-        relationTo: 'portfolio';
-        value: number | Portfolio;
-      } | null)
-    | ({
         relationTo: 'products';
         value: number | Product;
       } | null)
@@ -970,39 +923,6 @@ export interface ProjectsSelect<T extends boolean = true> {
   featured?: T;
   order?: T;
   isDemo?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "portfolio_select".
- */
-export interface PortfolioSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  location?: T;
-  year?: T;
-  category?: T;
-  areaSize?: T;
-  summary?: T;
-  image?: T;
-  projectSlug?: T;
-  symbol?:
-    | T
-    | {
-        asset?: T;
-        label?: T;
-      };
-  isDemo?: T;
-  seo?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-        noIndex?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

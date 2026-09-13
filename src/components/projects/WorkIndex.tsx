@@ -4,28 +4,31 @@ import { Media } from "@/components/ui/Media";
 import { Reveal } from "@/components/motion/Reveal";
 import { ProjectSymbol } from "@/components/projects/ProjectSymbol";
 import { categoryLine } from "@/lib/labels";
-import type { PortfolioItem } from "@/types/content";
+import type { Project } from "@/types/content";
 
 /**
- * A portfolio entry.
+ * An entry in the work index.
  *
  * Shares the homepage work card's *look* — the scrim, the image push-in, the
  * corner arrow — but deliberately not its behaviour. The homepage grid is a
  * showcase of six and can afford to hide everything until hover. This is a
- * finding tool: twelve items behind a category filter that reports counts, and
- * a filter exists so results can be scanned. Hiding the names would mean
- * hovering each card in turn to read them, which is the whole point of the
- * filter undone.
+ * finding tool: the whole body of work behind a category filter that reports
+ * counts, and a filter exists so results can be scanned. Hiding the names
+ * would mean hovering each card in turn to read them, which is the whole point
+ * of the filter undone.
  *
  * So the title and the facts stay permanently legible and only the summary —
  * the one line the card can afford to lose — rides in on hover. Below `md`,
  * where there is no hover, it is simply always shown.
  *
- * Items that also exist as a full case study link through to one; items that
- * do not are rendered as plain articles rather than as dead links.
+ * **A project with a written description links to its case study; one without
+ * is rendered as a plain article rather than as a dead link.** That test used
+ * to be a `projectSlug` pointing from a portfolio entry at a separate project
+ * document. The two have since merged, so "is this written up?" is now
+ * answered by whether anybody wrote it up.
  */
-function PortfolioEntry({ item }: { item: PortfolioItem }) {
-  const documented = Boolean(item.projectSlug);
+function WorkEntry({ item }: { item: Project }) {
+  const documented = Boolean(item.description?.length);
 
   const body = (
     <>
@@ -34,7 +37,7 @@ function PortfolioEntry({ item }: { item: PortfolioItem }) {
           crops to its own ratio rather than following the image. */}
       <div className="relative overflow-hidden">
         <Media
-          asset={item.image}
+          asset={item.hero}
           ratio="landscape"
           hoverScale
           hoverDesaturate
@@ -112,12 +115,17 @@ function PortfolioEntry({ item }: { item: PortfolioItem }) {
           <dt className="sr-only">Location</dt>
           <dd className="text-meta uppercase text-secondary">{item.location}</dd>
         </div>
-        <div className="flex gap-2">
-          <dt className="sr-only">Area</dt>
-          <dd data-numeric className="text-meta uppercase text-secondary">
-            {item.areaSize}
-          </dd>
-        </div>
+        {/* Area is optional — a card-only entry often has nothing but a name,
+            a place and a photograph. An empty cell would leave a gap in the
+            row that reads as a missing value rather than as an absent one. */}
+        {item.area && (
+          <div className="flex gap-2">
+            <dt className="sr-only">Area</dt>
+            <dd data-numeric className="text-meta uppercase text-secondary">
+              {item.area}
+            </dd>
+          </div>
+        )}
         <div className="ml-auto flex gap-2">
           <dt className="sr-only">Category</dt>
           <dd className="text-meta uppercase text-accent">
@@ -130,8 +138,8 @@ function PortfolioEntry({ item }: { item: PortfolioItem }) {
 
   return (
     <article className="border-t border-hairline pt-5">
-      {item.projectSlug ? (
-        <Link href={`/projects/${item.projectSlug}`} className="group block">
+      {documented ? (
+        <Link href={`/projects/${item.slug}`} className="group block">
           {body}
         </Link>
       ) : (
@@ -141,7 +149,7 @@ function PortfolioEntry({ item }: { item: PortfolioItem }) {
   );
 }
 
-export function PortfolioGrid({ items }: { items: PortfolioItem[] }) {
+export function WorkIndex({ items }: { items: Project[] }) {
   if (items.length === 0) {
     return (
       <p className="border-t border-hairline pt-5 text-meta uppercase text-secondary">
@@ -158,7 +166,7 @@ export function PortfolioGrid({ items }: { items: PortfolioItem[] }) {
     >
       {items.map((item) => (
         <li key={item.id}>
-          <PortfolioEntry item={item} />
+          <WorkEntry item={item} />
         </li>
       ))}
     </Reveal>

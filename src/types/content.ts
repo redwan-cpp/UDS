@@ -112,8 +112,15 @@ export interface Project extends ContentBase {
   status: ProjectStatus;
   /** One line. Used on cards and in the index. */
   summary: string;
-  /** Long-form. Paragraphs, rendered as separate <p> elements. */
-  description: string[];
+  /**
+   * Long-form. Paragraphs, rendered as separate <p> elements.
+   *
+   * Optional, and that is what decides whether this project has a case study
+   * at all. A studio lists far more work than it writes up; an entry with no
+   * description is a card in the index and nothing else — the job the separate
+   * `Portfolio` collection did before the two merged.
+   */
+  description?: string[];
   /** "What makes this project unique" — optional. */
   uniqueness?: string[];
   /** "Our concept" — optional. */
@@ -121,11 +128,13 @@ export interface Project extends ContentBase {
   area?: string;
   client?: string;
   services?: string[];
-  facts: ProjectFact[];
+  /** The information table. Only a written-up project carries one. */
+  facts?: ProjectFact[];
   /** The project's own mark, uploaded per project in the CMS. */
   symbol?: ProjectSymbol;
+  /** The card image, and the case study's opening image where there is one. */
   hero: MediaAsset;
-  gallery: MediaAsset[];
+  gallery?: MediaAsset[];
   /** Rough work / behind the scenes: sketches, drawings, site photography. */
   process?: MediaAsset[];
   featured: boolean;
@@ -138,19 +147,13 @@ export interface Project extends ContentBase {
 /* -------------------------------------------------------------------------- */
 
 /** Lighter than a Project. The index of everything the studio has built. */
-export interface PortfolioItem extends ContentBase {
-  title: string;
-  summary: string;
-  location: string;
-  areaSize: string;
-  category: Category[];
-  year: string;
-  image: MediaAsset;
-  /** Set when this item also exists as a full Project case study. */
-  projectSlug?: string;
-  /** The project's own mark. See `ProjectSymbol` below. */
-  symbol?: ProjectSymbol;
-}
+/**
+ * `PortfolioItem` is gone. It described a card in the work index, while
+ * `Project` described a case study, and the two were kept in step by hand —
+ * every piece of work had to be entered twice, once as each. `Project` now
+ * covers both: its optional `description` is what separates a card from a
+ * written-up project. See the note on that field above.
+ */
 
 /**
  * A project's own mark — the small drawn symbol that stands for the design

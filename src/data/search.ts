@@ -14,7 +14,6 @@ import type { SearchEntry } from "@/types/content";
 
 import { navigation } from "./navigation";
 import { getProjects } from "./projects";
-import { getPortfolio } from "./portfolio";
 import { getProducts } from "./products";
 import { getNews, newsKindLabels } from "./news";
 import { expertise } from "./expertise";
@@ -80,42 +79,33 @@ export function getSearchIndex(): SearchEntry[] {
     keywords: ["jobs", "hiring", "vacancies", "work with us"],
   });
 
+  // One loop, because there is one collection now. Projects and portfolio
+  // entries used to be indexed separately, with a guard to stop work that was
+  // both appearing twice under the same name.
+  //
+  // A written-up project points at its own page. One that is only a card has
+  // no page, so it points at the index filtered to its first category — an
+  // item in several still needs one destination, and the first is the one the
+  // editor put first.
   for (const project of getProjects()) {
+    const documented = Boolean(project.description?.length);
     entries.push({
       id: `project:${project.slug}`,
       title: project.title,
       kind: "project",
-      href: `/projects/${project.slug}`,
+      href: documented
+        ? `/projects/${project.slug}`
+        : project.category.length
+          ? `/projects?category=${project.category[0].slug}`
+          : "/projects",
       summary: project.summary,
       keywords: [
         project.location,
         project.year,
+        ...(project.area ? [project.area] : []),
         ...project.category.map((c) => c.label),
         statusLabels[project.status],
         ...(project.services ?? []),
-      ],
-    });
-  }
-
-  // Portfolio entries that are not also case studies. The ones that are would
-  // otherwise appear twice under the same name pointing at the same page.
-  for (const item of getPortfolio()) {
-    if (item.projectSlug) continue;
-    entries.push({
-      id: `work:${item.slug}`,
-      title: item.title,
-      kind: "project",
-      // An item in several categories still needs one destination; the
-      // first is the one the editor put first.
-      href: item.category.length
-        ? `/projects?category=${item.category[0].slug}`
-        : "/projects",
-      summary: item.summary,
-      keywords: [
-        item.location,
-        item.year,
-        item.areaSize,
-        ...item.category.map((c) => c.label),
       ],
     });
   }
