@@ -689,67 +689,104 @@ is that test.**
 ### 10.3 Backups — do not skip this
 
 A 20 GB server with no backup is one disk failure from losing everything the studio writes.
+`/srv` itself is root-owned, so creating a directory under it needs `sudo` even though
+`/srv/uthan` (made during setup) does not:
 
 ```bash
-mkdir -p /srv/backups
-nano /srv/uthan/backup.sh
+sudo mkdir -p /srv/backups
+sudo chown uthan:uthan /srv/backups
 ```
 
+Write the script with a heredoc rather than an editor — safer to copy-paste exactly:
+
 ```bash
+cat > /srv/uthan/backup.sh << 'EOF'
 #!/bin/bash
 set -e
 STAMP=$(date +%Y%m%d)
 pg_dump -U uthan -h localhost uthan | gzip > /srv/backups/db-$STAMP.sql.gz
 tar czf /srv/backups/media-$STAMP.tar.gz -C /srv/uthan media
 find /srv/backups -type f -mtime +14 -delete
+rclone copy /srv/backups b2backup:YOUR_BUCKET_NAME
+EOF
+chmod +x /srv/uthan/backup.sh
 ```
 
-> **The last line matters.** It deletes copies older than two weeks. Without it, backups
-> eventually fill the disk and take the site down — a backup that causes an outage is not a
-> backup.
+> **The `find` line matters.** It deletes local copies older than two weeks. Without it,
+> backups eventually fill the disk and take the site down — a backup that causes an outage is
+> not a backup. The `rclone copy` line is what gets a copy off this server entirely; see
+> 10.4 before running this for the first time, since `b2backup` has to exist first.
 
 ```bash
-chmod +x /srv/uthan/backup.sh
+echo "localhost:5432:uthan:uthan:YOUR_DB_PASSWORD" > ~/.pgpass
+chmod 600 ~/.pgpass
+```
+
+> Without this, `pg_dump` prompts for a password interactively — fine by hand, but cron has no
+> terminal to type one into, so the nightly run would just fail silently.
+
+```bash
 /srv/uthan/backup.sh
 ls -lh /srv/backups
 ```
 
-> It will ask for the database password. To let cron run it unattended, store it:
->
-> ```bash
-> echo "localhost:5432:uthan:uthan:YOUR_DB_PASSWORD" > ~/.pgpass
-> chmod 600 ~/.pgpass
-> ```
->
-> **You should see** two files, a `.sql.gz` and a `.tar.gz`.
+> **You should see** two files, a `.sql.gz` and a `.tar.gz`, both a real size.
 
-Schedule it nightly:
+Schedule it nightly, plus a monthly image-cache clear, without opening an editor:
 
 ```bash
-crontab -e
-```
-
-Choose `1` for nano if asked, then add at the bottom:
-
-```
+cat << 'EOF' | crontab -
 0 3 * * * /srv/uthan/backup.sh >> /srv/backups/backup.log 2>&1
-0 4 1 * * rm -rf /srv/uthan/.next/cache/images/* && sudo systemctl restart uthan
+0 4 1 * * rm -rf /srv/uthan/.next/cache/images/* && sudo systemctl restart uthan >> /srv/backups/backup.log 2>&1
+EOF
+crontab -l
 ```
 
 > The second line clears the optimised-image cache monthly. Next generates a file per image
-> per size — 18 photos already produce 304 files locally — and it grows without limit.
+> per size and it grows without limit — but that cache is also what makes image loads fast, so
+> clearing it means the next few visitors after the 1st of each month get a slower first load
+> while it rebuilds. `sudo systemctl restart uthan` needs to run without a password prompt for
+> this to work unattended:
+>
+> ```bash
+> echo "uthan ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart uthan" | sudo tee /etc/sudoers.d/uthan-restart
+> sudo chmod 440 /etc/sudoers.d/uthan-restart
+> ```
+>
+> This grants passwordless `sudo` for exactly that one command, not a blanket exemption.
+> Verify with `sudo -n systemctl restart uthan` — it should succeed silently, no password
+> prompt.
 
-### 10.4 Copy backups off the server
+### 10.4 Copy backups off the server — automatically, from the server itself
 
-**A backup on the same disk as the thing it protects is not a backup.** You do not have
-`rsync` on Windows, so use `scp`. Weekly is enough to start.
+**A backup on the same disk as the thing it protects is not a backup.** This deploy ships to a
+client, so the off-site copy runs unattended on the server via `rclone` and cron — not as a
+manual step on the developer's own machine, which would make an unrelated laptop a silent
+dependency of the client's backups.
 
-*On your machine:*
+1. Create a [Backblaze B2](https://backblaze.com/b2) account and a private bucket (their free
+   tier covers 10 GB; these backups are tens of megabytes). In the bucket's **Lifecycle
+   Settings**, set it to keep only the last 30 days — that replaces writing prune logic for the
+   remote copies.
+2. Under **Application Keys**, create a key scoped to just that bucket. Backblaze shows the
+   `keyID` and `applicationKey` once — copy both, but do not put them in this repo or hand them
+   to anyone who does not need server access.
+3. On the server:
 
-```bash
-mkdir -p ~/uthan-backups
-scp uthan@YOUR_SERVER_IP:/srv/backups/*.gz ~/uthan-backups/
-```
+   ```bash
+   sudo apt install -y rclone
+   rclone config create b2backup b2 account YOUR_KEY_ID key YOUR_APPLICATION_KEY
+   rclone lsd b2backup:
+   ```
+
+   **You should see** your bucket listed. This is what `backup.sh`'s `rclone copy` line in
+   10.3 pushes to every night — re-run `backup.sh` once by hand afterward and confirm with
+   `rclone ls b2backup:YOUR_BUCKET_NAME` that both files landed.
+
+> **If the studio ever needs a copy in hand** (migrating hosts, an audit, whatever the reason),
+> pull the latest pair down from the B2 bucket with `rclone copy b2backup:YOUR_BUCKET_NAME .`
+> from wherever you're standing — the server is still the only thing that has to run on a
+> schedule.
 
 ---
 
@@ -774,7 +811,6 @@ sudo systemctl restart uthan
 |---|---|---|
 | No email adapter | "Forgot password" writes to the server log instead of sending an email | The day a studio person has their own account |
 | No staging site | Code changes go from your laptop straight to the live site | When a broken deploy would embarrass someone |
-| Backups are on the server until you copy them | A disk failure loses everything since your last `scp` | Immediately — do 10.4 |
 | BDIX is local-first | Overseas visitors get slower international routing than the old Vercel site | If the studio courts foreign clients |
 
 ---
@@ -894,12 +930,18 @@ Everything else is closed by `ufw`.
   .env                       secrets — never committed, chmod 600
   .next/standalone/          the built server that systemd runs
   media/                     uploaded images. NOT in git, NOT in public/
-  backup.sh                  nightly database and media dump
-/srv/backups/                two weeks of backups, then pruned
+  backup.sh                  nightly database and media dump, then pushed to B2
+/srv/backups/                two weeks of backups, then pruned locally
 /etc/systemd/system/uthan.service
 /etc/caddy/Caddyfile
+/etc/sudoers.d/uthan-restart passwordless sudo, scoped to one restart command
+~/.config/rclone/rclone.conf the b2backup remote's credentials
 /swapfile                    4 GB
 ```
+
+Off-site copies live in the `uthan-backups`-style B2 bucket created in 10.4, kept 30 days by
+the bucket's own lifecycle rule. Nothing on the developer's own machine is part of this —
+the whole chain runs unattended on the server.
 
 **`media/` sits outside `public/` on purpose.** Anything under `public/` is
 served verbatim at full size, which would make an uploaded 30 MB original
