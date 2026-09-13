@@ -33,6 +33,16 @@ const nextConfig: NextConfig = {
 
     // Thumbnail tier, matched to the grid and index cards.
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+
+    // Payload builds media `url`s as absolute (via `NEXT_PUBLIC_SERVER_URL`,
+    // see payload.config.ts), not relative paths. The image optimizer treats
+    // any absolute URL as remote and rejects it with a 400 unless the
+    // hostname is allow-listed here — even when it's the site's own domain.
+    remotePatterns: [
+      { protocol: "https", hostname: "uthandesignstudio.com" },
+      { protocol: "https", hostname: "www.uthandesignstudio.com" },
+      { protocol: "http", hostname: "localhost" },
+    ],
   },
 };
 
