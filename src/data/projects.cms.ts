@@ -73,6 +73,8 @@ export const getProjects = cache(async (): Promise<Project[]> => {
   const payload = await client();
   const { docs } = await payload.find({
     collection: "projects",
+    // Drafts stay in the panel — see the note on `find` in content.cms.ts.
+    overrideAccess: false,
     limit: 200,
     depth: 1,
     sort: "order",
@@ -85,6 +87,8 @@ export const getProjectBySlug = cache(
     const payload = await client();
     const { docs } = await payload.find({
       collection: "projects",
+      // Drafts stay in the panel — see the note on `find` in content.cms.ts.
+      overrideAccess: false,
       where: { slug: { equals: slug } },
       limit: 1,
       depth: 1,
@@ -110,6 +114,8 @@ export const getProjectSlugs = cache(async (): Promise<string[]> => {
   const payload = await client();
   const { docs } = await payload.find({
     collection: "projects",
+    // Drafts stay in the panel — see the note on `find` in content.cms.ts.
+    overrideAccess: false,
     limit: 200,
     depth: 0,
     sort: "order",

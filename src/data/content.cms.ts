@@ -41,12 +41,25 @@ import {
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Doc = any;
 
+/**
+ * `overrideAccess: false` is what keeps drafts off the public site.
+ *
+ * Payload's Local API skips access control unless told otherwise, so these
+ * queries used to read every document regardless of status — including the
+ * untitled draft autosave creates the moment an editor clicks "Create new" and
+ * walks away. One of those shipped as a blank, unlinked card at the top of the
+ * live work index. Every collection here already declares
+ * `publishedOnlyAccess`, which gives an anonymous reader published documents
+ * only; running the query *as* that reader applies it, rather than writing the
+ * same `_status` filter into each accessor and missing one.
+ */
 const find = async (collection: string, opts: Record<string, unknown> = {}) => {
   const payload = await client();
   const { docs } = await payload.find({
     collection: collection as never,
     limit: 300,
     depth: 1,
+    overrideAccess: false,
     ...opts,
   });
   return docs as Doc[];
