@@ -14,8 +14,28 @@ import type {
  * 2 to 3 gate asks that a non-technical editor publish a project unaided, and
  * "unaided" cannot include asking a developer to rebuild.
  *
- * So saving a document invalidates the pages that render it. Pages stay static
- * and the change appears on the next request — seconds, not a deploy.
+ * **Any save invalidates the whole site.** Not the pages a document "appears
+ * on", which is how this started and why it failed. That version kept a table
+ * of which collections render where, and got it wrong in ways that only showed
+ * in production: a renamed Knowledge post changed on the index and stayed as it
+ * was on its own page; a deleted project lingered in every sibling's related
+ * strip. Two narrower fixes were tried and measured against a real production
+ * build before this was written, and neither worked for pages prerendered by
+ * `generateStaticParams`:
+ *
+ * - `revalidatePath("/knowledge", "layout")` — targets a layout file at that
+ *   segment, and there is none, so it matched nothing.
+ * - `revalidatePath("/knowledge/[slug]", "page")` — the route pattern; left the
+ *   prerendered article as `x-nextjs-cache: HIT` after the edit.
+ *
+ * `revalidatePath("/", "layout")` targets the one layout that does exist, and in
+ * the same test it turned a cached article *and* an unrelated project page into
+ * a MISS, and the article showed the edit. It also cannot drift: there is no
+ * list of pages to forget to update when a section moves.
+ *
+ * The cost is small. Nothing is rebuilt on save — each page is marked stale and
+ * re-renders once, on its next visit — and a studio publishes a handful of
+ * times a week, not a second.
  *
  * **Why this can call `revalidatePath` at all.** Payload runs inside this Next
  * application rather than beside it, so a hook fires in the same process that
@@ -30,109 +50,43 @@ import type {
  * confusing failure, so the call is allowed to fail quietly when there is no
  * server to tell.
  */
-function invalidate(paths: string[], type?: "layout" | "page") {
-  for (const path of paths) {
-    try {
-      revalidatePath(path, type);
-    } catch {
-      // No Next request context — a script, a migration, a build step.
-    }
+function invalidateSite() {
+  try {
+    revalidatePath("/", "layout");
+  } catch {
+    // No Next request context — a script, a migration, a build step.
   }
 }
 
 /**
- * Which pages a collection appears on.
- *
- * Written out rather than derived, because it is a fact about the site's
- * composition that only a person knows: statistics appear on the homepage and
- * on About, brands only on the homepage, projects on both the homepage band
- * and the work index. Getting one wrong means a stale page nobody notices, so
- * the list is explicit and worth re-reading when a section moves.
+ * The collection name is kept at the call sites because it reads as what the
+ * hook is attached to, and it names the source in the debug log — not because
+ * it narrows what gets invalidated. Nothing does, on purpose; see above.
  */
-const PAGES: Record<string, string[]> = {
-  projects: ["/", "/projects"],
-  products: ["/products"],
-  news: ["/", "/news"],
-  knowledge: ["/knowledge"],
-  team: ["/about"],
-  expertise: ["/", "/about"],
-  sustainability: ["/sustainability"],
-  statistics: ["/", "/about"],
-  brands: ["/"],
-  careers: ["/careers"],
-};
-
-/** Collections whose documents also own a page of their own, at `/<base>/<slug>`. */
-const DETAIL_ROUTE: Record<string, string> = {
-  projects: "/projects",
-  products: "/products",
-  news: "/news",
-  knowledge: "/knowledge",
-};
-
-/**
- * The listing pages, plus the whole detail subtree.
- *
- * The subtree is taken as a `layout`, not as the one concrete
- * `/projects/<slug>` that changed, because three different staleness bugs all
- * live in the pages that path does not cover:
- *
- * - **A deleted document keeps its page.** Invalidating `/projects/test1`
- *   after deleting it did not stop that URL serving 200 from cache.
- * - **A renamed slug leaves its old address live**, serving the document that
- *   moved away from it.
- * - **Every sibling detail page goes stale.** Each one renders a "related"
- *   strip listing the others, so a document that changed or was deleted keeps
- *   appearing — and linking — from pages that were never invalidated. This is
- *   the one that was found in production: a deleted test project still listed
- *   on every other project's page, pointing at a URL that no longer existed.
- *
- * Taking the base as a layout invalidates the index and every page beneath it
- * in one call, which covers all three without enumerating slugs.
- */
-function revalidateFor(slug: string) {
-  invalidate(PAGES[slug] ?? []);
-  const base = DETAIL_ROUTE[slug];
-  if (base) invalidate([base], "layout");
-}
-
 export const revalidateCollection =
-  (slug: string): CollectionAfterChangeHook =>
-  ({ doc }) => {
-    revalidateFor(slug);
+  (collection: string): CollectionAfterChangeHook =>
+  ({ doc, req }) => {
+    req.payload.logger.debug(`${collection} changed — invalidating the site`);
+    invalidateSite();
     return doc;
   };
 
 export const revalidateCollectionDelete =
-  (slug: string): CollectionAfterDeleteHook =>
-  ({ doc }) => {
-    revalidateFor(slug);
+  (collection: string): CollectionAfterDeleteHook =>
+  ({ doc, req }) => {
+    req.payload.logger.debug(`${collection} deleted — invalidating the site`);
+    invalidateSite();
     return doc;
   };
 
-/**
- * A global changes the whole site.
- *
- * The studio profile is in the footer of every page, the navigation is in every
- * header, and the copy global supplies headings across the site. There is no
- * useful subset to invalidate, so this takes the layout — which cascades to
- * every route beneath it — rather than listing pages and missing one.
- */
+/** Globals — the studio profile, the menu, the site copy — appear on every page. */
 export const revalidateEverything: GlobalAfterChangeHook = ({ doc }) => {
-  try {
-    revalidatePath("/", "layout");
-  } catch {
-    // No Next request context.
-  }
+  invalidateSite();
   return doc;
 };
 
-/** Media is referenced from anywhere, so a re-upload takes the layout too. */
+/** Media is referenced from anywhere. */
 export const revalidateMedia: CollectionAfterChangeHook = ({ doc }) => {
-  try {
-    revalidatePath("/", "layout");
-  } catch {
-    // No Next request context.
-  }
+  invalidateSite();
   return doc;
 };
