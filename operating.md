@@ -36,6 +36,7 @@ Down the left are four groups:
 
 | Group | What is in it |
 |---|---|
+| **Inbox** | Enquiries — every message sent through the contact form |
 | **Work** | Projects, Portfolio, Products — the studio's output |
 | **Studio** | News, Knowledge, Team, Expertise, Sustainability, Statistics, Collaborators, Careers, Users |
 | **Library** | Media — every photograph and drawing used anywhere on the site |
@@ -66,6 +67,21 @@ The order is always:
 
 If you upload something and then wonder why the site looks unchanged, this is why. Nothing is
 broken; the file is sitting in the library waiting to be used.
+
+---
+
+## 4a. Enquiries
+
+Every message sent through the contact form is saved under **Inbox → Enquiries**, newest first,
+and emailed to the studio. Replying to that email replies to the person who wrote.
+
+**The panel is the record; the email is a notification.** The enquiry is saved before any
+email is attempted, so if a message seems not to have arrived, look in the Inbox before
+assuming it was lost. If the Inbox has it but the email never came, the sending account's
+settings on the server need attention — see "Turning on email" in `deployment.md`.
+
+The form refuses obvious automated spam and limits each connection to five enquiries every ten
+minutes. A real person will never meet either limit.
 
 ---
 

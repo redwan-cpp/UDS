@@ -67,6 +67,7 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    enquiries: Enquiry;
     projects: Project;
     products: Product;
     news: News;
@@ -88,6 +89,7 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     news: NewsSelect<false> | NewsSelect<true>;
@@ -148,6 +150,26 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
+}
+/**
+ * Every message sent through the contact form, newest first. Each one is also emailed to the studio; if an email never arrived, it is still here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries".
+ */
+export interface Enquiry {
+  id: number;
+  name: string;
+  email: string;
+  topic?: string | null;
+  area?: string | null;
+  /**
+   * Square feet, as the visitor typed it.
+   */
+  size?: string | null;
+  message?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -799,6 +821,10 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
+        relationTo: 'enquiries';
+        value: number | Enquiry;
+      } | null)
+    | ({
         relationTo: 'projects';
         value: number | Project;
       } | null)
@@ -895,6 +921,20 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries_select".
+ */
+export interface EnquiriesSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  topic?: T;
+  area?: T;
+  size?: T;
+  message?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

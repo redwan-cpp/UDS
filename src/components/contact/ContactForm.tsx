@@ -28,13 +28,18 @@ import type { EnquiryTopic } from "@/types/content";
  * read `@/data/contact` directly from inside the component, which CLAUDE.md
  * rule 1 rules out — only routes read `src/data/**`.
  *
- * PHASE 1 IS UI ONLY. Submission is stubbed at the boundary: nothing is sent,
- * stored or emailed, and the confirmation says so rather than implying
- * otherwise. The server action, validation, rate limiting and bot protection
- * are Phase 3 (architecture.md §3.5) and drop in behind this unchanged.
+ * **Submission goes to the `enquiries` collection** (`/api/enquiries`), which
+ * saves the enquiry and then emails the studio. The checks here are for the
+ * visitor's benefit — instant, specific feedback. The server repeats them and
+ * adds the ones a browser cannot be trusted with: length limits, a rate limit,
+ * and the hidden `website` field below that only a bot fills in.
+ *
+ * A failed send keeps everything the visitor typed and names the studio's
+ * address as a way out, because the worst outcome for an enquiry form is a
+ * message someone wrote carefully and then lost.
  */
 
-/** Deliberately permissive. Real validation is Phase 3's job, not this one's. */
+/** Deliberately permissive: the server validates properly, this only catches typos. */
 function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
@@ -51,11 +56,13 @@ export function ContactForm({
   email,
 }: {
   topics: EnquiryTopic[];
-  /** Shown in the confirmation, so there is a real route out of a stub. */
+  /** Offered as a way out if sending fails. */
   email: string;
 }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [failure, setFailure] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const doneRef = useRef<HTMLParagraphElement>(null);
 
@@ -73,8 +80,9 @@ export function ContactForm({
     if (sent) doneRef.current?.focus();
   }, [sent]);
 
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (sending) return;
     const data = new FormData(event.currentTarget);
     const name = String(data.get("name") ?? "").trim();
     const address = String(data.get("email") ?? "").trim();
@@ -96,7 +104,48 @@ export function ContactForm({
       return;
     }
 
-    setSent(true);
+    const topicValue = String(data.get("topic") ?? "");
+    const text = (key: string) => String(data.get(key) ?? "").trim();
+
+    setFailure(null);
+    setSending(true);
+    try {
+      const response = await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email: address,
+          // The label, not the value: "Interior — reworking a space that
+          // exists" reads in an inbox; "interior" is a database key.
+          topic: topics.find((t) => t.value === topicValue)?.label ?? topicValue,
+          area: text("area"),
+          size: text("size"),
+          message: text("message"),
+          website: text("website"),
+        }),
+      });
+
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as {
+          errors?: { message?: string }[];
+        } | null;
+        // Rate-limit wording is written for people; anything else from the
+        // server is not, so it is replaced with a message that is.
+        setFailure(
+          response.status === 429 && body?.errors?.[0]?.message
+            ? body.errors[0].message
+            : "Your message could not be sent just now.",
+        );
+        return;
+      }
+
+      setSent(true);
+    } catch {
+      setFailure("Your message could not be sent — the connection dropped.");
+    } finally {
+      setSending(false);
+    }
   }
 
   if (sent) {
@@ -108,18 +157,8 @@ export function ContactForm({
           tabIndex={-1}
           className="mt-5 max-w-[46ch] text-lead outline-none"
         >
-          That is the end of the prototype. Nothing was sent, stored or
-          emailed — the enquiry backend is a later phase of this project.
-        </p>
-        <p className="mt-6 max-w-[46ch] text-small text-secondary">
-          To reach the studio for real in the meantime, write to{" "}
-          <a
-            href={`mailto:${email}`}
-            className="underline decoration-1 underline-offset-4 transition-colors hover:text-accent"
-          >
-            {email}
-          </a>
-          .
+          Your message has reached the studio. We will reply to the address you
+          gave.
         </p>
         <Button
           type="button"
@@ -130,7 +169,7 @@ export function ContactForm({
             setErrors({});
           }}
         >
-          Start again
+          Send another
         </Button>
       </div>
     );
@@ -218,14 +257,37 @@ export function ContactForm({
         />
       </div>
 
-      <Button type="submit" variant="primary" className="mt-12">
-        Send enquiry
+      {/* The trap. Off-screen rather than `display: none`, which some bots
+          detect and skip; out of the tab order and hidden from assistive
+          technology, so no person ever reaches it. */}
+      <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+        <label htmlFor="website">Leave this empty</label>
+        <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
+
+      <Button
+        type="submit"
+        variant="primary"
+        className="mt-12"
+        disabled={sending}
+        aria-busy={sending || undefined}
+      >
+        {sending ? "Sending…" : "Send enquiry"}
         <Arrow />
       </Button>
 
-      <p className="mt-6 max-w-[52ch] text-caption text-secondary">
-        Prototype only — nothing typed here is sent, stored or emailed.
-      </p>
+      {failure && (
+        <p role="alert" className="mt-6 max-w-[52ch] text-small text-accent">
+          {failure} Nothing you wrote has been lost — try again, or email{" "}
+          <a
+            href={`mailto:${email}`}
+            className="underline decoration-1 underline-offset-4"
+          >
+            {email}
+          </a>
+          .
+        </p>
+      )}
     </form>
   );
 }

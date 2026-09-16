@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { PageHero, DemoNotice } from "@/components/hero/PageHero";
+import { PageHero } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { ContactForm } from "@/components/contact/ContactForm";
@@ -29,12 +29,6 @@ export default async function ContactPage() {
         eyebrow={heroCopy["/contact"].eyebrow}
         title={heroCopy["/contact"].title}
         intro={heroCopy["/contact"].intro}
-        aside={
-          <DemoNotice>
-            UI prototype. Nothing typed into this form is sent, stored or
-            emailed — the enquiry backend is a later phase.
-          </DemoNotice>
-        }
       />
 
       {/* The enquiry on the left, where the studio is on the right. Two things

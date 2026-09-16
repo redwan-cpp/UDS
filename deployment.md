@@ -969,7 +969,8 @@ script inside an uploaded SVG.
 
 ## Environment variables
 
-All four live in `/srv/uthan/.env`, read by systemd through `EnvironmentFile`.
+All of these live in `/srv/uthan/.env`, read by systemd through `EnvironmentFile`. The first
+four are required; the last three turn on email.
 
 | Variable | Example | What breaks without it |
 |---|---|---|
@@ -977,6 +978,36 @@ All four live in `/srv/uthan/.env`, read by systemd through `EnvironmentFile`.
 | `DATABASE_URI` | `postgres://uthan:PASSWORD@localhost:5432/uthan` | No content. It also **selects the driver** — a `postgres://` URL switches the app from SQLite to PostgreSQL |
 | `NEXT_PUBLIC_SERVER_URL` | `https://uthandesignstudio.com` | Social share cards lose their image, and the CSRF allowlist is empty so admin login fails from a browser |
 | `MEDIA_DIR` | `/srv/uthan/media` | Uploads land inside the build output and are deleted on the next deploy |
+| `SMTP_USER` | `studio.account@gmail.com` | No email is sent. Enquiries are still saved to the panel; notifications and password-reset emails are written to the server log instead |
+| `SMTP_PASS` | 16-character Google app password | As above |
+| `ENQUIRY_TO` | `info@uthandesignstudio.com` | Optional. Where enquiry notifications go; defaults to `SMTP_USER` |
+
+### Turning on email
+
+Gmail refuses an account's ordinary password over SMTP, so this needs an **app password**, and
+app passwords only exist on accounts with 2-Step Verification switched on.
+
+1. Sign in to the Google account that will send the mail. In **Google Account → Security**,
+   make sure **2-Step Verification** is on.
+2. In the account's search box, search for **App passwords**, create one named
+   `uthandesignstudio.com`, and copy the 16 characters it shows. Google shows it once.
+3. On the server, add three lines to `/srv/uthan/.env` — in your terminal, not in any chat or
+   document:
+
+   ```
+   SMTP_USER=the.sending.account@gmail.com
+   SMTP_PASS=the16characterapppassword
+   ENQUIRY_TO=info@uthandesignstudio.com
+   ```
+
+4. `sudo systemctl restart uthan`. Environment changes are only read on start; no rebuild is
+   needed.
+5. Send a test enquiry through `/contact` and confirm it arrives.
+
+> If enquiries stop arriving by email, check the panel under **Inbox → Enquiries** first — every
+> enquiry is saved there before any email is attempted — then
+> `sudo journalctl -u uthan | grep "notification email failed"`. The usual cause is an app
+> password revoked when someone changed the Google account's password.
 
 ## Resource budget
 

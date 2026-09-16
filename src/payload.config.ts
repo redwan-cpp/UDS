@@ -2,6 +2,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import { postgresAdapter } from "@payloadcms/db-postgres";
+import { nodemailerAdapter } from "@payloadcms/email-nodemailer";
 import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
@@ -9,6 +10,7 @@ import sharp from "sharp";
 
 import { Brands } from "./collections/Brands";
 import { Categories } from "./collections/Categories";
+import { Enquiries } from "./collections/Enquiries";
 import { Careers } from "./collections/Careers";
 import { Expertise } from "./collections/Expertise";
 import { Knowledge } from "./collections/Knowledge";
@@ -93,6 +95,7 @@ export default buildConfig({
   // portfolio, Studio is everything about the practice, Library is media,
   // Settings holds the two globals that change how the whole site reads.
   collections: [
+    Enquiries,
     Projects,
     Products,
     News,
@@ -112,6 +115,36 @@ export default buildConfig({
   globals: [Studio, Navigation, SiteCopy],
 
   editor: lexicalEditor(),
+
+  /**
+   * Outgoing mail — enquiry notifications and password resets — through Gmail.
+   *
+   * Only when both credentials are present. Without them Payload falls back to
+   * writing each email to the server log, which is what it did before this was
+   * added: a development machine needs no mailbox, and a production server
+   * that has lost its credentials still saves every enquiry to the panel
+   * rather than failing to boot.
+   *
+   * `SMTP_PASS` is a Google *app password*, not the account's own password —
+   * Gmail refuses ordinary passwords over SMTP. It lives in `.env` on the
+   * server and nowhere in this repository.
+   */
+  email:
+    process.env.SMTP_USER && process.env.SMTP_PASS
+      ? nodemailerAdapter({
+          defaultFromAddress: process.env.SMTP_USER,
+          defaultFromName: "Uthan Design Studio website",
+          transportOptions: {
+            host: process.env.SMTP_HOST || "smtp.gmail.com",
+            port: Number(process.env.SMTP_PORT || 465),
+            secure: true,
+            auth: {
+              user: process.env.SMTP_USER,
+              pass: process.env.SMTP_PASS,
+            },
+          },
+        })
+      : undefined,
 
   /**
    * Postgres in production, SQLite in development — chosen by the connection
