@@ -1,8 +1,59 @@
 import path from "path";
 
-import type { CollectionConfig } from "payload";
+import type { CollectionBeforeOperationHook, CollectionConfig } from "payload";
 
 import { revalidateMedia } from "./hooks/revalidate";
+
+/**
+ * Strip the boilerplate design tools wrap around an SVG, before validation.
+ *
+ * Illustrator and CorelDRAW export every SVG with an XML prolog and a
+ * `<!DOCTYPE>` — Illustrator's with an internal subset of `<!ENTITY>`
+ * declarations. Payload's upload check does not recognise an XML file as an
+ * SVG once a DOCTYPE is present, and refuses it as `application/xml`; a clean
+ * SVG from Figma passes. So every logo the studio exported from Illustrator was
+ * rejected, and the collaborator list quietly filled up with placeholder icons
+ * instead. Reproduced locally before this was written: the Illustrator shape
+ * and a plain-DOCTYPE shape both failed, Figma and Inkscape shapes passed.
+ *
+ * None of that boilerplate draws anything. Entity values are substituted where
+ * the document uses them (Illustrator puts them in namespace attributes, which
+ * would be broken references once the declarations are gone), then the prolog,
+ * comments and DOCTYPE are removed.
+ *
+ * Payload's own security scan still runs afterwards on what is left, so an SVG
+ * carrying a script is refused exactly as before — this removes a false
+ * rejection, not a check. Dropping the DOCTYPE also removes the one place an
+ * XML entity-expansion attack could live.
+ */
+const normaliseSvgUpload: CollectionBeforeOperationHook = ({ args, req }) => {
+  const file = req.file;
+  const isSvg =
+    file?.mimetype === "image/svg+xml" || file?.name?.toLowerCase().endsWith(".svg");
+  if (!file?.data?.length || !isSvg) return args;
+
+  let svg = file.data.toString("utf8");
+
+  const doctype = svg.match(/<!DOCTYPE[^[>]*(?:\[([\s\S]*?)\])?\s*>/i);
+  if (doctype) {
+    for (const [, name, , value] of (doctype[1] ?? "").matchAll(
+      /<!ENTITY\s+([\w.-]+)\s+(["'])([\s\S]*?)\2\s*>/g,
+    )) {
+      svg = svg.split(`&${name};`).join(value);
+    }
+    svg = svg.replace(doctype[0], "");
+  }
+
+  svg = svg
+    .replace(/<\?xml[\s\S]*?\?>/i, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .trim();
+
+  file.data = Buffer.from(svg, "utf8");
+  file.size = file.data.length;
+  file.mimetype = "image/svg+xml";
+  return args;
+};
 
 /**
  * The media library.
@@ -24,7 +75,10 @@ import { revalidateMedia } from "./hooks/revalidate";
  */
 export const Media: CollectionConfig = {
   slug: "media",
-  hooks: { afterChange: [revalidateMedia] },
+  hooks: {
+    beforeOperation: [normaliseSvgUpload],
+    afterChange: [revalidateMedia],
+  },
   admin: { group: "Library" },
   access: {
     read: () => true,
