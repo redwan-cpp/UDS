@@ -60,7 +60,7 @@ export default async function KnowledgeArticlePage({
         <Container width="text" className="mx-auto">
           <nav aria-label="Breadcrumb" className="pb-6">
             <Link
-              href="/news"
+              href="/knowledge"
               className="group/back inline-flex items-center gap-2 text-meta uppercase text-secondary transition-colors hover:text-accent"
             >
               <Arrow className="rotate-180 transition-transform duration-[var(--dur-base)] ease-out-soft group-hover/back:-translate-x-1 motion-reduce:transition-none" />
@@ -200,7 +200,7 @@ export default async function KnowledgeArticlePage({
           >
             {more.map((next) => (
               <li key={next.id}>
-                <NewsCard item={next} />
+                <NewsCard item={next} basePath="/knowledge" />
               </li>
             ))}
           </Reveal>

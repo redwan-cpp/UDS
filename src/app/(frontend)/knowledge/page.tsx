@@ -52,7 +52,7 @@ export default async function NewsPage() {
           >
             {items.map((item, i) => (
               <li key={item.id}>
-                <NewsCard item={item} priority={i < 3} />
+                <NewsCard item={item} priority={i < 3} basePath="/knowledge" />
               </li>
             ))}
           </Reveal>

@@ -12,11 +12,23 @@ import type { NewsItem } from "@/types/content";
  * Hairline-and-interval, not a filled card: a top rule, the image, then the
  * metadata and title on the grid. One link wraps the whole entry so there is a
  * single tab stop per destination.
+ *
+ * `basePath` because Knowledge reuses this card for its own posts. It used to
+ * hardcode `/news`, so every Knowledge card linked to a news URL that does not
+ * exist — the section looked broken from the first click.
  */
-export function NewsCard({ item, priority = false }: { item: NewsItem; priority?: boolean }) {
+export function NewsCard({
+  item,
+  priority = false,
+  basePath = "/news",
+}: {
+  item: NewsItem;
+  priority?: boolean;
+  basePath?: "/news" | "/knowledge";
+}) {
   return (
     <article className="border-t border-hairline pt-5">
-      <Link href={`/news/${item.slug}`} className="group block">
+      <Link href={`${basePath}/${item.slug}`} className="group block">
         <Media
           asset={item.image}
           ratio="landscape"
