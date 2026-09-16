@@ -794,14 +794,32 @@ dependency of the client's backups.
 
 ```bash
 ssh uthan@YOUR_SERVER_IP
+screen -S deploy
 cd /srv/uthan
 git pull
 npm ci
+npx payload run scripts/counts.ts
 npm run build
 sudo systemctl restart uthan
 ```
 
 **This is for code only.** Content is edited in the panel and appears without any of this.
+
+> **The `counts.ts` line is not optional, and its position matters.** `next build` reads the
+> CMS while it pre-renders pages, so if a commit added a field, the build queries a column the
+> database does not have yet and dies with `column … does not exist`. Payload brings the
+> schema up to date when a script starts, so running one *before* the build fixes it —
+> `counts.ts` because it only reads. The first deploy of the hero-video fields failed exactly
+> like this.
+>
+> If it asks to **delete** tables or columns, stop. Run `/srv/uthan/backup.sh` first, and only
+> answer `y` when you know why that data is going. Additions never prompt.
+>
+> **Do not use `seed.ts` for this.** The seed rewrites every seeded document from `src/data`,
+> so it undoes whatever editors have changed in the panel since.
+>
+> If the build fails, **do not restart the service.** The old build is still loaded and still
+> serving; restarting onto a half-written `.next` is what would take the site down.
 
 ---
 

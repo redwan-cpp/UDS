@@ -207,15 +207,30 @@ Content never needs this. Only code does.
 
 ```bash
 ssh uthan@160.25.226.194
+screen -S deploy
 cd /srv/uthan
 git pull
 npm ci
+npx payload run scripts/counts.ts
 npm run build
 sudo systemctl restart uthan
 ```
 
-The build needs several minutes and a lot of memory. Run it inside `screen` so a dropped
-connection cannot kill it halfway.
+Three rules, each learned from something actually going wrong:
+
+- **Run `counts.ts` before the build, every time.** If the update added a field, the database
+  needs it before the build reads the CMS, or the build stops with `column … does not exist`.
+  `counts.ts` only reads, but starting it is what brings the database structure up to date.
+- **If it asks to delete tables or columns, stop.** Run `/srv/uthan/backup.sh`, and only answer
+  `y` when you know why that data is going. Additions never ask.
+- **If the build fails, do not restart.** The site keeps running the previous version until
+  you do. Fix the build first.
+
+Never run `seed.ts` as part of a deploy — it resets content to the original demo data and
+undoes edits made in the panel.
+
+The build takes several minutes and a lot of memory. `screen` keeps it running if your
+connection drops; reattach with `screen -r deploy`.
 
 Expect images to load slowly for the first few minutes afterwards: the build clears the
 resized-image cache, and each photograph is re-optimised the first time someone asks for it.
