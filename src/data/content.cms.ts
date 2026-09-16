@@ -4,6 +4,7 @@ import type {
   Brand,
   ExpertiseArea,
   JobOpening,
+  NavItem,
   NewsItem,
   Product,
   Statistic,
@@ -20,6 +21,7 @@ import {
   toRows,
   toValues,
 } from "./payload";
+import { navigation as staticNavigation } from "./navigation";
 
 /**
  * The rest of the content, read from the CMS.
@@ -111,6 +113,40 @@ export const getVisibleCategorySlugs = cache(
 
 /* The portfolio accessor is gone: `portfolio` merged into `projects`, and the
    work index now reads `getProjects` from projects.cms.ts. */
+
+/* ------------------------------------------------------------ navigation --- */
+
+/**
+ * The menu, from the CMS.
+ *
+ * Same gap the studio profile had: the Navigation global was modelled with an
+ * image per item, the panel let editors change them, and the site went on
+ * rendering `src/data/navigation.ts` — so a new hover image saved fine and
+ * appeared nowhere.
+ *
+ * Falls back to that static list when the global holds no items, so a database
+ * that was never seeded still has a working menu rather than an empty overlay.
+ */
+export const getNavigation = cache(async (): Promise<NavItem[]> => {
+  const payload = await client();
+  const d: Doc = await payload.findGlobal({
+    slug: "navigation",
+    depth: 1,
+    overrideAccess: false,
+  });
+  const items: Doc[] = d.items ?? [];
+  if (items.length === 0) return staticNavigation;
+
+  return items.map((item) => {
+    const image = toAsset(item.image);
+    return {
+      index: item.index ?? "",
+      label: item.label ?? "",
+      href: item.href ?? "/",
+      image: image.src ? image : undefined,
+    };
+  });
+});
 
 /* ---------------------------------------------------------------- studio --- */
 

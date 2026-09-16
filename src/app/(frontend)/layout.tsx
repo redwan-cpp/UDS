@@ -8,8 +8,7 @@ import { LoadingSequence } from "@/components/motion/LoadingSequence";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { MotionFailsafe } from "@/components/motion/MotionFailsafe";
 import { CrosshairCursor } from "@/components/ui/CrosshairCursor";
-import { navigation } from "@/data/navigation";
-import { getStudio } from "@/data/content.cms";
+import { getNavigation, getStudio } from "@/data/content.cms";
 import { getSearchIndex } from "@/data/search";
 import { footerCopy } from "@/data/copy";
 import { SITE_URL, SHARE_IMAGE } from "@/lib/share";
@@ -122,7 +121,7 @@ export default async function RootLayout({
   // and the layout is the one place above all three — so it is fetched once
   // here rather than three times below. `cache` would dedupe it anyway; this
   // also keeps the header a client component that is handed its data.
-  const studio = await getStudio();
+  const [studio, navigation] = await Promise.all([getStudio(), getNavigation()]);
 
   // suppressHydrationWarning on <html>: the boot script deliberately adds
   // `js-motion` / `js-intro` before React hydrates — that is the entire point
