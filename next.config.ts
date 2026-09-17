@@ -46,6 +46,7 @@ const nextConfig: NextConfig = {
       { source: "/brand/:path*", headers: cached },
       { source: "/illustration/:path*", headers: cached },
       { source: "/api/media/file/:path*", headers: cached },
+      { source: "/api/videos/file/:path*", headers: cached },
     ];
   },
 

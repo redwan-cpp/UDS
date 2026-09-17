@@ -22,6 +22,7 @@ import {
   toValues,
 } from "./payload";
 import { navigation as staticNavigation } from "./navigation";
+import { studio as seedStudio } from "./studio";
 
 /**
  * The rest of the content, read from the CMS.
@@ -168,22 +169,17 @@ export const getStudio = cache(async (): Promise<StudioProfile> => {
   const payload = await client();
   const d: Doc = await payload.findGlobal({ slug: "studio", depth: 1 });
 
-  // All three or none. A WebM with no MP4 fails silently on Safari, and video
-  // with no poster shows nothing at all under reduced motion — so a partly
-  // filled hero falls back to the shipped clip rather than half-rendering.
-  const poster = toAsset(d.hero?.poster);
-  const webm = d.hero?.webm?.url;
-  const mp4 = d.hero?.mp4?.url;
-  const hero =
-    webm && mp4 && poster.src
-      ? {
-          sources: [
-            { src: webm, type: "video/webm" },
-            { src: mp4, type: "video/mp4" },
-          ],
-          poster,
-        }
-      : undefined;
+  // Any uploaded video replaces the shipped clip. This used to require WebM,
+  // MP4 and poster together and silently fell back otherwise — the studio
+  // uploaded an MP4 alone, saved, and saw no change. An H.264 MP4 plays in
+  // every browser on its own; the WebM is a size optimisation and the poster a
+  // nicety, so neither is allowed to veto the upload.
+  const sources = [
+    { src: d.hero?.webm?.url, type: "video/webm" },
+    { src: d.hero?.mp4?.url, type: "video/mp4" },
+  ].filter((s): s is { src: string; type: string } => Boolean(s.src));
+  const poster = d.hero?.poster ? toAsset(d.hero.poster) : undefined;
+  const hero = sources.length ? { sources, poster } : undefined;
 
   return {
     name: d.name ?? "",
@@ -223,6 +219,13 @@ export const getStudio = cache(async (): Promise<StudioProfile> => {
       label: s.label ?? "",
       href: s.href ?? "",
     })),
+    // Empty until someone saves it in the panel — the live site's global
+    // predates the field — so the wording falls back to the seed. With no URL
+    // it renders as plain text, not a link to nowhere.
+    credit: {
+      label: d.credit?.label || seedStudio.credit.label,
+      href: d.credit?.href || undefined,
+    },
   };
 });
 

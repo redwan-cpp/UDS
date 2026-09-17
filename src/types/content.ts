@@ -38,7 +38,8 @@ export interface VideoAsset {
    * broad-compatibility fallback (older Safari in particular).
    */
   sources: { src: string; type: string }[];
-  poster: MediaAsset;
+  /** Optional for a CMS upload; without one the hero is ink until the video plays. */
+  poster?: MediaAsset;
   /** Described for assistive technology; decorative background video has none. */
   description?: string;
   credit?: string;
@@ -389,6 +390,8 @@ export interface StudioProfile {
    *  Components render an unlinked label rather than a dead `#` anchor. */
   social: { label: string; href?: string }[];
   legal: { label: string; href: string }[];
+  /** Who built the site. Plain text until `href` is set. */
+  credit: { label: string; href?: string };
 }
 
 /* -------------------------------------------------------------------------- */

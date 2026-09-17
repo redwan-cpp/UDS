@@ -9,7 +9,7 @@ import { gsap, motionSafe } from "@/lib/gsap";
 import type { MediaAsset, VideoAsset } from "@/types/content";
 
 interface HomeHeroProps {
-  poster: MediaAsset;
+  poster?: MediaAsset;
   video?: VideoAsset;
   services: { label: string; href: string }[];
 }

@@ -459,6 +459,7 @@ await payload.updateGlobal({
     },
     social: studio.social,
     legal: studio.legal,
+    credit: studio.credit,
   },
 });
 note("globals");

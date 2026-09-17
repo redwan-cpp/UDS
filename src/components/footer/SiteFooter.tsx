@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { ExternalLink } from "@/components/ui/ExternalLink";
 import { Eyebrow } from "@/components/typography";
-import { DEVELOPER_CREDIT, IS_DEMO_BUILD } from "@/data/studio";
+import { IS_DEMO_BUILD } from "@/data/studio";
 import type { NavItem, StudioProfile } from "@/types/content";
 
 /**
@@ -193,7 +193,18 @@ export function SiteFooter({
           {/* The build credit. Its own line rather than appended to the
               copyright, because they are two different claims — one is the
               studio's ownership of the work, the other is who made the site. */}
-          <p>{DEVELOPER_CREDIT}</p>
+          <p>
+            {studio.credit.href ? (
+              <ExternalLink
+                href={studio.credit.href}
+                className="inline-flex min-h-11 items-center underline decoration-1 underline-offset-4 transition-colors duration-[var(--dur-fast)] hover:text-accent"
+              >
+                {studio.credit.label}
+              </ExternalLink>
+            ) : (
+              studio.credit.label
+            )}
+          </p>
           {/* The legal links sit in a horizontal bar, so there is no row
               structure to carry the affordance and they were rendering as mute
               text indistinguishable from the copyright line beside them. An

@@ -64,7 +64,7 @@ export const Studio: GlobalConfig = {
               label: "Hero video",
               admin: {
                 description:
-                  "Optional. Leave all three empty and the homepage keeps the video that ships with the site. Fill all three to replace it — two video files, and the still frame beneath them.",
+                  "Optional. Leave both videos empty and the homepage keeps the video that ships with the site. Upload an MP4 (H.264) and it replaces it — that alone plays in every browser. The WebM is an optional smaller copy. The poster is optional but recommended: use the video's first frame, so something shows while the video loads.",
               },
               fields: [
                 {
@@ -235,6 +235,24 @@ export const Studio: GlobalConfig = {
                   fields: [
                     { name: "label", type: "text", required: true },
                     { name: "href", type: "text" },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "credit",
+              type: "group",
+              label: "Developer credit",
+              admin: {
+                description:
+                  "The line at the very bottom of the footer. Add a URL and it becomes a link that opens in a new tab; leave it empty and it stays plain text.",
+              },
+              fields: [
+                {
+                  type: "row",
+                  fields: [
+                    { name: "label", type: "text" },
+                    { name: "href", type: "text", label: "URL" },
                   ],
                 },
               ],

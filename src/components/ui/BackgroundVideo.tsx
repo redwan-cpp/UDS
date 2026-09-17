@@ -41,7 +41,7 @@ export function BackgroundVideo({
   className = "",
 }: {
   /** Always rendered. The video, when present, plays on top of it. */
-  poster: MediaAsset;
+  poster?: MediaAsset;
   video?: VideoAsset;
   className?: string;
 }) {
@@ -104,19 +104,21 @@ export function BackgroundVideo({
 
   return (
     <div className={`absolute inset-0 overflow-hidden bg-ink ${className}`}>
-      <Image
-        src={poster.src}
-        alt={poster.alt}
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover"
-        style={
-          poster.focal
-            ? { objectPosition: `${poster.focal.x * 100}% ${poster.focal.y * 100}%` }
-            : undefined
-        }
-      />
+      {poster && (
+        <Image
+          src={poster.src}
+          alt={poster.alt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+          style={
+            poster.focal
+              ? { objectPosition: `${poster.focal.x * 100}% ${poster.focal.y * 100}%` }
+              : undefined
+          }
+        />
+      )}
 
       {video && (
         // No `poster` attribute. The `<Image>` above already paints this exact

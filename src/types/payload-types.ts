@@ -1405,7 +1405,7 @@ export interface Studio {
     id?: string | null;
   }[];
   /**
-   * Optional. Leave all three empty and the homepage keeps the video that ships with the site. Fill all three to replace it — two video files, and the still frame beneath them.
+   * Optional. Leave both videos empty and the homepage keeps the video that ships with the site. Upload an MP4 (H.264) and it replaces it — that alone plays in every browser. The WebM is an optional smaller copy. The poster is optional but recommended: use the video's first frame, so something shows while the video loads.
    */
   hero?: {
     /**
@@ -1500,6 +1500,13 @@ export interface Studio {
         id?: string | null;
       }[]
     | null;
+  /**
+   * The line at the very bottom of the footer. Add a URL and it becomes a link that opens in a new tab; leave it empty and it stays plain text.
+   */
+  credit?: {
+    label?: string | null;
+    href?: string | null;
+  };
   legal?:
     | {
         label: string;
@@ -1695,6 +1702,12 @@ export interface StudioSelect<T extends boolean = true> {
         label?: T;
         href?: T;
         id?: T;
+      };
+  credit?:
+    | T
+    | {
+        label?: T;
+        href?: T;
       };
   legal?:
     | T

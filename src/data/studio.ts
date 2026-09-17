@@ -127,6 +127,9 @@ export const studio: StudioProfile = {
     { label: "Privacy", href: "/privacy" },
     { label: "Terms", href: "/terms" },
   ],
+
+  /** Editable under Studio > Links. No URL supplied yet, so it seeds as text. */
+  credit: { label: "Website developed by Redova Studio (2026)" },
 };
 
 /**
@@ -141,10 +144,3 @@ export const studio: StudioProfile = {
  */
 export const IS_DEMO_BUILD = false;
 
-/**
- * Who built it. Printed in the footer beside the copyright.
- *
- * A credit, not a link — ruler.md forbids an href that goes nowhere, and no
- * URL was supplied. Give me one and it becomes a link.
- */
-export const DEVELOPER_CREDIT = "Website developed by Redova Studios (2026)";
