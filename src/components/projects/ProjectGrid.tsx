@@ -61,7 +61,12 @@ export function ProjectGrid({ projects }: { projects: Project[] }) {
             key={project.id}
             className="animate-[uds-rise_400ms_ease-out] motion-reduce:animate-none"
           >
-            <WorkCard project={project} index={i + 1} priority={i < 2} />
+            {/* No `priority`. This band sits below the hero and the opening
+                spread on every screen size; marking its first cards priority
+                preloaded them alongside the hero — measured on the live
+                homepage as project photographs fetched before any scrolling,
+                competing with the fonts and the poster. */}
+            <WorkCard project={project} index={i + 1} />
           </li>
         ))}
       </ul>

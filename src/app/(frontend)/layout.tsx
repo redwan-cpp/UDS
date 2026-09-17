@@ -25,18 +25,31 @@ import "./globals.css";
  * confirmed the existing secondary stays, so Newsreader keeps the editorial
  * register the statement and lead type is built on.
  */
+//
+// Only the faces the public site actually sets. Measured on the live homepage:
+// seven font files, 350 KB, every one preloaded at high priority ahead of the
+// hero. Two were 144 KB and 129 KB of Newsreader, the second the italic, which
+// nothing uses: no `italic` class, no `<em>`, and the one element italic by
+// default (`<address>`) is set `not-italic`. Barlow 700 is the same: no bold
+// class, no `<strong>`, no CSS weight above 600. The admin panel's layout
+// declares its own set and is unaffected.
 const barlow = Barlow({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600"],
   display: "swap",
   variable: "--font-barlow",
 });
 
+// Not preloaded. Every serif use is below the first screen of the homepage —
+// the statement, the about copy, the closing line — so it should not jump the
+// queue ahead of the hero and Barlow. The stylesheet still declares it, so it
+// loads as soon as a serif line is laid out, just at normal priority.
 const newsreader = Newsreader({
   subsets: ["latin"],
   axes: ["opsz"],
-  style: ["normal", "italic"],
+  style: ["normal"],
   display: "swap",
+  preload: false,
   variable: "--font-newsreader",
 });
 

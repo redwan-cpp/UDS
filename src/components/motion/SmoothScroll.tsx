@@ -78,22 +78,57 @@ export function SmoothScroll() {
     window.addEventListener("popstate", onPop);
 
     // Measurements taken before fonts and media settle are wrong. Re-measure
-    // once each is done, and coalesce the calls.
-    let refreshFrame = 0;
+    // once each is done — through one debounce shared with the height watcher
+    // below, so fonts, `load` and the page's own reflows during startup, which
+    // all land within about a second of each other, cost as few refreshes as
+    // possible rather than one each.
+    let settle = 0;
     const refresh = () => {
-      if (refreshFrame) return;
-      refreshFrame = window.requestAnimationFrame(() => {
-        refreshFrame = 0;
-        ScrollTrigger.refresh();
-      });
+      window.clearTimeout(settle);
+      settle = window.setTimeout(() => ScrollTrigger.refresh(), 200);
     };
     document.fonts?.ready.then(refresh).catch(() => {});
     window.addEventListener("load", refresh);
 
+    // …and whenever the page changes height. Fonts and `load` are not the only
+    // things that move content after triggers are measured, and on a fast
+    // connection `load` can fire *before* hydration, so it is not even reliable
+    // for those. The case that proved it: the work grid is server-rendered with
+    // every project and collapses to four cards once the browser measures its
+    // columns. Every trigger below it — the figures, the closing section — was
+    // created in that same render and kept positions from a page ~2,400px
+    // taller than the one on screen. Measured on a production build: the
+    // counters started 1,641px after they had scrolled off the top, and the
+    // closing section revealed only at the very bottom of the page. The same
+    // happens, smaller, whenever "show more" adds a row.
+    //
+    // Debounced, and only for a change in *height*. A refresh measures every
+    // trigger on the page, which forces a full layout — on a throttled phone
+    // CPU that measured 100–340ms each, and during load the body resizes
+    // several times in a second (the grid collapsing, the serif arriving and
+    // reflowing). Refreshing on each one turned 450ms of main-thread work into
+    // 2.1s. Width changes and sub-pixel jitter are ignored: neither moves a
+    // trigger, and viewport resizes already refresh on their own.
+    //
+    // The height comes from the observer's own entry, not `offsetHeight`.
+    // Reading `offsetHeight` here forces a synchronous layout of the whole
+    // page, and doing it during hydration measured as ~250ms of later
+    // DOMContentLoaded on a throttled phone. The entry is computed by the
+    // browser's own layout pass and costs nothing to read.
+    let lastHeight = -1;
+    const resize = new ResizeObserver(([entry]) => {
+      const height = entry.contentRect.height;
+      if (Math.abs(height - lastHeight) < 2) return;
+      lastHeight = height;
+      refresh();
+    });
+    resize.observe(document.body);
+
     return () => {
+      resize.disconnect();
+      window.clearTimeout(settle);
       window.removeEventListener("load", refresh);
       window.removeEventListener("popstate", onPop);
-      if (refreshFrame) window.cancelAnimationFrame(refreshFrame);
       gsap.ticker.remove(raf);
       gsap.ticker.lagSmoothing(500, 33);
       lenis.destroy();

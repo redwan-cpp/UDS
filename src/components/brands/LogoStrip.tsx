@@ -62,23 +62,42 @@ export function LogoStrip({ brands }: { brands: Brand[] }) {
     let paused = false;
     let visible = false;
 
+    // The position lives here, not in `scrollLeft`.
+    //
+    // Browsers round a scroll position to whole device pixels — 0.8 CSS px at
+    // 125% display scaling. At 26 px/s a frame's step is under half a pixel, so
+    // reading `scrollLeft` back and adding to it compounded the rounding: at
+    // 60 Hz every step rounded up and the row ran at 48 px/s in visible jumps;
+    // at 144 Hz every step rounded down to nothing and it never moved at all.
+    // Measured, not theorised. Accumulating in a float and only writing the
+    // result makes the speed exact at any refresh rate, whatever the rounding.
+    let position = 0;
+    // Half the track is one full pass of the list; wrapping there lands on the
+    // identical second copy. Measured on start and on resize, not every frame,
+    // so the loop never forces a layout read mid-scroll.
+    let half = 0;
+    const measure = () => {
+      half = el.scrollWidth / 2;
+    };
+    const resize = new ResizeObserver(measure);
+    resize.observe(el);
+
     const tick = (now: number) => {
       frame = requestAnimationFrame(tick);
       const delta = last ? Math.min((now - last) / 1000, 0.05) : 0;
       last = now;
       if (paused) return;
 
-      // Half the track is one full pass of the list. Wrapping there lands on
-      // the identical second copy, so there is nothing to see.
-      const half = el.scrollWidth / 2;
-      let next = el.scrollLeft + SPEED * delta;
-      if (half > 0 && next >= half) next -= half;
-      el.scrollLeft = next;
+      position += SPEED * delta;
+      if (half > 0 && position >= half) position -= half;
+      el.scrollLeft = position;
     };
 
     const start = () => {
       if (frame) return;
       last = 0;
+      position = el.scrollLeft;
+      measure();
       frame = requestAnimationFrame(tick);
     };
     const stop = () => {
@@ -93,6 +112,8 @@ export function LogoStrip({ brands }: { brands: Brand[] }) {
     const resume = () => {
       paused = false;
       last = 0; // don't credit the paused time as a jump
+      // Pick up wherever the reader left it — they may have dragged the row.
+      position = el.scrollLeft;
     };
 
     // Only run while the row is actually on screen.
@@ -115,6 +136,7 @@ export function LogoStrip({ brands }: { brands: Brand[] }) {
 
     return () => {
       io.disconnect();
+      resize.disconnect();
       stop();
       el.removeEventListener("pointerenter", pause);
       el.removeEventListener("pointerleave", resume);

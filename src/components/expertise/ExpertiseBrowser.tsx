@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import { Media } from "@/components/ui/Media";
 import { Eyebrow } from "@/components/typography";
@@ -59,6 +59,28 @@ export function ExpertiseBrowser({
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const baseId = useId();
 
+  // Only the open area's photograph exists until the browser is on screen.
+  // All nine used to mount stacked at hydration, and because this sits just
+  // under the hero they were all inside the browser's lazy-load distance —
+  // measured on the live homepage as seven photographs downloaded before any
+  // scrolling, for a panel that shows one. Mounting the rest when the browser
+  // enters the viewport keeps hover switching instant for anyone who reaches
+  // it, without spending those bytes on the first screen.
+  const root = useRef<HTMLDivElement>(null);
+  const [onScreen, setOnScreen] = useState(false);
+  useEffect(() => {
+    const el = root.current;
+    if (!el || onScreen) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setOnScreen(true);
+        observer.disconnect();
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [onScreen]);
+
   if (areas.length === 0) return null;
 
   const area = areas[active];
@@ -88,7 +110,7 @@ export function ExpertiseBrowser({
   };
 
   return (
-    <div>
+    <div ref={root}>
       <div className="flex items-baseline gap-4 pb-4">
         <span className="text-meta uppercase text-accent" data-numeric>
           {index}
@@ -118,13 +140,16 @@ export function ExpertiseBrowser({
               data-active={i === active || undefined}
               className="fade-layer absolute inset-0"
             >
-              <Media
-                asset={item.image}
-                ratio="auto"
-                className="h-full w-full"
-                priority={i === 0}
-                sizes="(min-width: 1024px) 46vw, 100vw"
-              />
+              {(onScreen || i === active) && (
+                // No `priority`: this panel starts below the hero on every
+                // screen size, so even the first image is not first-screen.
+                <Media
+                  asset={item.image}
+                  ratio="auto"
+                  className="h-full w-full"
+                  sizes="(min-width: 1024px) 46vw, 100vw"
+                />
+              )}
             </div>
           ))}
         </div>

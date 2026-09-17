@@ -19,6 +19,36 @@ const nextConfig: NextConfig = {
     return [{ source: "/studio", destination: "/about", permanent: true }];
   },
 
+  /**
+   * Cache the media that is not fingerprinted.
+   *
+   * `/_next/static` is already cached for a year, because its filenames carry
+   * a content hash. These paths do not: `public/` files were served
+   * `max-age=0` and CMS uploads with no `Cache-Control` at all, so a returning
+   * visitor re-checked the hero video, its poster and every logo on each page
+   * load — measured on the live site.
+   *
+   * A day, then revalidated in the background for a week. Not `immutable` and
+   * not a year: these names are not hashed, and the shipped hero clip keeps
+   * its filename when it is re-encoded, so a much longer lifetime would pin an
+   * old file in returning visitors' browsers. A day removes nearly all repeat
+   * requests and stays safe.
+   */
+  async headers() {
+    const cached = [
+      {
+        key: "Cache-Control",
+        value: "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    ];
+    return [
+      { source: "/media/:path*", headers: cached },
+      { source: "/brand/:path*", headers: cached },
+      { source: "/illustration/:path*", headers: cached },
+      { source: "/api/media/file/:path*", headers: cached },
+    ];
+  },
+
   images: {
     // AVIF first, WebP as the fallback. On photography this is the single
     // largest reduction in bytes decoded per scroll, and decode cost is what
