@@ -58,6 +58,29 @@ export interface Seo {
   noIndex?: boolean;
 }
 
+/**
+ * A paragraph of editorial prose that carries inline formatting — bold,
+ * italic, underline, strikethrough, sub/superscript, links.
+ *
+ * `text` is the plain-text form: for search indexing, `<meta description>`,
+ * and anywhere else a paragraph is read as content rather than rendered.
+ * `html` is the same paragraph with its inline marks preserved as a small,
+ * fixed set of safe tags, ready to render directly.
+ */
+export interface RichParagraph {
+  text: string;
+  html: string;
+}
+
+/**
+ * A paragraph as the site renders it: either a plain string — hand-written
+ * copy that was never going to carry formatting (the demo content layer, the
+ * studio's editorial statement) — or a `RichParagraph` from a CMS rich-text
+ * field. `Prose` and every other paragraph renderer accept both, so a field
+ * can move from one to the other without a second rendering path.
+ */
+export type Paragraph = string | RichParagraph;
+
 /** Every content entity carries these. `isDemo` is how demo content is kept honest. */
 export interface ContentBase {
   id: string;
@@ -121,11 +144,11 @@ export interface Project extends ContentBase {
    * description is a card in the index and nothing else — the job the separate
    * `Portfolio` collection did before the two merged.
    */
-  description?: string[];
+  description?: Paragraph[];
   /** "What makes this project unique" — optional. */
-  uniqueness?: string[];
+  uniqueness?: Paragraph[];
   /** "Our concept" — optional. */
-  concept?: string[];
+  concept?: Paragraph[];
   area?: string;
   client?: string;
   services?: string[];
@@ -198,7 +221,7 @@ export interface Product extends ContentBase {
   category: Category[];
   /** One line, sits under the title. */
   summary: string;
-  description: string[];
+  description: Paragraph[];
   materials: string[];
   applications: string[];
   specs: ProductSpec[];
@@ -227,7 +250,7 @@ export interface NewsItem extends ContentBase {
   organisation?: string;
   location?: string;
   summary: string;
-  body: string[];
+  body: Paragraph[];
   image: MediaAsset;
   gallery?: MediaAsset[];
   /** MoU or supporting documentation. */

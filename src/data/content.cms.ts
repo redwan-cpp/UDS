@@ -6,6 +6,7 @@ import type {
   JobOpening,
   NavItem,
   NewsItem,
+  SectionCopy,
   Product,
   Statistic,
   StudioProfile,
@@ -18,11 +19,14 @@ import {
   toAssets,
   toCategories,
   toParagraphs,
+  toRichParagraphs,
+  toSeo,
   toRows,
   toValues,
 } from "./payload";
 import { navigation as staticNavigation } from "./navigation";
 import { studio as seedStudio } from "./studio";
+import * as defaultCopy from "./copy";
 
 /**
  * The rest of the content, read from the CMS.
@@ -235,10 +239,11 @@ const toProduct = (d: Doc): Product => ({
   id: String(d.id),
   slug: d.slug,
   isDemo: Boolean(d.isDemo),
+  seo: toSeo(d.seo),
   title: d.title,
   category: toCategories(d.category),
   summary: d.summary,
-  description: toParagraphs(d.description),
+  description: toRichParagraphs(d.description),
   materials: toValues(d.materials),
   applications: toValues(d.applications),
   specs: toRows(d.specs),
@@ -271,6 +276,7 @@ const toNews = (d: Doc): NewsItem => ({
   id: String(d.id),
   slug: d.slug,
   isDemo: Boolean(d.isDemo),
+  seo: toSeo(d.seo),
   title: d.title,
   kind: d.kind,
   // Payload stores a real date; the site renders it through `<time datetime>`,
@@ -280,7 +286,7 @@ const toNews = (d: Doc): NewsItem => ({
   organisation: d.organisation ?? undefined,
   location: d.location ?? undefined,
   summary: d.summary,
-  body: toParagraphs(d.body),
+  body: toRichParagraphs(d.body),
   image: toAsset(d.image),
   gallery: toAssets(d.gallery).length ? toAssets(d.gallery) : undefined,
   documents: (d.documents ?? []).map((doc: Doc) => ({
@@ -333,11 +339,12 @@ const toKnowledge = (d: Doc): NewsItem => ({
   id: String(d.id),
   slug: d.slug,
   isDemo: Boolean(d.isDemo),
+  seo: toSeo(d.seo),
   title: d.title,
   kind: "publication",
   date: typeof d.date === "string" ? d.date.slice(0, 10) : d.date,
   summary: d.summary,
-  body: toParagraphs(d.body),
+  body: toRichParagraphs(d.body),
   image: toAsset(d.image),
   gallery: toAssets(d.gallery).length ? toAssets(d.gallery) : undefined,
   featured: Boolean(d.featured),
@@ -448,3 +455,57 @@ export const getOpenings = cache(async (): Promise<JobOpening[]> =>
     requirements: toValues(d.requirements),
   })),
 );
+
+/* ----------------------------------------------------------------------- copy */
+
+type CopyFields = Partial<Record<"eyebrow" | "title" | "intro" | "aside", string | null>>;
+
+/** One head from the CMS over its default. A blank field keeps the default. */
+const mergeHead = <T extends SectionCopy>(base: T, cms: CopyFields | undefined): T => {
+  const out: SectionCopy = { ...base };
+  for (const f of ["eyebrow", "title", "intro", "aside"] as const) {
+    if (cms?.[f]) out[f] = cms[f];
+  }
+  return out as T;
+};
+
+const mergeHeads = <T extends Record<string, SectionCopy>>(
+  base: T,
+  cms: (key: string) => CopyFields | undefined,
+): T =>
+  Object.fromEntries(
+    Object.entries(base).map(([k, v]) => [k, mergeHead(v, cms(k))]),
+  ) as T;
+
+const mergeLabels = <T extends Record<string, string>>(
+  base: T,
+  cms: Record<string, string | null | undefined> | null | undefined,
+): T =>
+  Object.fromEntries(Object.entries(base).map(([k, v]) => [k, cms?.[k] || v])) as T;
+
+/**
+ * The Site copy global, laid over `copy.ts`.
+ *
+ * The global was modelled and seeded, but every route imported `copy.ts`
+ * directly, so a heading changed in the panel never reached the site. `copy.ts`
+ * stays as the default for anything left blank, and as the set of keys: an
+ * unknown route or section key typed into the panel changes nothing rather than
+ * breaking a page. Indices still come from the defaults and the menu.
+ */
+export const getCopy = cache(async () => {
+  const payload = await client();
+  const d: Doc = await payload.findGlobal({ slug: "copy", depth: 0 });
+  const heroes: Doc[] = d.heroes ?? [];
+  const sections: Doc[] = d.sections ?? [];
+  return {
+    homeCopy: mergeHeads(defaultCopy.homeCopy, (k) => d.home?.[k]),
+    heroCopy: mergeHeads(defaultCopy.heroCopy, (k) =>
+      heroes.find((h) => h.route === k),
+    ),
+    sectionCopy: mergeHeads(defaultCopy.sectionCopy, (k) =>
+      sections.find((s) => s.key === k),
+    ),
+    footerCopy: mergeLabels(defaultCopy.footerCopy, d.footer),
+    actionCopy: mergeLabels(defaultCopy.actionCopy, d.actions),
+  };
+});

@@ -41,6 +41,7 @@ const head = (name: string, label: string, extra: Field[] = []): Field => ({
 
 export const SiteCopy: GlobalConfig = {
   slug: "copy",
+  label: "Site copy",
   hooks: { afterChange: [revalidateEverything] },
   admin: {
     group: "Settings",

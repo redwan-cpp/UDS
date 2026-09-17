@@ -12,14 +12,15 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { ViewMore } from "@/components/ui/ViewMore";
 import { Reveal } from "@/components/motion/Reveal";
-import { Eyebrow, Prose, Statement } from "@/components/typography";
+import { Eyebrow, Prose, RichText, Statement } from "@/components/typography";
+import type { Paragraph } from "@/types/content";
 import { DemoNotice } from "@/components/hero/PageHero";
+import { getCopy } from "@/data/content.cms";
 import {
   getProjectBySlug,
   getProjectSlugs,
   getRelatedProjects,
 } from "@/data/projects.cms";
-import { sectionCopy } from "@/data/copy";
 
 /**
  * Statically rendered per project so every case study is individually
@@ -46,6 +47,7 @@ export async function generateMetadata({
     title: project.title,
     description: project.summary,
     path: `/projects/${project.slug}`,
+    seo: project.seo,
     image: project.hero,
   });
 }
@@ -59,7 +61,7 @@ function Narrative({
 }: {
   eyebrow: string;
   heading: string;
-  paragraphs?: string[];
+  paragraphs?: Paragraph[];
   lead?: boolean;
 }) {
   if (!paragraphs?.length) return null;
@@ -85,7 +87,7 @@ function Narrative({
                 still needs its own wrapper here. */}
             <Reveal delay={0.1}>
               <Statement as="p" className="mb-8">
-                {paragraphs[0]}
+                <RichText paragraph={paragraphs[0]} />
               </Statement>
             </Reveal>
             <Prose paragraphs={paragraphs.slice(1)} />
@@ -103,6 +105,7 @@ export default async function ProjectPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const { sectionCopy } = await getCopy();
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
   // A project with nothing written is a card in the index, not a page. Since

@@ -8,7 +8,7 @@ import {
 import {
   publishedOnlyAccess,
   isDemoField,
-  paragraphs,
+  richParagraphs,
   seoGroup,
   slugField,
 } from "./fields";
@@ -90,7 +90,7 @@ export const News: CollectionConfig = {
       required: true,
       admin: { description: "One line. Used on cards and in the index." },
     },
-    paragraphs("body", { required: true }),
+    richParagraphs("body", { required: true }),
     { name: "image", type: "upload", relationTo: "media", required: true },
     { name: "gallery", type: "upload", relationTo: "media", hasMany: true },
     {

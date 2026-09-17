@@ -8,9 +8,8 @@ import { LoadingSequence } from "@/components/motion/LoadingSequence";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { MotionFailsafe } from "@/components/motion/MotionFailsafe";
 import { CrosshairCursor } from "@/components/ui/CrosshairCursor";
-import { getNavigation, getStudio } from "@/data/content.cms";
+import { getNavigation, getStudio, getCopy } from "@/data/content.cms";
 import { getSearchIndex } from "@/data/search";
-import { footerCopy } from "@/data/copy";
 import { SITE_URL, SHARE_IMAGE } from "@/lib/share";
 
 import "./globals.css";
@@ -130,6 +129,7 @@ if(!sessionStorage.getItem('uds-intro'))d.classList.add('js-intro');
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const { footerCopy } = await getCopy();
   // The footer, the menu overlay and the wordmark all read the studio profile,
   // and the layout is the one place above all three — so it is fetched once
   // here rather than three times below. `cache` would dedupe it anyway; this
@@ -160,7 +160,7 @@ export default async function RootLayout({
         <SiteHeader
           items={navigation}
           studio={studio}
-          searchIndex={getSearchIndex()}
+          searchIndex={await getSearchIndex()}
         />
 
         <main id="main" tabIndex={-1} className="outline-none">

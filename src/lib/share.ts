@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import type { MediaAsset } from "@/types/content";
+import type { MediaAsset, Seo } from "@/types/content";
 
 /**
  * The site's own origin.
@@ -55,6 +55,7 @@ export function pageMetadata({
   description,
   path,
   image,
+  seo,
 }: {
   title: string;
   description: string;
@@ -62,7 +63,12 @@ export function pageMetadata({
   path: string;
   /** The page's own picture. Falls back to the site's. */
   image?: MediaAsset;
+  /** The editor's overrides from the item's SEO fields in the CMS. */
+  seo?: Seo;
 }): Metadata {
+  title = seo?.title || title;
+  description = seo?.description || description;
+  image = seo?.image ?? image;
   const url = absolute(path);
   const picture = image?.src
     ? {
@@ -79,6 +85,7 @@ export function pageMetadata({
     title,
     description,
     alternates: { canonical: url },
+    robots: seo?.noIndex ? { index: false } : undefined,
     openGraph: {
       type: "website",
       title: shareTitle,
@@ -119,6 +126,7 @@ export function articleMetadata({
   path,
   image,
   publishedTime,
+  seo,
 }: {
   title: string;
   description: string;
@@ -127,7 +135,12 @@ export function articleMetadata({
   image?: MediaAsset;
   /** ISO date. Renders as `article:published_time`. */
   publishedTime?: string;
+  /** The editor's overrides from the item's SEO fields in the CMS. */
+  seo?: Seo;
 }): Metadata {
+  title = seo?.title || title;
+  description = seo?.description || description;
+  image = seo?.image ?? image;
   const url = absolute(path);
   const images = image?.src
     ? [
@@ -144,6 +157,7 @@ export function articleMetadata({
     title,
     description,
     alternates: { canonical: url },
+    robots: seo?.noIndex ? { index: false } : undefined,
     openGraph: {
       type: "article",
       title,

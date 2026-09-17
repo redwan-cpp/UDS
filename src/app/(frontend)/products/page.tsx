@@ -9,8 +9,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
 import { ProductCard } from "@/components/products/ProductCard";
 import { navIndex } from "@/data/navigation";
-import { heroCopy } from "@/data/copy";
-import { getProducts, getCategoryFilters } from "@/data/content.cms";
+import { getProducts, getCategoryFilters, getCopy } from "@/data/content.cms";
 
 
 export const metadata: Metadata = pageMetadata({
@@ -25,6 +24,7 @@ export default async function ProductsPage({
 }: {
   searchParams: Promise<{ category?: string }>;
 }) {
+  const { heroCopy } = await getCopy();
   const { category } = await searchParams;
   const [all, filters] = await Promise.all([
     getProducts(),

@@ -1,4 +1,16 @@
 import type { Field } from "payload";
+import {
+  BoldFeature,
+  InlineToolbarFeature,
+  ItalicFeature,
+  lexicalEditor,
+  LinkFeature,
+  ParagraphFeature,
+  StrikethroughFeature,
+  SubscriptFeature,
+  SuperscriptFeature,
+  UnderlineFeature,
+} from "@payloadcms/richtext-lexical";
 
 /**
  * Field shapes that recur across the collections.
@@ -30,6 +42,62 @@ export const paragraphs = (
   labels: { singular: "Paragraph", plural: "Paragraphs" },
   admin: opts.description ? { description: opts.description } : undefined,
   fields: [{ name: "text", type: "textarea", required: true }],
+});
+
+/**
+ * The editor for rich paragraphs — Word-style character formatting only.
+ *
+ * Bold, italic, underline, strikethrough, sub/superscript (m², CO₂) and links,
+ * from the toolbar that appears over selected text or the usual Ctrl+B / I / U.
+ * No headings, lists, quotes, colours or font sizes: the type scale in
+ * `design.md` is closed, and a paragraph set in 32px red is exactly what it
+ * exists to prevent. Enter still starts a new paragraph — `toRichParagraphs`
+ * gives each one its own `<p>` and scroll trigger (CLAUDE.md rule 5).
+ *
+ * Links are to URLs only. An internal link to a document needs a resolver for
+ * every collection's route, and pasting the page's address does the same job.
+ */
+const inlineEditor = lexicalEditor({
+  features: () => [
+    ParagraphFeature(),
+    BoldFeature(),
+    ItalicFeature(),
+    UnderlineFeature(),
+    StrikethroughFeature(),
+    SubscriptFeature(),
+    SuperscriptFeature(),
+    LinkFeature({ enabledCollections: [] }),
+    InlineToolbarFeature(),
+  ],
+});
+
+/**
+ * A `Paragraph[]` whose rows are rich text — `paragraphs()` with formatting.
+ *
+ * The rich text lives in `content`, a new column, rather than replacing
+ * `text`. Changing `text` from a text column to JSON is a type change Postgres
+ * will not cast, so the schema push offers to drop the column — the paragraphs
+ * editors had already published. `text` stays as a hidden legacy column:
+ * `scripts/migrate-rich-text.ts` moves each value into `content`, and the site
+ * reads `text` for any row that has not moved yet, including old versions
+ * restored from history.
+ */
+export const richParagraphs = (
+  name: string,
+  opts: { required?: boolean; description?: string } = {},
+): Field => ({
+  name,
+  type: "array",
+  required: opts.required,
+  minRows: opts.required ? 1 : undefined,
+  labels: { singular: "Paragraph", plural: "Paragraphs" },
+  admin: opts.description ? { description: opts.description } : undefined,
+  fields: [
+    { name: "content", label: "Text", type: "richText", editor: inlineEditor },
+    // ponytail: legacy plain text, kept so the push never drops a column. Remove once
+    // every environment has run migrate-rich-text.ts (accepting the drop prompt).
+    { name: "text", type: "textarea", admin: { hidden: true } },
+  ],
 });
 
 /** A `string[]` of short values — materials, services, requirements. */

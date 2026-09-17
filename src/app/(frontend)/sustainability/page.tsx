@@ -8,9 +8,8 @@ import { Container } from "@/components/ui/Container";
 import { Media } from "@/components/ui/Media";
 import { Reveal } from "@/components/motion/Reveal";
 import { Statement, Eyebrow } from "@/components/typography";
-import { getSustainabilityPrinciples } from "@/data/content.cms";
+import { getSustainabilityPrinciples, getCopy } from "@/data/content.cms";
 import { navIndex } from "@/data/navigation";
-import { heroCopy } from "@/data/copy";
 
 export const metadata: Metadata = pageMetadata({
   title: "Sustainability",
@@ -20,6 +19,7 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function SustainabilityPage() {
+  const { heroCopy } = await getCopy();
   const principles = await getSustainabilityPrinciples();
 
   return (

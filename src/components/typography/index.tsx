@@ -1,6 +1,7 @@
 import type { ElementType, ReactNode } from "react";
 
 import { Reveal } from "@/components/motion/Reveal";
+import type { Paragraph } from "@/types/content";
 
 /**
  * The typographic vocabulary. Every heading, label and statement on the site is
@@ -38,6 +39,26 @@ export function Statement({ children, className = "", as: Tag = "p", id }: BaseP
 }
 
 /**
+ * Renders one `Paragraph` inline: a plain string as-is, or a `RichParagraph`'s
+ * `html` as safe inline markup (bold, italic, underline, strikethrough,
+ * sub/superscript, links — no block wrapper, so it nests inside whatever
+ * element the caller already renders). Shared by `Prose` and by anywhere else
+ * a single paragraph is pulled out and shown on its own, such as a lead
+ * statement — the CMS content shape is the same either way.
+ */
+export function RichText({ paragraph }: { paragraph: Paragraph }) {
+  if (typeof paragraph === "string") return <>{paragraph}</>;
+  // See the note on `Prose` below: this html is inline-only and CMS-authored
+  // by an access-controlled editor, not public input.
+  return (
+    <span
+      className="[&_a]:text-accent [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-4"
+      dangerouslySetInnerHTML={{ __html: paragraph.html }}
+    />
+  );
+}
+
+/**
  * Long-form narrative body, for project descriptions and articles.
  *
  * Each paragraph reveals on its own scroll trigger rather than sharing one
@@ -55,19 +76,19 @@ export function Prose({
   paragraphs,
   className = "",
 }: {
-  paragraphs: string[];
+  paragraphs: Paragraph[];
   className?: string;
 }) {
   return (
     <div className={`flex flex-col gap-5 ${className}`}>
-      {paragraphs.map((text, i) => (
+      {paragraphs.map((p, i) => (
         <Reveal
           key={i}
           as="p"
           delay={Math.min(i, 2) * 0.05}
           className="font-serif text-body-serif text-pretty"
         >
-          {text}
+          <RichText paragraph={p} />
         </Reveal>
       ))}
     </div>

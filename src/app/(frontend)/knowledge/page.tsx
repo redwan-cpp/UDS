@@ -7,9 +7,8 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal";
 import { NewsCard } from "@/components/news/NewsCard";
-import { getKnowledge } from "@/data/content.cms";
+import { getKnowledge, getCopy } from "@/data/content.cms";
 import { navIndex } from "@/data/navigation";
-import { heroCopy } from "@/data/copy";
 
 // The description was news's, copied and left behind — which would have put
 // "events, memoranda, announcements" on the share card for a section of
@@ -22,6 +21,7 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function NewsPage() {
+  const { heroCopy } = await getCopy();
   const items = await getKnowledge();
 
   return (

@@ -5,7 +5,7 @@ import {
   revalidateCollectionDelete,
 } from "./hooks/revalidate";
 
-import { publishedOnlyAccess } from "./fields";
+import { publishedOnlyAccess, richParagraphs, seoGroup } from "./fields";
 
 /**
  * Major Projects — the publication-grade case study.
@@ -107,34 +107,18 @@ export const Projects: CollectionConfig = {
       required: true,
       admin: { description: "One line. Used on cards and in the index." },
     },
-    {
-      // `description: string[]` — an array of paragraphs, not rich text. The
-      // site renders each as its own <p> and gives each its own scroll reveal
-      // (CLAUDE.md rule 5), so the paragraph boundaries have to survive the
-      // round trip. A rich-text blob would flatten them into one node.
-      name: "description",
-      type: "array",
-      labels: { singular: "Paragraph", plural: "Paragraphs" },
-      admin: {
-        description:
-          "The case study. Leave this empty and the project is a card in the index with no page of its own — which is what most work is until somebody writes it up. Fill it in and the card starts linking to a full project page.",
-      },
-      fields: [{ name: "text", type: "textarea", required: true }],
-    },
-    {
-      name: "uniqueness",
-      type: "array",
-      labels: { singular: "Paragraph", plural: "Paragraphs" },
-      admin: { description: "What makes this project unique. Optional." },
-      fields: [{ name: "text", type: "textarea", required: true }],
-    },
-    {
-      name: "concept",
-      type: "array",
-      labels: { singular: "Paragraph", plural: "Paragraphs" },
-      admin: { description: "Our concept. Optional." },
-      fields: [{ name: "text", type: "textarea", required: true }],
-    },
+    // Rows of rich text, not a single rich-text blob: the site renders each
+    // row as its own <p> and gives each its own scroll reveal (CLAUDE.md rule
+    // 5), so the paragraph boundaries have to survive the round trip. See
+    // `richParagraphs` for exactly which inline marks an editor can use.
+    richParagraphs("description", {
+      description:
+        "The case study. Leave this empty and the project is a card in the index with no page of its own — which is what most work is until somebody writes it up. Fill it in and the card starts linking to a full project page.",
+    }),
+    richParagraphs("uniqueness", {
+      description: "What makes this project unique. Optional.",
+    }),
+    richParagraphs("concept", { description: "Our concept. Optional." }),
     {
       type: "row",
       fields: [
@@ -239,5 +223,6 @@ export const Projects: CollectionConfig = {
         },
       ],
     },
+    seoGroup,
   ],
 };

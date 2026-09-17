@@ -7,7 +7,7 @@ import {
 import {
   publishedOnlyAccess,
   isDemoField,
-  paragraphs,
+  richParagraphs,
   seoGroup,
   slugField,
 } from "./fields";
@@ -66,7 +66,7 @@ export const Knowledge: CollectionConfig = {
           "One line. Used on cards, in the index, and as the description on the card someone sees when this is shared to Facebook or LinkedIn.",
       },
     },
-    paragraphs("body", { required: true }),
+    richParagraphs("body", { required: true }),
     {
       name: "image",
       type: "upload",

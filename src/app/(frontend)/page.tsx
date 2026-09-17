@@ -11,10 +11,10 @@ import {
   getFeaturedNews,
   getStatistics,
   getStudio,
+  getCopy,
 } from "@/data/content.cms";
 import { getProjects } from "@/data/projects.cms";
 import { heroVideo } from "@/data/hero";
-import { homeCopy, actionCopy } from "@/data/copy";
 
 /**
  * The homepage.
@@ -25,6 +25,7 @@ import { homeCopy, actionCopy } from "@/data/copy";
  * the tree changes.
  */
 export default async function HomePage() {
+  const { homeCopy, actionCopy } = await getCopy();
   // All of the major projects, not a selection of four: the homepage grid
   // is the studio's body of work, and the full index (which also carries the
   // work without a case study) is one click away.

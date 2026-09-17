@@ -6,7 +6,8 @@ import {
   toAsset,
   toAssets,
   toCategories,
-  toParagraphs,
+  toRichParagraphs,
+  toSeo,
   toRows,
   toSymbol,
   toValues,
@@ -39,6 +40,7 @@ function toProject(d: Doc): Project {
   return {
     id: String(d.id),
     slug: d.slug,
+    seo: toSeo(d.seo),
     isDemo: Boolean(d.isDemo),
     title: d.title,
     location: d.location,
@@ -49,13 +51,15 @@ function toProject(d: Doc): Project {
     // Undefined rather than an empty array when nothing has been written:
     // "does this have a case study" is read off this field, and `[]` and
     // `undefined` answer that question differently in a truthiness test.
-    description: toParagraphs(d.description).length
-      ? toParagraphs(d.description)
+    description: toRichParagraphs(d.description).length
+      ? toRichParagraphs(d.description)
       : undefined,
-    uniqueness: toParagraphs(d.uniqueness).length
-      ? toParagraphs(d.uniqueness)
+    uniqueness: toRichParagraphs(d.uniqueness).length
+      ? toRichParagraphs(d.uniqueness)
       : undefined,
-    concept: toParagraphs(d.concept).length ? toParagraphs(d.concept) : undefined,
+    concept: toRichParagraphs(d.concept).length
+      ? toRichParagraphs(d.concept)
+      : undefined,
     area: d.area ?? undefined,
     client: d.client ?? undefined,
     services: toValues(d.services).length ? toValues(d.services) : undefined,

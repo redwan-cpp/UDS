@@ -2,8 +2,21 @@
 
 ```
 CURRENT PHASE:
-PHASE 2 — CMS
+PHASE 3 — BACKEND
 ```
+
+**Phase 2 → 3 gate passed, 2026-09-17** (`process.md` §5). CMS selected and recorded (Payload,
+`architecture.md` §3.1). Every content type is modelled *and read by the site* — see "Modelled
+is not the same as wired" below for the last four that were not. A non-technical editor at the
+studio created and published real work unaided on the live site: the project *Rakhalia Krishi
+Bari* and the news post announcing the Redova collaboration.
+
+**Phase 3 is largely built, ahead of its gate:** PostgreSQL in production, the contact form
+stores enquiries and emails the studio (`34f700f`), and roles are enforced (admin / editor /
+author). The site is also already **deployed** — a BDIX VPS behind Caddy (`deployment.md`) —
+which is Phase 6 work done early because the studio needed a live site; it is recorded, not
+hidden. Open before the Phase 3 → 4 gate: Gmail SMTP credentials on the server, so enquiries
+*deliver* as well as persist; and a restore test of the off-site backup.
 
 Durable decisions only. Not a log, not a changelog. If a line here stops being true, change
 it deliberately and say why — reversing something in this file is a decision, not a tweak.
@@ -119,7 +132,9 @@ it deliberately and say why — reversing something in this file is a decision, 
   hero or a product image: a grid of competing thumbnails reads as one field with a
   consistent tone, and the card being considered is the one that comes back — so the
   photograph is never *shown* edited, only held in a contact-sheet register until chosen.
-  Fine pointers only, since with no hover there is nothing to restore the colour. `filter`
+  Fine pointers only, since with no hover there is nothing to restore the colour — **and 768px
+  and up** (2026-09-17): some phone browsers report a fine, hovering pointer, so the pointer
+  test alone left phone cards grey for good. `filter`
   is on the compositor's accelerated list alongside `transform` and `opacity`, so this does
   not breach the "everything composites" rule.
 - **One background motif.** `TerraceMotif` — the stepped mass as a filled silhouette, on
@@ -199,6 +214,59 @@ it deliberately and say why — reversing something in this file is a decision, 
   `generateStaticParams`, the detail route, the related strip and the search index all read
   that same test, so nothing is built, linked or indexed that would 404. The homepage band is
   unchanged: it was always Projects filtered by `featured`.
+
+- **Editorial prose gets Word-style character formatting — bold, italic, underline,
+  strikethrough, sub/superscript, links — and stops there, 2026-09-17.** Applies to the
+  fields always rendered through `Prose`: `Project.description` / `uniqueness` / `concept`,
+  `News.body`, `Knowledge.body`, `Product.description` (`richParagraphs()` in
+  `collections/fields.ts`, Payload's Lexical editor). **No headings, lists, quotes, colours or
+  font sizes**: `design.md`'s type scale is closed, and those are the controls that let an
+  editor defeat it. Links are URL-only (internal document links would need a route resolver
+  per collection). `content.ts` carries it as `Paragraph = string | RichParagraph`, so the
+  plain-string demo data needed no edits.
+  - **Enter makes a new paragraph, not a run-on.** `toRichParagraphs` splits every row into its
+    paragraphs, so each still gets its own `<p>` and its own scroll trigger (rule 5). HTML comes
+    from Payload's own converters (text escaped, URLs sanitised) with only the wrapping `<p>`
+    removed, because `Prose` already renders one.
+  - **The rich text is a new `content` column; the old plain `text` column is kept, hidden.**
+    Converting `text` in place is a varchar→jsonb change Postgres will not cast, so the schema
+    push offers to drop the column — which on the live site held the paragraphs the studio had
+    already published. `scripts/migrate-rich-text.ts` copies each `text` into `content` and is
+    safe to re-run; the site reads `text` for any row not yet moved (including old versions
+    restored from history). Remove the hidden column only after every environment has migrated.
+  - **Excluded on purpose:** the Studio statement / approach / About paragraphs. The homepage
+    and About page set `paragraph[0]` as a display-scale lead line, where bold and links read
+    as noise. Same pattern if it is ever wanted.
+  - `npm run generate:importmap` after changing the editor's features — without it the admin
+    field renders as an empty box with no error.
+
+- **Modelled is not the same as wired — the CMS gap this project kept reopening.** Five times a
+  collection or global existed in the panel, was seeded, and was read by nothing, so an editor's
+  save changed nothing on the site: the studio profile (`4c38421`), the menu (`d92fa1a`), and on
+  2026-09-17 **Site copy** (every heading and standfirst — routes still imported `copy.ts`),
+  **Careers** (the page imported `careers.ts`), **SEO fields** (no accessor read `seo`), plus the
+  **search index** (built from the static demo modules, so the studio's own project and news
+  post were unsearchable). All now read the CMS: `getCopy()` lays the global over `copy.ts`
+  field by field (blank keeps the default; `copy.ts` also fixes the set of keys), and
+  `pageMetadata` / `articleMetadata` take the item's `seo` overrides, including `noIndex`.
+  **Test for a new content type is not "it appears in the panel" but "change it in the panel
+  and see the page change."**
+  - **Still static, knowingly:** the contact form's enquiry topics (`contact.ts`) and the
+    privacy / terms page bodies, which are placeholders until the studio supplies a policy.
+    The privacy placeholder also still says the site has no backend — stale since the contact
+    form began storing and emailing enquiries, and something the real policy must cover.
+
+- **Uploaded photographs are capped at 2560px wide when saved, 2026-09-17** (`Media` upload
+  `resizeOptions`). The studio uploads straight from renderers — 7680×4320, 4–8MB — and the
+  two-vCPU server cut each display size from that original at 4–6s a time, so a ten-image
+  project page timed out on phones. The site never requests wider than 2048, so nothing
+  visible is lost. Width only, so a tall portrait keeps its full width. SVG is untouched.
+  `scripts/shrink-media.ts` applies the same cap to files uploaded before it (back up first:
+  originals are replaced in place, same filename and URL).
+- **Any uploaded hero video replaces the shipped clip** — an MP4 alone is enough; WebM and the
+  poster are optional (`db129d2`). Requiring all three made an MP4-only upload silently do
+  nothing. **The footer's developer credit is a Studio global field** (label + URL), not a
+  constant.
 
 ---
 
@@ -588,6 +656,10 @@ exemption.** A sixth *client* dependency still needs its own answer.
   internal linking. `generateStaticParams` on every `[slug]` route.
 - Metadata, canonicals, Open Graph, JSON-LD, sitemap and robots are **Phase 5**. Structured
   data will only ever describe visible content.
+- **Ahead of Phase 5, already built:** per-route metadata, canonicals, Open Graph and Twitter
+  cards on every page (`src/lib/share.ts`, `c243191`), `robots.ts`, and — 2026-09-17 — the
+  editor's SEO title / description / image / no-index overrides on projects, products, news
+  and Knowledge. **Still Phase 5:** `sitemap.xml` and JSON-LD.
 
 ---
 
@@ -597,6 +669,13 @@ exemption.** A sixth *client* dependency still needs its own answer.
   unsanitised external SVG, no `dangerouslySetInnerHTML` on unvetted content.
 - No public authentication surface will exist on the marketing site — this removes an entire
   attack class by design.
+- **The contact form is the one public write, and is guarded accordingly** (`34f700f`): field
+  length limits, a honeypot, five submissions per connection per ten minutes, saved before it
+  is emailed so a mail failure never loses an enquiry. Turnstile and security headers remain
+  Phase 4.
+- **Rich text renders as HTML, and only through Payload's converters** (`src/data/payload.ts`):
+  text escaped, link URLs sanitised, a fixed inline tag set. It is authored by signed-in
+  editors only. Do not widen the editor's features without checking what they emit.
 - Fooocus, when built, sits behind a backend service layer. Credentials and internal
   endpoints never reach the browser, and the public site must function with Fooocus offline.
 
@@ -647,15 +726,18 @@ exemption.** A sixth *client* dependency still needs its own answer.
 
 ## Outstanding decisions
 
-1. CMS confirmation (Phase 2 gate).
+1. CMS confirmation: RESOLVED — Payload, 2026-09-06; Phase 2 gate passed 2026-09-17.
 2. Wordmark: RESOLVED — the studio supplied a drawn mark. See the Brand decisions note on `UthanMark`.
 3. Real expertise categories — the nine in use are placeholders.
 4. Real statistics.
 5. Real sustainability practice.
 6. Photography art direction for production.
 7. Whether project detail pages get a shared-element page transition.
-8. Deployment target.
-9. Domain.
+8. Deployment target: RESOLVED — BDIX VPS, systemd + Caddy, PostgreSQL, off-site backups to
+   Backblaze (`deployment.md`).
+9. Domain: RESOLVED — uthandesignstudio.com.
+10. Whether the demo content comes down now that real work is being published.
+11. A privacy policy and terms, now that the contact form collects personal data.
 
 ---
 

@@ -4,9 +4,7 @@ import { PageHero } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/typography";
-import { getStudio } from "@/data/content.cms";
-import { heroCopy } from "@/data/copy";
-import { sectionCopy } from "@/data/copy";
+import { getStudio, getCopy } from "@/data/content.cms";
 
 export const metadata: Metadata = {
   title: "Privacy",
@@ -23,6 +21,7 @@ export const metadata: Metadata = {
  * drafting a plausible-sounding one would be worse than admitting it is absent.
  */
 export default async function PrivacyPage() {
+  const { heroCopy, sectionCopy } = await getCopy();
   const studio = await getStudio();
 
   return (

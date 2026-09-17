@@ -35,6 +35,7 @@ npx payload run scripts/seed.ts         # load src/data into the CMS (idempotent
 npx payload run scripts/counts.ts       # what is in the CMS; fails on duplicate media
 npx payload run scripts/reset-media.ts  # empty the media library, then re-seed
 npx payload run scripts/shrink-media.ts # cap pre-existing uploads at 2560px wide (back up first)
+npx payload run scripts/migrate-rich-text.ts # move plain paragraphs into the rich-text editor (idempotent)
 ```
 
 `seed.ts` is safe to re-run: documents are matched on their natural key and media on

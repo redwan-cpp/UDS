@@ -15,13 +15,12 @@ import {
   getExpertise,
   getStatistics,
   getStudio,
+  getCopy,
 } from "@/data/content.cms";
 
 
 import { img } from "@/data/media";
 import { navIndex } from "@/data/navigation";
-import { heroCopy } from "@/data/copy";
-import { sectionCopy } from "@/data/copy";
 
 export const metadata: Metadata = pageMetadata({
   title: "About",
@@ -31,6 +30,7 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function AboutPage() {
+  const { heroCopy, sectionCopy } = await getCopy();
   // Hoisted rather than awaited inline in the JSX: three collections read once
   // each, and the reader can see at the top of the component exactly what this
   // page costs.

@@ -22,6 +22,7 @@ import path from "path";
 import fs from "fs";
 
 import { getPayload } from "payload";
+import { buildEditorState } from "@payloadcms/richtext-lexical";
 import type { Where } from "payload";
 import config from "@payload-config";
 
@@ -44,7 +45,7 @@ import {
   footerCopy,
   actionCopy,
 } from "@/data/copy";
-import type { MediaAsset } from "@/types/content";
+import type { MediaAsset, Paragraph } from "@/types/content";
 
 const payload = await getPayload({ config });
 
@@ -123,6 +124,16 @@ const uploadMany = async (assets: MediaAsset[] = []) => {
 /** `string[]` -> the array-of-objects Payload stores it as. */
 const paras = (v: string[] = []) => v.map((text) => ({ text }));
 const values = (v: string[] = []) => v.map((value) => ({ value }));
+
+/**
+ * Demo paragraphs into rows for a `richParagraphs()` field: one unformatted
+ * Lexical paragraph each, and the legacy `text` column cleared.
+ */
+const richParas = (v: Paragraph[] = []) =>
+  v.map((p) => ({
+    content: buildEditorState({ text: typeof p === "string" ? p : p.text }),
+    text: null,
+  }));
 
 /* --------------------------------------------------------------- upsert --- */
 
@@ -240,9 +251,9 @@ for (const p of getProjects()) {
       // Card-only projects carry none of these. `undefined` leaves the field
       // genuinely empty, which is what the site reads to decide whether a
       // project has a case study at all.
-      description: p.description ? paras(p.description) : undefined,
-      uniqueness: paras(p.uniqueness),
-      concept: paras(p.concept),
+      description: p.description ? richParas(p.description) : undefined,
+      uniqueness: richParas(p.uniqueness),
+      concept: richParas(p.concept),
       area: p.area,
       client: p.client,
       services: values(p.services),
@@ -271,7 +282,7 @@ for (const p of getProducts()) {
       slug: p.slug,
       category: cats(p.category),
       summary: p.summary,
-      description: paras(p.description),
+      description: richParas(p.description),
       materials: values(p.materials),
       applications: values(p.applications),
       specs: p.specs,
@@ -297,7 +308,7 @@ for (const n of getNews()) {
       organisation: n.organisation,
       location: n.location,
       summary: n.summary,
-      body: paras(n.body),
+      body: richParas(n.body),
       image: await upload(n.image),
       gallery: await uploadMany(n.gallery),
       documents: n.documents,
@@ -318,7 +329,7 @@ for (const k of knowledge) {
       slug: k.slug,
       date: k.date,
       summary: k.summary,
-      body: paras(k.body),
+      body: richParas(k.body),
       image: await upload(k.image),
       gallery: await uploadMany(k.gallery),
       featured: k.featured,

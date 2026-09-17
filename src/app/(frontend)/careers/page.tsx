@@ -7,10 +7,9 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/typography";
 import { Reveal } from "@/components/motion/Reveal";
-import { careersIntro, openings } from "@/data/careers";
-import { getStudio } from "@/data/content.cms";
-import { heroCopy } from "@/data/copy";
-import { sectionCopy } from "@/data/copy";
+import type { SectionCopy } from "@/types/content";
+import { careersIntro } from "@/data/careers";
+import { getOpenings, getStudio, getCopy } from "@/data/content.cms";
 
 export const metadata: Metadata = pageMetadata({
   title: "Careers",
@@ -32,7 +31,8 @@ export const metadata: Metadata = pageMetadata({
  * a worse outcome than an email address that works.
  */
 export default async function CareersPage() {
-  const studio = await getStudio();
+  const { heroCopy, sectionCopy } = await getCopy();
+  const [studio, openings] = await Promise.all([getStudio(), getOpenings()]);
 
   return (
     <>
@@ -40,7 +40,7 @@ export default async function CareersPage() {
         index="—"
         eyebrow={heroCopy["/careers"].eyebrow}
         title={heroCopy["/careers"].title}
-        intro={careersIntro}
+        intro={(heroCopy["/careers"] as SectionCopy).intro ?? careersIntro}
       />
 
       <Section surface="light" spacing="standard">

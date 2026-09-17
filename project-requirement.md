@@ -2,8 +2,8 @@
 
 **Document owner:** Creative direction / Project lead
 **Status:** Living document
-**Last updated:** 2026-08-30
-**Current phase:** PHASE 1 — UI/UX
+**Last updated:** 2026-09-17
+**Current phase:** PHASE 3 — Backend (Phase 2 gate passed 2026-09-17; see §18)
 
 ---
 
@@ -188,11 +188,33 @@ contact details → review → submit. Phase 1 is UI only; submission is stubbed
 
 ---
 
-## 9. CMS requirements — PLANNED, NOT IMPLEMENTED IN PHASE 1
+## 9. CMS requirements — IMPLEMENTED (Phase 2, Payload CMS)
 
 The CMS must let non-technical editors manage: Projects, Products, News,
 Collaborations, Team, Brands, Expertise, Homepage, Sustainability, SEO, Media and Contact
 information.
+
+**Status, 2026-09-17 — every item above is modelled and read by the site:**
+
+| Requirement | Where an editor manages it |
+|---|---|
+| Projects | Projects (cards, case studies, galleries, facts, categories) |
+| Products | Products |
+| News, Collaborations | News (a collaboration is a news kind); also Knowledge for writing |
+| Team | Team |
+| Brands | Brands (the collaborator marquee) |
+| Expertise | Expertise |
+| Homepage | Studio (hero video, statement, services, closing line) and Site copy (every section heading and page standfirst) |
+| Sustainability | Sustainability |
+| SEO | SEO fields on projects, products, news and Knowledge — title, description, share image, no-index. (Team carries the fields too, but team members have no page of their own for them to apply to.) |
+| Media | Media (alt text required) and Videos |
+| Contact information | Studio (email, phones, address, hours, social profiles, map) |
+
+Beyond the list: Careers, Categories, Statistics, Navigation (menu and its hover images),
+Enquiries (the contact form's submissions), Users with admin / editor / author roles. Long-form
+text (project descriptions, news and Knowledge bodies, product descriptions) supports bold,
+italic, underline, strikethrough, sub/superscript and links. **Not editable, by decision:** the
+contact form's topic list, and the privacy / terms pages, which await a real policy.
 
 **Selection constraints (MUST):** free or open-source · actively maintained · self-hostable ·
 role-based access · draft/publish workflow · media library with alt text · rich text · SEO
@@ -303,9 +325,12 @@ documents.
 
 ## 17. Future requirements
 
-**PLANNED — NOT IMPLEMENTED IN PHASE 1:** CMS · database · authentication · media storage
-and CDN · contact processing and email · Fooocus image-generation service · analytics ·
-rate limiting · CAPTCHA · upload pipeline · security headers · deployment automation.
+**Built since Phase 1:** CMS · database (PostgreSQL in production) · authentication and roles ·
+contact processing and email · rate limiting on the contact form · deployment (a single VPS,
+with a written runbook rather than automation).
+
+**Still planned:** media CDN · Fooocus image-generation service · analytics · CAPTCHA ·
+hardened upload pipeline · security headers · deployment automation.
 
 Fooocus must never be required for the public site to function, and its credentials and
 endpoints must never reach the browser.
@@ -316,13 +341,17 @@ endpoints must never reach the browser.
 
 | Phase | Scope | State |
 |---|---|---|
-| **PHASE 1** | Design, UX, UI, layout, typography, responsive behaviour, animation, interaction, component system, page structure, demo content, and the frontend architecture the UI requires | **ACTIVE** |
-| PHASE 2 | CMS selection, modelling, integration, content migration | Not started |
-| PHASE 3 | Backend, contact processing, email, auth, database | Not started |
-| PHASE 4 | Security hardening, rate limiting, headers, upload pipeline | Not started |
-| PHASE 5 | SEO completion, structured data, sitemap, analytics | Not started |
-| PHASE 6 | Performance, testing, deployment | Not started |
+| PHASE 1 | Design, UX, UI, layout, typography, responsive behaviour, animation, interaction, component system, page structure, demo content, and the frontend architecture the UI requires | Complete — `phase-1-report.md` |
+| PHASE 2 | CMS selection, modelling, integration, content migration | Complete — gate passed 2026-09-17 |
+| **PHASE 3** | Backend, contact processing, email, auth, database | **ACTIVE** — PostgreSQL, enquiries stored and emailed, roles enforced; SMTP credentials on the server still to set |
+| PHASE 4 | Security hardening, rate limiting, headers, upload pipeline | Started early — contact form rate limit and honeypot, SVG upload clean-up, photo size cap; headers and Turnstile not started |
+| PHASE 5 | SEO completion, structured data, sitemap, analytics | Started early — metadata, canonicals, share cards, robots, editor SEO overrides; sitemap, JSON-LD and analytics not started |
+| PHASE 6 | Performance, testing, deployment | Started early — **live on a VPS** (`deployment.md`), homepage load-weight pass; formal Web Vitals and cross-browser audit not done |
 | PHASE 7 | Fooocus integration behind a service layer | Not started |
+
+Work done ahead of its phase was done because the studio needed a working, live site, and is
+recorded here rather than left to be discovered. It does not pass those later gates early —
+each is still judged against `process.md` §5 when its phase comes.
 
 ---
 

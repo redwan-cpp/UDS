@@ -39,6 +39,7 @@ export async function generateMetadata({
     title: product.title,
     description: product.summary,
     path: `/products/${product.slug}`,
+    seo: product.seo,
     image: product.hero,
   });
 }

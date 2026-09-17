@@ -7,9 +7,8 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal";
 import { NewsCard } from "@/components/news/NewsCard";
-import { getNews } from "@/data/content.cms";
+import { getNews, getCopy } from "@/data/content.cms";
 import { navIndex } from "@/data/navigation";
-import { heroCopy } from "@/data/copy";
 
 export const metadata: Metadata = pageMetadata({
   title: "Collaboration & News",
@@ -19,6 +18,7 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function NewsPage() {
+  const { heroCopy } = await getCopy();
   const items = await getNews();
 
   return (

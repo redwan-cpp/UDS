@@ -1,11 +1,11 @@
 # TECHNICAL ARCHITECTURE — UTHAN DESIGN STUDIO
 
 **Status:** Living document
-**Last updated:** 2026-08-30
-**Current phase:** PHASE 1 — UI/UX
+**Last updated:** 2026-09-17
+**Current phase:** PHASE 3 — Backend (Phase 2 complete)
 
-Everything under §2 is implemented. Everything under §3 is marked
-`PLANNED — NOT IMPLEMENTED IN PHASE 1` and must not be built until its phase is approved.
+Everything under §2 is implemented. §3 was the plan for later phases; each of its headings now
+states what is built, and anything still marked planned must not be built until its phase is approved.
 
 ---
 
@@ -250,9 +250,12 @@ mobile version is a separately authored composition, not a reflow.
 
 ---
 
-## 3. Future architecture — PLANNED, NOT IMPLEMENTED IN PHASE 1
+## 3. Architecture beyond Phase 1 — status per area, 2026-09-17
 
-### 3.1 CMS — ADOPTED, PHASE 2 IN PROGRESS
+Written as the plan before Phase 2; each heading now states what is built. Where the plan and
+the build differ, the build is recorded under the heading rather than the plan rewritten.
+
+### 3.1 CMS — ADOPTED; PHASE 2 COMPLETE (gate passed 2026-09-17)
 
 Decision framework, to be executed and confirmed at the start of Phase 2. Candidates carried
 forward: **Payload CMS**, **Directus**, **Strapi Community Edition**, **Sanity (free tier)**,
@@ -277,7 +280,7 @@ now accepted rather than hypothetical: if Payload cannot boot, neither does the 
 site. The accessor boundary in §2.5 is what keeps the fallback available, so it is
 load-bearing from here rather than merely tidy.
 
-### 3.2 Database — SQLITE IN DEVELOPMENT, POSTGRESQL STILL THE TARGET
+### 3.2 Database — SQLITE IN DEVELOPMENT, POSTGRESQL IN PRODUCTION
 PostgreSQL, driven by whichever CMS is selected. No direct database access from route
 handlers; all reads go through the content layer.
 
@@ -291,20 +294,32 @@ switching is a Phase 3 task, not a rewrite. The database file (`uthan.db`) and t
 directory (`media/`) are gitignored: both are local state, and `media/` is deliberately
 outside `public/`, which is served verbatim.
 
-### 3.3 Authentication — PLANNED, NOT IMPLEMENTED IN PHASE 1
-CMS-owned. Editor / Author / Admin roles. No public authentication surface exists on the
-marketing site, which removes an entire attack class by design.
+**Built:** production runs PostgreSQL (`@payloadcms/db-postgres`, chosen by `DATABASE_URI`);
+development stays on SQLite. Schema changes are pushed by running any `payload run` script
+before `npm run build` (`deployment.md`). A field whose column changes type must get a new
+column plus a copy script, never an in-place change — Postgres will not cast text to JSON and
+the push offers to drop the data instead (see `richParagraphs` and
+`scripts/migrate-rich-text.ts`).
 
-### 3.4 Media storage & CDN — PLANNED, NOT IMPLEMENTED IN PHASE 1
-Object storage behind a CDN, with derivative generation at upload. The `MediaAsset` type is
-already shaped for this.
+### 3.3 Authentication — BUILT
+CMS-owned. Editor / Author / Admin roles, enforced in collection access rules. No public
+authentication surface exists on the marketing site, which removes an entire attack class by
+design.
 
-### 3.5 Contact system — PLANNED, NOT IMPLEMENTED IN PHASE 1
-Server action → validation → rate limit → bot check → persistence → transactional email.
-The Phase 1 flow is deliberately stubbed at the submit boundary so this drops in behind an
-unchanged UI.
+### 3.4 Media storage & CDN — LOCAL DISK, NO CDN YET
+Built: uploads on the server's disk outside the build directory (`MEDIA_DIR`), derivatives cut
+at upload, originals capped at 2560px wide, served through the Next image optimizer with long
+cache headers, and copied off-site to Backblaze by the backup job. Object storage behind a CDN
+is still the plan if traffic or the media library outgrow one server. The `MediaAsset` type is
+already shaped for it.
 
-### 3.6 Fooocus integration — PLANNED, NOT IMPLEMENTED IN PHASE 1
+### 3.5 Contact system — BUILT, EXCEPT THE BOT CHECK
+Validation → rate limit (five per connection per ten minutes) → honeypot → persistence in the
+Enquiries collection → email to the studio via SMTP, not awaited, so a mail failure never loses
+an enquiry. Turnstile is not added yet. Email delivers only once `SMTP_USER` / `SMTP_PASS` are
+set on the server; without them the enquiry is still saved.
+
+### 3.6 Fooocus integration — PLANNED, NOT STARTED
 
 ```
 CMS → Media Manager → Image Generation Service → Fooocus
@@ -317,23 +332,38 @@ layer; no credential or internal endpoint ever reaches the browser; the public s
 functions completely when Fooocus is offline; generated images enter the library as drafts
 requiring human approval.
 
-### 3.7 SEO — PLANNED, NOT IMPLEMENTED IN PHASE 1
+### 3.7 SEO — PARTLY BUILT
 Route-level `generateMetadata`, canonicals, Open Graph, Twitter/X cards, JSON-LD, generated
 `sitemap.xml` and `robots.txt`. Phase 1 has already built the semantic structure this needs.
 
-### 3.8 Analytics — PLANNED, NOT IMPLEMENTED IN PHASE 1
+**Built:** metadata, canonicals, Open Graph and Twitter cards on every route
+(`src/lib/share.ts`), `robots.ts`, and per-item editor overrides (title, description, share
+image, no-index) on projects, products, news and Knowledge. **Not built:** JSON-LD and
+`sitemap.xml`.
+
+### 3.8 Analytics — PLANNED, NOT STARTED
 Privacy-respecting, cookieless, self-hosted or EU-hosted. No third-party tag manager.
 
-### 3.9 Security — PLANNED, NOT IMPLEMENTED IN PHASE 1
+### 3.9 Security — PARTLY BUILT; HARDENING IS PHASE 4
 Headers (CSP without `unsafe-inline`, HSTS, X-Content-Type-Options, Referrer-Policy,
 Permissions-Policy, frame protections) · rate limiting · Turnstile on abuse-prone flows ·
 upload validation by magic bytes · SVG sanitisation · isolated storage origin.
 Self-hosted fonts and zero third-party scripts in Phase 1 are what make a strict CSP
 achievable later.
 
-### 3.10 Deployment — PLANNED, NOT IMPLEMENTED IN PHASE 1
-Target undecided. Constraints: Node runtime for the CMS, CDN in front of static output,
-preview deployments per branch, environment secrets never in the repository.
+**Built so far:** the contact form's rate limit and honeypot; SVG uploads stripped of
+DOCTYPE/entity boilerplate before Payload's own script scan; drafts kept off the public site
+by running every query as an anonymous reader. **One constraint for the CSP:** rich text
+renders underline and strikethrough as inline `style` attributes (Payload's converter), so a
+CSP without `unsafe-inline` must either allow `style-src-attr` or the converter must emit
+classes instead. Decide that in Phase 4, not by quietly dropping the formatting.
+
+### 3.10 Deployment — BUILT (single VPS), AHEAD OF PHASE 6
+A BDIX VPS: Next standalone server under systemd, Caddy in front for TLS, PostgreSQL on the
+same machine, nightly database and media backups copied to Backblaze. The runbook is
+`deployment.md`; day-to-day editing is `operating.md`. Not built from the original
+constraints: a CDN in front of static output and per-branch preview deployments. Environment
+secrets live only in the server's `.env`, never in the repository.
 
 ---
 

@@ -8,11 +8,11 @@ import { Container } from "@/components/ui/Container";
 import { CategoryFilter, readCategory } from "@/components/ui/CategoryFilter";
 import { WorkIndex } from "@/components/projects/WorkIndex";
 import { navIndex } from "@/data/navigation";
-import { heroCopy } from "@/data/copy";
 import { getProjects } from "@/data/projects.cms";
 import {
   getCategoryFilters,
   getVisibleCategorySlugs,
+  getCopy,
 } from "@/data/content.cms";
 
 
@@ -47,6 +47,7 @@ export default async function ProjectsPage({
 }: {
   searchParams: Promise<{ category?: string }>;
 }) {
+  const { heroCopy } = await getCopy();
   const { category } = await searchParams;
   const [all, filters, visible] = await Promise.all([
     getProjects(),

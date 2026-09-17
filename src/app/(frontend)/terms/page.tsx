@@ -4,9 +4,7 @@ import { PageHero } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/typography";
-import { getStudio } from "@/data/content.cms";
-import { heroCopy } from "@/data/copy";
-import { sectionCopy } from "@/data/copy";
+import { getStudio, getCopy } from "@/data/content.cms";
 
 export const metadata: Metadata = {
   title: "Terms",
@@ -19,6 +17,7 @@ export const metadata: Metadata = {
  * footer link resolves; the content is a legal document the studio must supply.
  */
 export default async function TermsPage() {
+  const { heroCopy, sectionCopy } = await getCopy();
   const studio = await getStudio();
 
   return (

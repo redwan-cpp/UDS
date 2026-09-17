@@ -6,19 +6,23 @@
    pages render from, so a search result cannot drift out of sync with the page
    it points at.
 
-   In Phase 2 this becomes a CMS query. The shape it returns (`SearchEntry[]`)
-   is what the UI consumes, so the swap is confined to this file.
+   Read from the CMS through the same accessors the pages use, so something an
+   editor publishes is searchable on the next render. The shape it returns
+   (`SearchEntry[]`) is what the UI consumes.
    ============================================================================= */
 
 import type { SearchEntry } from "@/types/content";
 
-import { navigation } from "./navigation";
-import { getProjects } from "./projects";
-import { getProducts } from "./products";
-import { getNews, newsKindLabels } from "./news";
-import { expertise } from "./expertise";
-import { openings } from "./careers";
-import { studio } from "./studio";
+import { getProjects } from "./projects.cms";
+import {
+  getExpertise,
+  getNavigation,
+  getNews,
+  getOpenings,
+  getProducts,
+  getStudio,
+} from "./content.cms";
+import { newsKindLabels } from "./news";
 import { statusLabels } from "@/lib/labels";
 
 /**
@@ -36,7 +40,17 @@ const PAGE_SUMMARIES: Record<string, string> = {
   "/careers": "Open roles at the studio.",
 };
 
-export function getSearchIndex(): SearchEntry[] {
+export async function getSearchIndex(): Promise<SearchEntry[]> {
+  const [navigation, projects, products, news, expertise, openings, studio] =
+    await Promise.all([
+      getNavigation(),
+      getProjects(),
+      getProducts(),
+      getNews(),
+      getExpertise(),
+      getOpenings(),
+      getStudio(),
+    ]);
   const entries: SearchEntry[] = [];
 
   /**
@@ -87,7 +101,7 @@ export function getSearchIndex(): SearchEntry[] {
   // no page, so it points at the index filtered to its first category — an
   // item in several still needs one destination, and the first is the one the
   // editor put first.
-  for (const project of getProjects()) {
+  for (const project of projects) {
     const documented = Boolean(project.description?.length);
     entries.push({
       id: `project:${project.slug}`,
@@ -110,18 +124,18 @@ export function getSearchIndex(): SearchEntry[] {
     });
   }
 
-  for (const product of getProducts()) {
+  for (const product of products) {
     entries.push({
       id: `product:${product.slug}`,
       title: product.title,
       kind: "product",
-      href: "/products",
+      href: `/products/${product.slug}`,
       summary: product.summary,
       keywords: [...product.materials, ...product.applications],
     });
   }
 
-  for (const item of getNews()) {
+  for (const item of news) {
     entries.push({
       id: `news:${item.slug}`,
       title: item.title,

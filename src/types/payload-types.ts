@@ -195,7 +195,22 @@ export interface Project {
    */
   description?:
     | {
-        text: string;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        text?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -204,7 +219,22 @@ export interface Project {
    */
   uniqueness?:
     | {
-        text: string;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        text?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -213,7 +243,22 @@ export interface Project {
    */
   concept?:
     | {
-        text: string;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        text?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -269,6 +314,18 @@ export interface Project {
    * Placeholder content, not the studio's real work. Drives the demo notices.
    */
   isDemo?: boolean | null;
+  /**
+   * Leave blank to derive from the title and summary. Only fill these in to override.
+   */
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    /**
+     * Ask search engines not to index this page.
+     */
+    noIndex?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -390,7 +447,22 @@ export interface Product {
    */
   summary: string;
   description: {
-    text: string;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    text?: string | null;
     id?: string | null;
   }[];
   materials: {
@@ -458,7 +530,22 @@ export interface News {
    */
   summary: string;
   body: {
-    text: string;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    text?: string | null;
     id?: string | null;
   }[];
   image: number | Media;
@@ -520,7 +607,22 @@ export interface Knowledge {
    */
   summary: string;
   body: {
-    text: string;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    text?: string | null;
     id?: string | null;
   }[];
   /**
@@ -951,18 +1053,21 @@ export interface ProjectsSelect<T extends boolean = true> {
   description?:
     | T
     | {
+        content?: T;
         text?: T;
         id?: T;
       };
   uniqueness?:
     | T
     | {
+        content?: T;
         text?: T;
         id?: T;
       };
   concept?:
     | T
     | {
+        content?: T;
         text?: T;
         id?: T;
       };
@@ -993,6 +1098,14 @@ export interface ProjectsSelect<T extends boolean = true> {
   featured?: T;
   order?: T;
   isDemo?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        noIndex?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1009,6 +1122,7 @@ export interface ProductsSelect<T extends boolean = true> {
   description?:
     | T
     | {
+        content?: T;
         text?: T;
         id?: T;
       };
@@ -1062,6 +1176,7 @@ export interface NewsSelect<T extends boolean = true> {
   body?:
     | T
     | {
+        content?: T;
         text?: T;
         id?: T;
       };
@@ -1101,6 +1216,7 @@ export interface KnowledgeSelect<T extends boolean = true> {
   body?:
     | T
     | {
+        content?: T;
         text?: T;
         id?: T;
       };

@@ -140,14 +140,20 @@ Asked before any UI is called finished. A "no" is a redesign, not a tweak.
 
 ## 5. Phase gates
 
-| Gate | Requirement to pass |
-|---|---|
-| Phase 1 → 2 | Every acceptance criterion in `project-requirement.md` §19 met, completion report delivered, **explicit client approval received** |
-| Phase 2 → 3 | CMS selected and recorded in `architecture.md` and `memory.md`; every content type modelled; a non-technical editor has created and published a project unaided |
-| Phase 3 → 4 | Contact submissions persist and deliver; auth roles enforced; no secret reachable from the browser |
-| Phase 4 → 5 | Security review complete; rate limits live; headers verified; upload validation tested against malicious samples |
-| Phase 5 → 6 | Metadata, structured data, sitemap and robots verified against live pages |
-| Phase 6 → deploy | Core Web Vitals targets met on real hardware; accessibility audit passed; cross-browser verified |
+| Gate | Requirement to pass | Status |
+|---|---|---|
+| Phase 1 → 2 | Every acceptance criterion in `project-requirement.md` §19 met, completion report delivered, **explicit client approval received** | Passed |
+| Phase 2 → 3 | CMS selected and recorded in `architecture.md` and `memory.md`; every content type modelled; a non-technical editor has created and published a project unaided | **Passed 2026-09-17** |
+| Phase 3 → 4 | Contact submissions persist and deliver; auth roles enforced; no secret reachable from the browser | Open — submissions persist; delivery waits on SMTP credentials on the server |
+| Phase 4 → 5 | Security review complete; rate limits live; headers verified; upload validation tested against malicious samples | Not reached |
+| Phase 5 → 6 | Metadata, structured data, sitemap and robots verified against live pages | Not reached |
+| Phase 6 → deploy | Core Web Vitals targets met on real hardware; accessibility audit passed; cross-browser verified | Not reached — the site went live before this gate, at the studio's need; see `memory.md` |
+
+**Phase 2 → 3, the evidence.** Payload is recorded in `architecture.md` §3.1 and `memory.md`.
+Every content type in `project-requirement.md` §9 is modelled — and, the part that failed
+repeatedly, *read by the site*: "modelled" is tested by changing a value in the panel and
+seeing the page change, not by finding the field in the panel. A studio editor with no
+developer help published the project *Rakhalia Krishi Bari* and a news post on the live site.
 
 ---
 

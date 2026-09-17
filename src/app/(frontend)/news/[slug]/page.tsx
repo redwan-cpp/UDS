@@ -36,6 +36,7 @@ export async function generateMetadata({
     title: item.title,
     description: item.summary,
     path: `/news/${item.slug}`,
+    seo: item.seo,
     image: item.image,
     publishedTime: item.date,
   });

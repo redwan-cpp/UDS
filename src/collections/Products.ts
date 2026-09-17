@@ -10,7 +10,7 @@ import {
   isDemoField,
   labelValueRows,
   orderField,
-  paragraphs,
+  richParagraphs,
   seoGroup,
   slugField,
   stringList,
@@ -69,7 +69,7 @@ export const Products: CollectionConfig = {
       required: true,
       admin: { description: "One line, sits under the title." },
     },
-    paragraphs("description", { required: true }),
+    richParagraphs("description", { required: true }),
     stringList("materials", {
       singular: "Material",
       plural: "Materials",

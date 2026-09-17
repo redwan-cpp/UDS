@@ -121,8 +121,8 @@ The longest job in the panel, so it is worth doing in order.
    - **Category** — more than one is allowed
    - **Status** — completed, in progress, or concept
    - **Summary** — one line, used on cards and in the index
-   - **Description** — at least one paragraph. Each paragraph is its own box; add a new box
-     per paragraph rather than pressing Enter twice inside one.
+   - **Description** — at least one paragraph. Pressing Enter starts a new paragraph, and so
+     does adding a new box; both look the same on the site. Press Enter once, not twice.
    - **Facts** — the information table. **Every row needs both a label and a value.** A row
      with only one half filled blocks publishing with *"Facts 1 > Value — this field is
      required"*. If a save fails and you cannot see why, check here first.
@@ -130,7 +130,24 @@ The longest job in the panel, so it is worth doing in order.
    - **Gallery** — at least one image
 4. Optional but useful: Area, Client, Services, Uniqueness, Our concept, Rough work.
 5. **Order** controls position — lower numbers first. **Featured** puts it on the homepage.
-6. **Publish**, then reload the public page a few seconds later.
+6. **SEO** (optional) — a different title, description or share picture for Google and for
+   links shared on Facebook and LinkedIn. Leave it blank and the title, summary and hero
+   are used.
+7. **Publish**, then reload the public page a few seconds later.
+
+### Formatting text
+
+Project descriptions, Uniqueness, Our concept, news and Knowledge articles, and product
+descriptions can be formatted like Word. **Select some words** and a small toolbar appears:
+**bold**, *italic*, underline, strikethrough, subscript and superscript (for m² or CO₂), and a
+link button. The keyboard shortcuts work too: Ctrl+B, Ctrl+I, Ctrl+U.
+
+To add a link, select the words, click the link button, and paste the full address including
+`https://`. Tick "open in new tab" for links to other websites.
+
+There are no headings, bullet lists, colours or font sizes, on purpose: the site's typography
+is fixed so that every page stays consistent. Headings above each section come from
+**Settings → Site copy**, which is also where every page title and introduction is edited.
 
 ---
 

@@ -1,8 +1,21 @@
 import { cache } from "react";
 import { getPayload } from "payload";
 import config from "@payload-config";
+import {
+  convertLexicalToHTML,
+  defaultHTMLConverters,
+  type HTMLConverters,
+} from "@payloadcms/richtext-lexical/html";
+import { convertLexicalToPlaintext } from "@payloadcms/richtext-lexical/plaintext";
+import type { SerializedEditorState } from "lexical";
 
-import type { Category, MediaAsset } from "@/types/content";
+import type {
+  Category,
+  MediaAsset,
+  Paragraph,
+  RichParagraph,
+  Seo,
+} from "@/types/content";
 
 /**
  * The seam between Payload and the site.
@@ -102,6 +115,64 @@ export function toAssets(value: Upload[] | null | undefined): MediaAsset[] {
 export const toParagraphs = (
   rows: { text?: string | null }[] | null | undefined,
 ): string[] => (rows ?? []).map((r) => r.text ?? "").filter(Boolean);
+
+/**
+ * Payload's HTML converters with the paragraph's own `<p>` removed.
+ *
+ * `Prose` already renders each paragraph as a `<p>` with its own scroll
+ * trigger; the default converter would nest a second `<p>` inside it. Text is
+ * escaped and link URLs sanitised by Payload's own converters — nothing here
+ * builds markup by hand.
+ */
+const inlineHTMLConverters: HTMLConverters = {
+  ...defaultHTMLConverters,
+  paragraph: ({ node, nodesToHTML }) =>
+    nodesToHTML({ nodes: node.children ?? [] }).join(""),
+};
+
+type RichRow = { content?: SerializedEditorState | null; text?: string | null };
+
+/**
+ * Rows from a `richParagraphs()` field as the site's `Paragraph[]`.
+ *
+ * Every paragraph inside a row becomes its own entry, so an editor who presses
+ * Enter gets two paragraphs, not two run together. A row whose `content` is
+ * empty falls back to its legacy plain `text` (see `richParagraphs`). Empty
+ * paragraphs are dropped, as `toParagraphs` drops empty rows.
+ */
+export const toRichParagraphs = (rows: RichRow[] | null | undefined): Paragraph[] =>
+  (rows ?? []).flatMap((r): Paragraph[] => {
+    const root = r.content?.root;
+    if (!root?.children?.length) return r.text ? [r.text] : [];
+    return root.children.flatMap((child) => {
+      const data = { root: { ...root, children: [child] } } as SerializedEditorState;
+      const text = convertLexicalToPlaintext({ data }).trim();
+      if (!text) return [];
+      const html = convertLexicalToHTML({
+        data,
+        disableContainer: true,
+        converters: inlineHTMLConverters,
+      });
+      return [{ text, html } satisfies RichParagraph];
+    });
+  });
+
+/** A `seoGroup` as `Seo`, with blank fields left undefined so defaults apply. */
+export const toSeo = (
+  seo:
+    | { title?: string | null; description?: string | null; image?: Upload; noIndex?: boolean | null }
+    | null
+    | undefined,
+): Seo | undefined => {
+  if (!seo) return undefined;
+  const image = toAsset(seo.image);
+  return {
+    title: seo.title || undefined,
+    description: seo.description || undefined,
+    image: image.src ? image : undefined,
+    noIndex: seo.noIndex || undefined,
+  };
+};
 
 /** The same, for the short-value lists — materials, services, requirements. */
 export const toValues = (

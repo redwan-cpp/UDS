@@ -8,11 +8,9 @@ import { StudioMap } from "@/components/contact/StudioMap";
 import { SocialIcon } from "@/components/contact/SocialIcon";
 import { ExternalLink } from "@/components/ui/ExternalLink";
 import { Eyebrow } from "@/components/typography";
-import { getStudio } from "@/data/content.cms";
+import { getStudio, getCopy } from "@/data/content.cms";
 import { enquiryTopics } from "@/data/contact";
 import { navIndex } from "@/data/navigation";
-import { heroCopy } from "@/data/copy";
-import { sectionCopy } from "@/data/copy";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -20,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
+  const { heroCopy, sectionCopy } = await getCopy();
   const studio = await getStudio();
 
   return (
