@@ -13,15 +13,31 @@ import { APIError } from "payload";
  * form is public. Reading, editing and deleting need a login, so a stranger
  * can post an enquiry but cannot list everybody else's.
  *
- * Public create is a spam surface, so three cheap defences sit in front of it:
- * length limits on every field, a hidden field only a bot fills in, and a
- * per-address rate limit. None is sophisticated; together they stop the
- * scripted noise that finds every open form within weeks of launch.
+ * Public create is a spam surface, so cheap defences sit in front of it:
+ * length limits on every field, a hidden field only a bot fills in, a
+ * per-address rate limit, and a site-wide one. None is sophisticated; together
+ * they stop the scripted noise that finds every open form within weeks of
+ * launch, and cap what a distributed flood can store or send. Turnstile is the
+ * Phase 4 answer to a determined attacker.
+ *
+ * **Kept for 10 days, then deleted.** The panel is a working inbox, not an
+ * archive: the email is the studio's permanent copy, and personal details
+ * nobody needs any more are a liability to hold.
  */
 
 /** Per visitor address, within the window. Generous for a person, useless for a script. */
 const RATE_LIMIT = 5;
+/**
+ * Across all visitors, within the same window. A botnet sends from thousands of
+ * addresses, so the per-address limit alone would let it fill the database and
+ * burn through Gmail's daily sending quota, which would get the studio's account
+ * suspended. The cost is that during a flood a real visitor may be turned away
+ * for a few minutes; the message tells them to email instead.
+ */
+const GLOBAL_LIMIT = 20;
 const WINDOW_MS = 10 * 60 * 1000;
+/** Enquiries older than this are deleted. The emailed copy is the long-term record. */
+const RETENTION_MS = 10 * 24 * 60 * 60 * 1000;
 // ponytail: in-memory, per process — right for this single-instance server,
 // but it resets on restart and needs a shared store if the site ever runs as
 // more than one process.
@@ -29,8 +45,18 @@ const recent = new Map<string, number[]>();
 
 function clientAddress(headers: Headers) {
   // Caddy terminates the connection, so the visitor's address arrives in the
-  // forwarded header rather than on the socket.
+  // forwarded header rather than on the socket. Caddy replaces any forwarded
+  // header a client sends, and the app port is closed by the firewall, so the
+  // first entry cannot be forged to dodge the limit.
   return headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+}
+
+/** Records a hit against `key`; false when the key is already at `limit`. */
+function allow(key: string, limit: number, now: number) {
+  const hits = (recent.get(key) ?? []).filter((t) => now - t < WINDOW_MS);
+  if (hits.length >= limit) return false;
+  recent.set(key, [...hits, now]);
+  return true;
 }
 
 export const Enquiries: CollectionConfig = {
@@ -40,7 +66,7 @@ export const Enquiries: CollectionConfig = {
     useAsTitle: "name",
     defaultColumns: ["name", "email", "topic", "createdAt"],
     description:
-      "Every message sent through the contact form, newest first. Each one is also emailed to the studio; if an email never arrived, it is still here.",
+      "Every message sent through the contact form, newest first. Each one is also emailed to the studio. Enquiries are deleted automatically after 10 days — the email is the permanent copy.",
   },
   defaultSort: "-createdAt",
   access: {
@@ -61,22 +87,45 @@ export const Enquiries: CollectionConfig = {
           throw new APIError("The enquiry could not be sent.", 400);
         }
 
-        const key = clientAddress(req.headers);
         const now = Date.now();
-        const hits = (recent.get(key) ?? []).filter((t) => now - t < WINDOW_MS);
-        if (hits.length >= RATE_LIMIT) {
+        // One entry per address, so a botnet grows the map; drop stale ones.
+        if (recent.size > 1000) {
+          for (const [k, hits] of recent) {
+            if (hits.every((t) => now - t >= WINDOW_MS)) recent.delete(k);
+          }
+        }
+        // Per address first, so one noisy visitor cannot use up the shared allowance.
+        if (
+          !allow(clientAddress(req.headers), RATE_LIMIT, now) ||
+          !allow("*", GLOBAL_LIMIT, now)
+        ) {
           throw new APIError(
-            "Too many enquiries from this connection. Please try again in a few minutes, or email the studio directly.",
+            "Too many enquiries right now. Please try again in a few minutes, or email the studio directly.",
             429,
           );
         }
-        recent.set(key, [...hits, now]);
         return args;
       },
     ],
     afterChange: [
       ({ doc, operation, req }) => {
         if (operation !== "create") return doc;
+
+        // Retention. Swept whenever a new enquiry arrives rather than on a
+        // timer: nothing grows unless enquiries arrive, so no scheduler is
+        // needed. Not awaited and not in this request's transaction, so a
+        // failed sweep never fails the visitor's submission.
+        void req.payload
+          .delete({
+            collection: "enquiries",
+            where: {
+              createdAt: { less_than: new Date(Date.now() - RETENTION_MS).toISOString() },
+            },
+            overrideAccess: true,
+          })
+          .catch((error: unknown) =>
+            req.payload.logger.error({ err: error, msg: "Old enquiries could not be deleted" }),
+          );
 
         const to = process.env.ENQUIRY_TO || process.env.SMTP_USER;
         if (!to) return doc;

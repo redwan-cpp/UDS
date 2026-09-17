@@ -673,6 +673,14 @@ exemption.** A sixth *client* dependency still needs its own answer.
   length limits, a honeypot, five submissions per connection per ten minutes, saved before it
   is emailed so a mail failure never loses an enquiry. Turnstile and security headers remain
   Phase 4.
+  - **2026-09-17, at the studio's request:** a site-wide cap of twenty per ten minutes, because
+    a botnet sends from many addresses and the per-address limit alone would let it fill the
+    database and exhaust Gmail's sending quota (which gets the account suspended). The accepted
+    cost: a flood can turn away a real visitor for minutes.
+  - **Enquiries are deleted after 10 days.** The panel is a working inbox; the email is the
+    permanent record. Swept each time a new enquiry is saved, not on a timer — storage only
+    grows when enquiries arrive, so no scheduler is needed. The consequence to know: **email
+    must work**, or an enquiry nobody opened in the panel within 10 days is gone.
 - **Rich text renders as HTML, and only through Payload's converters** (`src/data/payload.ts`):
   text escaped, link URLs sanitised, a fixed inline tag set. It is authored by signed-in
   editors only. Do not widen the editor's features without checking what they emit.
