@@ -79,7 +79,9 @@ export function WorkCard({
               {project.title}
             </h3>
 
-            <p className="mt-3 max-w-[46ch] text-small text-paper/80 text-pretty transition-[opacity,transform] delay-[60ms] duration-[var(--dur-slow)] ease-out-soft motion-reduce:transform-none motion-reduce:transition-none md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-visible:translate-y-0 md:group-focus-visible:opacity-100">
+            {/* Hidden on phones, where the block is always showing and the
+                summary crowded the photograph. The title and facts carry it. */}
+            <p className="mt-3 hidden max-w-[46ch] md:block text-small text-paper/80 text-pretty transition-[opacity,transform] delay-[60ms] duration-[var(--dur-slow)] ease-out-soft motion-reduce:transform-none motion-reduce:transition-none md:translate-y-4 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-visible:translate-y-0 md:group-focus-visible:opacity-100">
               {project.summary}
             </p>
 

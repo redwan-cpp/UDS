@@ -115,6 +115,15 @@ export const Media: CollectionConfig = {
     // description does not suggest — the field was renamed instead of
     // relying further on undocumented internals.
     focalPoint: false,
+    // Cap the stored original. Studios upload straight from cameras and
+    // renderers — 7680×4320, 4–8MB — and every size the site requests is cut
+    // from the original on a two-vCPU server: measured at 4–6s per image per
+    // width, so a project page with a ten-image gallery timed out on phones.
+    // Width only: the site requests images by width and never above 2048, so
+    // 2560 keeps every size sharp, and a tall portrait keeps its full width.
+    // Only raster formats go through this; SVG is untouched.
+    // `scripts/shrink-media.ts` applies the same cap to files uploaded before.
+    resizeOptions: { width: 2560, withoutEnlargement: true },
     imageSizes: [
       { name: "thumbnail", width: 384, height: undefined, position: "centre" },
       { name: "card", width: 1080, height: undefined, position: "centre" },

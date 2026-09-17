@@ -379,8 +379,10 @@
      and opacity, so this is not the paint-per-frame cost the rule exists to
      prevent.
      Gated behind a fine pointer: on a phone there is no hover to restore the
-     colour, so the photography simply stays as shot. */
-  @media (hover: hover) and (pointer: fine) {
+     colour, so the photography simply stays as shot. The width condition is
+     there because some phone browsers report a fine, hovering pointer anyway,
+     and a phone-width layout should never start grey. */
+  @media (hover: hover) and (pointer: fine) and (min-width: 768px) {
     .hover-desaturate {
       filter: grayscale(1);
       transition: filter var(--dur-slow) var(--ease-out-soft);
