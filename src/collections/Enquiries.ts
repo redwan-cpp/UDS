@@ -20,9 +20,10 @@ import { APIError } from "payload";
  * launch, and cap what a distributed flood can store or send. Turnstile is the
  * Phase 4 answer to a determined attacker.
  *
- * **Kept for 10 days, then deleted.** The panel is a working inbox, not an
- * archive: the email is the studio's permanent copy, and personal details
- * nobody needs any more are a liability to hold.
+ * **Kept for 10 days, then deleted, read or not.** The studio reads enquiries
+ * here and declined email, so this is the only copy — deleting unread ones was
+ * their explicit choice (`memory.md`). The email code below stays dormant until
+ * `SMTP_USER` / `SMTP_PASS` are set.
  */
 
 /** Per visitor address, within the window. Generous for a person, useless for a script. */
@@ -36,7 +37,7 @@ const RATE_LIMIT = 5;
  */
 const GLOBAL_LIMIT = 20;
 const WINDOW_MS = 10 * 60 * 1000;
-/** Enquiries older than this are deleted. The emailed copy is the long-term record. */
+/** Enquiries older than this are deleted, read or not. */
 const RETENTION_MS = 10 * 24 * 60 * 60 * 1000;
 // ponytail: in-memory, per process — right for this single-instance server,
 // but it resets on restart and needs a shared store if the site ever runs as
@@ -66,7 +67,7 @@ export const Enquiries: CollectionConfig = {
     useAsTitle: "name",
     defaultColumns: ["name", "email", "topic", "createdAt"],
     description:
-      "Every message sent through the contact form, newest first. Each one is also emailed to the studio. Enquiries are deleted automatically after 10 days — the email is the permanent copy.",
+      "Every message sent through the contact form, newest first. This is the only copy: enquiries are deleted automatically after 10 days, read or not.",
   },
   defaultSort: "-createdAt",
   access: {

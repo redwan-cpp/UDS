@@ -144,7 +144,7 @@ Asked before any UI is called finished. A "no" is a redesign, not a tweak.
 |---|---|---|
 | Phase 1 → 2 | Every acceptance criterion in `project-requirement.md` §19 met, completion report delivered, **explicit client approval received** | Passed |
 | Phase 2 → 3 | CMS selected and recorded in `architecture.md` and `memory.md`; every content type modelled; a non-technical editor has created and published a project unaided | **Passed 2026-09-17** |
-| Phase 3 → 4 | Contact submissions persist and deliver; auth roles enforced; no secret reachable from the browser | Open — submissions persist; delivery waits on SMTP credentials on the server |
+| Phase 3 → 4 | Contact submissions persist and deliver; auth roles enforced; no secret reachable from the browser | Open — submissions persist and reach the studio through the panel (email declined by the studio, 2026-09-17); roles and secrets still to verify |
 | Phase 4 → 5 | Security review complete; rate limits live; headers verified; upload validation tested against malicious samples | Not reached |
 | Phase 5 → 6 | Metadata, structured data, sitemap and robots verified against live pages | Not reached |
 | Phase 6 → deploy | Core Web Vitals targets met on real hardware; accessibility audit passed; cross-browser verified | Not reached — the site went live before this gate, at the studio's need; see `memory.md` |

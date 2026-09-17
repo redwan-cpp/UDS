@@ -72,14 +72,16 @@ broken; the file is sitting in the library waiting to be used.
 
 ## 4a. Enquiries
 
-Every message sent through the contact form is saved under **Inbox → Enquiries**, newest first,
-and emailed to the studio. Replying to that email replies to the person who wrote.
+Every message sent through the contact form is saved under **Inbox → Enquiries**, newest first.
+This is the only place enquiries arrive — nothing is emailed. To answer one, write to the
+visitor's email address shown in the enquiry.
 
-**Enquiries stay in the panel for 10 days, then are deleted automatically.** The email is the
-permanent copy, so keep those emails. The enquiry is saved before any email is attempted, so if
-a message seems not to have arrived, look in the Inbox first. If the Inbox has it but the email
-never came, the sending account's settings on the server need attention — see "Turning on
-email" in `deployment.md` — and fix it within 10 days, before the panel copy is gone.
+**Check the Inbox at least every few days. Enquiries are deleted automatically after 10 days,
+whether anyone has read them or not, and there is no other copy.** Before one is deleted, copy
+anything worth keeping — the person's details and message — into your own records.
+
+The panel's "Forgot password" link does not send an email on this site. An editor who is
+locked out asks an admin to set a new password for them under **Users**.
 
 The form refuses obvious automated spam, limits each connection to five enquiries every ten
 minutes, and accepts at most twenty from everyone combined in ten minutes. A real person will

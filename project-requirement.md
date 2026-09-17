@@ -343,7 +343,7 @@ endpoints must never reach the browser.
 |---|---|---|
 | PHASE 1 | Design, UX, UI, layout, typography, responsive behaviour, animation, interaction, component system, page structure, demo content, and the frontend architecture the UI requires | Complete — `phase-1-report.md` |
 | PHASE 2 | CMS selection, modelling, integration, content migration | Complete — gate passed 2026-09-17 |
-| **PHASE 3** | Backend, contact processing, email, auth, database | **ACTIVE** — PostgreSQL, enquiries stored and emailed, roles enforced; SMTP credentials on the server still to set |
+| **PHASE 3** | Backend, contact processing, email, auth, database | **ACTIVE** — PostgreSQL, enquiries stored in the panel (no email, by the studio's choice), roles enforced |
 | PHASE 4 | Security hardening, rate limiting, headers, upload pipeline | Started early — contact form rate limit and honeypot, SVG upload clean-up, photo size cap; headers and Turnstile not started |
 | PHASE 5 | SEO completion, structured data, sitemap, analytics | Started early — metadata, canonicals, share cards, robots, editor SEO overrides; sitemap, JSON-LD and analytics not started |
 | PHASE 6 | Performance, testing, deployment | Started early — **live on a VPS** (`deployment.md`), homepage load-weight pass; formal Web Vitals and cross-browser audit not done |

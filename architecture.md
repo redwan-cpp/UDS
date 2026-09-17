@@ -315,8 +315,9 @@ already shaped for it.
 
 ### 3.5 Contact system — BUILT, EXCEPT THE BOT CHECK
 Validation → rate limit (five per connection per ten minutes) → honeypot → persistence in the
-Enquiries collection → email to the studio via SMTP, not awaited, so a mail failure never loses
-an enquiry. Turnstile is not added yet. Email delivers only once `SMTP_USER` / `SMTP_PASS` are
+Enquiries collection, deleted after 10 days. **The studio reads enquiries in the panel and has
+declined email (2026-09-17)**; the SMTP path stays in the code, dormant, and switches on if
+`SMTP_USER` / `SMTP_PASS` are ever
 set on the server; without them the enquiry is still saved.
 
 ### 3.6 Fooocus integration — PLANNED, NOT STARTED

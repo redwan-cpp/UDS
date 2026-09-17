@@ -12,11 +12,19 @@ studio created and published real work unaided on the live site: the project *Ra
 Bari* and the news post announcing the Redova collaboration.
 
 **Phase 3 is largely built, ahead of its gate:** PostgreSQL in production, the contact form
-stores enquiries and emails the studio (`34f700f`), and roles are enforced (admin / editor /
+stores enquiries in the panel (`34f700f`), and roles are enforced (admin / editor /
 author). The site is also already **deployed** — a BDIX VPS behind Caddy (`deployment.md`) —
 which is Phase 6 work done early because the studio needed a live site; it is recorded, not
-hidden. Open before the Phase 3 → 4 gate: Gmail SMTP credentials on the server, so enquiries
-*deliver* as well as persist; and a restore test of the off-site backup.
+hidden. Open before the Phase 3 → 4 gate: a restore test of the off-site backup, and verifying roles
+and that no secret reaches the browser.
+
+**Enquiries reach the studio through the panel only — the studio declined email,
+2026-09-17.** For this site, "persist and deliver" means *saved and visible under Inbox →
+Enquiries*. Two consequences, accepted: someone must check the panel at least every 10 days,
+because enquiries are deleted after that whether read or not (the studio chose this over
+deleting only handled ones); and the panel's "Forgot password" sends nothing, so a locked-out
+editor is reset by an admin. The email code is dormant, not removed — adding `SMTP_USER` /
+`SMTP_PASS` turns it on.
 
 Durable decisions only. Not a log, not a changelog. If a line here stops being true, change
 it deliberately and say why — reversing something in this file is a decision, not a tweak.
@@ -254,7 +262,7 @@ it deliberately and say why — reversing something in this file is a decision, 
   - **Still static, knowingly:** the contact form's enquiry topics (`contact.ts`) and the
     privacy / terms page bodies, which are placeholders until the studio supplies a policy.
     The privacy placeholder also still says the site has no backend — stale since the contact
-    form began storing and emailing enquiries, and something the real policy must cover.
+    form began storing enquiries, and something the real policy must cover.
 
 - **Uploaded photographs are capped at 2560px wide when saved, 2026-09-17** (`Media` upload
   `resizeOptions`). The studio uploads straight from renderers — 7680×4320, 4–8MB — and the
@@ -677,10 +685,10 @@ exemption.** A sixth *client* dependency still needs its own answer.
     a botnet sends from many addresses and the per-address limit alone would let it fill the
     database and exhaust Gmail's sending quota (which gets the account suspended). The accepted
     cost: a flood can turn away a real visitor for minutes.
-  - **Enquiries are deleted after 10 days.** The panel is a working inbox; the email is the
-    permanent record. Swept each time a new enquiry is saved, not on a timer — storage only
-    grows when enquiries arrive, so no scheduler is needed. The consequence to know: **email
-    must work**, or an enquiry nobody opened in the panel within 10 days is gone.
+  - **Enquiries are deleted after 10 days, read or not** — the studio's choice, made knowing the
+    panel is the only copy since email was declined. Swept each time a new enquiry is saved, not on a timer — storage only
+    grows when enquiries arrive, so no scheduler is needed. The consequence to know: an
+    enquiry nobody opens in the panel within 10 days is gone for good.
 - **Rich text renders as HTML, and only through Payload's converters** (`src/data/payload.ts`):
   text escaped, link URLs sanitised, a fixed inline tag set. It is authored by signed-in
   editors only. Do not widen the editor's features without checking what they emit.
