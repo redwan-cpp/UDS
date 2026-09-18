@@ -689,6 +689,15 @@ exemption.** A sixth *client* dependency still needs its own answer.
     panel is the only copy since email was declined. Swept each time a new enquiry is saved, not on a timer — storage only
     grows when enquiries arrive, so no scheduler is needed. The consequence to know: an
     enquiry nobody opens in the panel within 10 days is gone for good.
+- **GraphQL is off** (`graphQL.disable`, 2026-09-18). Nothing called it — the site uses the Local
+  API, the panel uses REST — so it was a public endpoint with no user. Turn it back on only for
+  a real consumer.
+- **The page must never depend on the JS bundle to become visible** (2026-09-18). The boot
+  script's `js-motion` / `js-intro` hide content until the app runs; when it never ran (a
+  browser below Next's baseline, a script blocker, a dropped chunk) the visitor sat on the
+  intro's "000" indefinitely — reproduced by blocking the JS chunks. The boot script now removes
+  both classes itself if `MotionFailsafe` has not marked `data-hydrated` within 6s. This was
+  the "works in some browsers, not others" report.
 - **Rich text renders as HTML, and only through Payload's converters** (`src/data/payload.ts`):
   text escaped, link URLs sanitised, a fixed inline tag set. It is authored by signed-in
   editors only. Do not widen the editor's features without checking what they emit.

@@ -84,6 +84,11 @@ export default buildConfig({
   cors: serverURL ? [serverURL] : [],
   csrf: serverURL ? [serverURL] : [],
 
+  // Nothing uses GraphQL — the site reads through the Local API and the panel
+  // through REST — so it is an open endpoint with no caller. Off, one less
+  // public surface (same access rules, but also query-cost to worry about).
+  graphQL: { disable: true },
+
   admin: {
     user: Users.slug,
     meta: {

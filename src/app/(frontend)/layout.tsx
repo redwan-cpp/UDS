@@ -119,11 +119,21 @@ export const viewport: Viewport = {
  *
  * Deciding both here, synchronously, is what avoids a flash of an overlay or of
  * content that is about to be hidden. Authored in-repo; no external input.
+ *
+ * **The escape hatch lives here too, not only in React.** Both classes hide
+ * things until the app's JavaScript runs. If it never does — a browser older
+ * than Next's baseline (Safari < 16.4), a script blocker, a dropped chunk on a
+ * bad connection — `MotionFailsafe` never mounts either, and the visitor sat on
+ * the intro's "000" forever with every reveal invisible. Reproduced by blocking
+ * the JS chunks in Chromium. This inline ES5 runs where the bundle cannot: if
+ * nothing has marked the page `data-hydrated` within 6s, both classes come off
+ * and the page is shown complete, unanimated.
  */
 const BOOT = `(function(){try{var d=document.documentElement;
 if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 d.classList.add('js-motion');
 if(!sessionStorage.getItem('uds-intro'))d.classList.add('js-intro');
+setTimeout(function(){if(!d.hasAttribute('data-hydrated')){d.classList.remove('js-motion');d.classList.remove('js-intro');}},6000);
 }catch(e){}})();`;
 
 export default async function RootLayout({

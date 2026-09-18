@@ -33,6 +33,8 @@ const GRACE_MS = 4000;
 
 export function MotionFailsafe() {
   useEffect(() => {
+    // Tells the boot script's 6s escape hatch (layout.tsx) the app is running.
+    document.documentElement.setAttribute("data-hydrated", "");
     if (!document.documentElement.classList.contains("js-motion")) return;
 
     const timers = new Map<Element, number>();
