@@ -152,7 +152,7 @@ export interface UserAuthOperations {
   };
 }
 /**
- * Every message sent through the contact form, newest first. Each one is also emailed to the studio; if an email never arrived, it is still here.
+ * Every message sent through the contact form, newest first. This is the only copy: enquiries are deleted automatically after 10 days, read or not.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "enquiries".
@@ -886,6 +886,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -1453,6 +1454,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
