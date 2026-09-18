@@ -60,6 +60,9 @@ function TeamMemberCard({
         aria-label={expanded ? `${member.name}, ${member.role}` : undefined}
         tabIndex={expanded ? -1 : undefined}
         data-flip-id={member.id}
+        // Lenis owns the wheel for the whole page; without this the wheel
+        // scrolled the page behind the open card instead of the card.
+        data-lenis-prevent={expanded || undefined}
         className={
           expanded
             ? "surface-dark fixed inset-6 z-90 overflow-y-auto bg-ink p-6 text-paper outline-none sm:p-8 md:inset-0 md:m-auto md:h-[min(38rem,85vh)] md:w-[min(56rem,90vw)] md:p-10"
@@ -95,7 +98,15 @@ function TeamMemberCard({
                 <span data-numeric className="text-meta uppercase text-accent">
                   {String(position).padStart(2, "0")}
                 </span>
-                <span className="text-meta uppercase text-secondary">
+                {/* Same corner as the "View profile" overlay below, so it gives
+                    way wherever that shows: always on phones, on hover above. */}
+                <span
+                  className={`text-meta uppercase text-secondary transition-opacity duration-[var(--dur-slow)] ease-out-soft motion-reduce:transition-none ${
+                    member.linkedin && !expanded
+                      ? "max-md:invisible md:group-hover/member:opacity-0"
+                      : ""
+                  }`}
+                >
                   Portrait to follow
                 </span>
               </div>
