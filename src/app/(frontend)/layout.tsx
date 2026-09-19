@@ -101,6 +101,20 @@ export const metadata: Metadata = {
       "An architecture and design practice working across architecture, interior design and spatial strategy.",
     images: [SHARE_IMAGE.url],
   },
+
+  /**
+   * Google Search Console site-ownership proof, as a meta tag — the
+   * alternative to `public/google646612664bfaa0c8.html`, which is left in
+   * place rather than removed: Google allows more than one verification
+   * method at once, and keeping both means losing one later (an accidental
+   * file deletion, say) does not drop verification on its own.
+   *
+   * Not a secret — its only job is to be publicly visible, which is exactly
+   * what the file-based version already is, committed the same way.
+   */
+  verification: {
+    google: "Nqmpb1YTimeV8j2dVg6NCIR61kmjbohyTqBllTouDMw",
+  },
 };
 
 export const viewport: Viewport = {
