@@ -10,7 +10,7 @@ import { MotionFailsafe } from "@/components/motion/MotionFailsafe";
 import { CrosshairCursor } from "@/components/ui/CrosshairCursor";
 import { getNavigation, getStudio, getCopy } from "@/data/content.cms";
 import { getSearchIndex } from "@/data/search";
-import { SITE_URL, SHARE_IMAGE } from "@/lib/share";
+import { SITE_URL, SHARE_IMAGE, organizationJsonLd } from "@/lib/share";
 
 import "./globals.css";
 
@@ -157,6 +157,16 @@ export default async function RootLayout({
     >
       <body className="bg-ink text-paper antialiased">
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />
+        {/* `<` escaped so no CMS-entered string (name, address line, tagline)
+            can close this script tag early — JSON.stringify does not do that
+            on its own. Content itself is safe as JSON: every value here is
+            editor-authored through the CMS, not public input. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd(studio)).replace(/</g, "\\u003c"),
+          }}
+        />
 
         <a href="#main" className="skip-link">
           Skip to content

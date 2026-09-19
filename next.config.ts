@@ -15,8 +15,20 @@ const nextConfig: NextConfig = {
   // The practice page moved from /studio to /about. Permanent, so a search
   // engine or a bookmark from before the rename lands on the current page
   // instead of a 404.
+  //
+  // /pricing, /services and /team are not renames of anything in this build —
+  // they are what Google still has indexed from the studio's previous site,
+  // from before this rebuild. They currently 404. A stale search result
+  // pointing at a dead page is worse than one pointing at the closest real
+  // page this site actually has; these are best-effort landings, not URLs
+  // this project ever served itself.
   async redirects() {
-    return [{ source: "/studio", destination: "/about", permanent: true }];
+    return [
+      { source: "/studio", destination: "/about", permanent: true },
+      { source: "/team", destination: "/about#team", permanent: true },
+      { source: "/services", destination: "/about#expertise", permanent: true },
+      { source: "/pricing", destination: "/contact", permanent: true },
+    ];
   },
 
   /**

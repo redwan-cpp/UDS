@@ -122,7 +122,7 @@ export default async function AboutPage() {
         </Container>
       </Section>
 
-      <Section surface="light" spacing="standard" labelledBy="people-heading">
+      <Section id="team" surface="light" spacing="standard" labelledBy="people-heading">
         <Container>
           <Reveal>
             <SectionHead

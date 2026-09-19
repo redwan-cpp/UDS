@@ -665,9 +665,51 @@ exemption.** A sixth *client* dependency still needs its own answer.
 - Metadata, canonicals, Open Graph, JSON-LD, sitemap and robots are **Phase 5**. Structured
   data will only ever describe visible content.
 - **Ahead of Phase 5, already built:** per-route metadata, canonicals, Open Graph and Twitter
-  cards on every page (`src/lib/share.ts`, `c243191`), `robots.ts`, and — 2026-09-17 — the
-  editor's SEO title / description / image / no-index overrides on projects, products, news
-  and Knowledge. **Still Phase 5:** `sitemap.xml` and JSON-LD.
+  cards on every page (`src/lib/share.ts`, `c243191`), `robots.ts`, the editor's SEO
+  title / description / image / no-index overrides on projects, products, news and Knowledge
+  (2026-09-17), and — 2026-09-19 — `sitemap.xml` and sitewide JSON-LD.
+  - **`sitemap.xml`** (`src/app/sitemap.ts`) lists every static route plus every published
+    project/product/news/Knowledge slug, read through the same accessors the pages already use.
+    Card-only projects (no `description`) are correctly excluded — `getProjectSlugs` already
+    filters to that same test. `robots.ts` now also declares `Sitemap:` explicitly, since not
+    every crawler checks the well-known path unprompted.
+  - **JSON-LD** (`organizationJsonLd` in `src/lib/share.ts`, rendered once from the root layout)
+    is a `ProfessionalService` + `WebSite` graph built from `getStudio()`: name, tagline, phone,
+    email, address, `GeoCoordinates` from the studio's own `coordinates` field, and `sameAs`
+    linking every social profile the studio actually runs. This is the entity-verification
+    layer that both Google's Knowledge Panel and an AI answer engine lean on to confirm "this
+    website is this business" — it does not by itself make an LLM cite the studio; that also
+    needs the studio's Google Business Profile, directory listings and backlinks to agree with
+    it (account-side work, not a code change).
+    - **Deliberately not asserted:** structured `openingHoursSpecification` (`hours` is free
+      text — "Sunday–Thursday, 9:00 AM – 5:00 PM" — not schema.org's day/time codes, and
+      parsing it risks stating a wrong hour if the field is ever phrased differently) and a
+      split `PostalAddress` (`addressLines` has no declared street/city/postcode boundary;
+      the lines are joined whole rather than guessed apart).
+  - **`<`  is escaped to `<`** in the JSON-LD script tag — `JSON.stringify` does not do
+    this on its own, and without it a CMS-entered string containing `</script>` (a tagline, an
+    address line) could break out of the tag. Same class of fix as the rich-text HTML escaping.
+  - **Still open:** per-page `CreativeWork`/`Article`/`BreadcrumbList` schema on individual
+    project and news pages — a reasonable next step, scoped separately.
+- **The favicon was a generic placeholder, not the studio's mark, 2026-09-19.** `favicon.ico`
+  (present since Phase 1) was a black-circle-white-triangle icon that predates the studio's mark
+  being drawn — confirmed by fetching it directly, not assumed. `scripts/generate-favicon.mjs`
+  rebuilds `favicon.ico` / `icon.png` / `apple-icon.png` from `public/brand/uthan-mark.svg` on
+  the site's own paper background (`--color-paper`); rerun it if the mark ever changes.
+  - **Two rendering bugs found and fixed while building it**, both worth recording since they
+    would resurface on any future SVG-to-raster pipeline: `sharp`'s `resize(..., {fit:
+    "contain"})` pads the letterboxed area with **opaque black**, not transparent, by default —
+    it needs an explicit `background: {r:0,g:0,b:0,alpha:0}`. And `sharp(path)` rasterises an
+    SVG once at its own default size before any `resize()` is applied when the SVG declares
+    `width="100%" height="100%"` with no intrinsic pixel size (as every brand SVG here does) —
+    an explicit `density` avoids resizing up from that small implicit raster.
+- **Redirects added for what the studio's previous site left in Google's index, 2026-09-19:**
+  `/pricing` → `/contact`, `/services` → `/about#expertise`, `/team` → `/about#team`
+  (`next.config.ts`). None are renames of a URL this rebuild ever served — they 404'd. A stale
+  search result landing on the closest real page beats one landing on a dead page. The About
+  page's team section gained an `id="team"` it did not have, so the last of those actually
+  lands somewhere. Getting Google to stop *showing* the old sitelinks/description is a Search
+  Console action, not something a redirect alone fixes quickly — see the outstanding item below.
 
 ---
 
@@ -763,6 +805,23 @@ exemption.** A sixth *client* dependency still needs its own answer.
 9. Domain: RESOLVED — uthandesignstudio.com.
 10. Whether the demo content comes down now that real work is being published.
 11. A privacy policy and terms, now that the contact form collects personal data.
+12. **Google Search Console verification and reindex request** for the studio's domain — an
+    account action, not a code change. Needed to get Google to drop the stale `/pricing`,
+    `/services`, `/team` sitelinks and description faster than a natural recrawl would.
+13. **The Google Business Profile address does not match the studio's real one** — a screenshot
+    of the live search result showed "5th Floor, House # 1, Road # 4, Gulshan Badda Link Road",
+    while the CMS (and the map embed already in use) has "Plot 1, Road 4, Gulshan, Dhaka 1212".
+    Likely the source of the stale sitelinks along with the old site's crawl. Correcting the
+    listing is account-side (Google Business Profile), and matters beyond cosmetics: mismatched
+    name/address/phone across the studio's own web presence is a standard reason a local
+    business fails to rank as one consistent entity, and is exactly the kind of inconsistency
+    an AI system cross-checking sources before citing a business would treat as a red flag.
+14. **Getting an AI system to suggest Uthan for "best interior designer in Dhaka/Bangladesh"
+    is not a single fix.** The JSON-LD entity data above is the on-page half; the other half is
+    off-page and account-side: the Google Business Profile corrected and verified (13), reviews
+    on it, consistent citations on relevant directories, and backlinks from other real sites
+    (press, partners, directories) that mention the studio the same way. No code change reaches
+    any of that.
 
 ---
 

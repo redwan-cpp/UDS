@@ -44,5 +44,9 @@ export default function robots(): MetadataRoute.Robots {
         "/media/process-",
       ],
     },
+    // Declared explicitly rather than relied on by convention: not every
+    // crawler checks the well-known /sitemap.xml path unprompted, and this
+    // costs nothing to state. `sitemap.ts` is what actually generates it.
+    sitemap: `${process.env.NEXT_PUBLIC_SERVER_URL || "https://uthandesignstudio.com"}/sitemap.xml`,
   };
 }

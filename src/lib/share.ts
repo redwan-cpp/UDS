@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import type { MediaAsset, Seo } from "@/types/content";
+import type { MediaAsset, Seo, StudioProfile } from "@/types/content";
 
 /**
  * The site's own origin.
@@ -172,5 +172,80 @@ export function articleMetadata({
       description,
       images: images?.map((i) => i.url),
     },
+  };
+}
+
+/**
+ * The studio as structured data — `Organization`/`ProfessionalService` plus
+ * `WebSite`, rendered once on every page from the root layout.
+ *
+ * This is the machine-readable identity claim underneath everything else SEO
+ * touches: a name, address and phone that match the studio's Google Business
+ * listing word for word (mismatched "NAP" data is a standard reason a
+ * business fails to rank or resolve as one entity), `sameAs` linking to every
+ * verified profile the studio actually runs, and coordinates for exact
+ * geographic placement. This is also the layer that matters most for an AI
+ * system answering "best interior designer in Dhaka" — those tools lean on
+ * structured, cross-verified entity data rather than parsing prose, and this
+ * is what gives them something to verify against. None of it substitutes for
+ * the studio's own Google Business Profile, backlinks or reviews, which are
+ * account-side work no code change reaches.
+ *
+ * Deliberately not asserted: `openingHoursSpecification` (`hours` is a free
+ * text field — "Sunday–Thursday, 9:00 AM – 5:00 PM" — not the day/time codes
+ * schema.org wants, and parsing that string to guess them risks stating a
+ * wrong hour if the field is ever phrased differently) and a split
+ * `PostalAddress` (`addressLines` is an ordered free-text list with no
+ * declared street/city/postcode boundary; joining it whole is accurate to
+ * what the CMS actually holds, splitting it would be guessing where the
+ * boundaries fall).
+ */
+export function organizationJsonLd(studio: StudioProfile) {
+  const id = `${SITE_URL}/#organization`;
+  const logo = absolute("/icon.png");
+
+  const address = studio.contact.addressLines.length
+    ? {
+        "@type": "PostalAddress",
+        streetAddress: studio.contact.addressLines.join(", "),
+      }
+    : undefined;
+
+  const geo = studio.contact.coordinates
+    ? {
+        "@type": "GeoCoordinates",
+        latitude: studio.contact.coordinates.lat,
+        longitude: studio.contact.coordinates.lon,
+      }
+    : undefined;
+
+  const sameAs = studio.social.map((s) => s.href).filter((href): href is string => Boolean(href));
+
+  const organization = {
+    "@type": "ProfessionalService",
+    "@id": id,
+    name: studio.name,
+    url: SITE_URL || undefined,
+    logo,
+    image: absolute(SHARE_IMAGE.url),
+    description: studio.tagline || undefined,
+    telephone: studio.contact.phone || undefined,
+    email: studio.contact.email || undefined,
+    address,
+    geo,
+    sameAs: sameAs.length ? sameAs : undefined,
+  };
+
+  const website = {
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    name: studio.name,
+    url: SITE_URL || undefined,
+    publisher: { "@id": id },
+  };
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [organization, website],
   };
 }
