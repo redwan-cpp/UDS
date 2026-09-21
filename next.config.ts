@@ -92,10 +92,19 @@ const nextConfig: NextConfig = {
     // Turbopack/HMR boundary — "React will never use eval() in production
     // mode" per its own warning when this is missing. Dev-only so the
     // production policy stays as strict as it can actually be.
+    // Turnstile.tsx loads Cloudflare's widget script and renders its
+    // challenge in an iframe from this same origin; ContactForm.tsx's own
+    // fetch to /api/enquiries stays same-origin (Cloudflare's verification
+    // call happens server-side in Enquiries.ts, which is never subject to
+    // the browser's CSP at all). Present in the policy even while the
+    // studio's Turnstile keys are unset — Turnstile.tsx renders nothing
+    // without a site key, so the allowance is simply unused until then,
+    // not a live gap.
+    const CLOUDFLARE = "https://challenges.cloudflare.com";
     const scriptSrc =
       process.env.NODE_ENV === "production"
-        ? "script-src 'self' 'unsafe-inline'"
-        : "script-src 'self' 'unsafe-inline' 'unsafe-eval'";
+        ? `script-src 'self' 'unsafe-inline' ${CLOUDFLARE}`
+        : `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${CLOUDFLARE}`;
 
     const csp = [
       "default-src 'self'",
@@ -103,11 +112,12 @@ const nextConfig: NextConfig = {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "font-src 'self'",
-      "connect-src 'self'",
-      // The studio's Google Maps embed — StudioMap.tsx — is the only
-      // third-party content on the site, and the privacy page discloses it
-      // as such.
-      "frame-src 'self' https://www.google.com",
+      `connect-src 'self' ${CLOUDFLARE}`,
+      // The studio's Google Maps embed (StudioMap.tsx) and the Turnstile
+      // challenge iframe are the only third-party content on the site —
+      // the privacy page discloses the Maps embed as such and should be
+      // updated to name Turnstile too once it's actually configured.
+      `frame-src 'self' https://www.google.com ${CLOUDFLARE}`,
       "frame-ancestors 'none'",
       "object-src 'none'",
       "base-uri 'self'",

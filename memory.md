@@ -54,6 +54,29 @@ Dev mode also carries `'unsafe-eval'` (React's stack-trace reconstruction in Tur
 "React will never use eval() in production," per its own warning), gated on `NODE_ENV` so
 production stays as strict as it can actually be.
 
+**Turnstile, 2026-09-21** — the bot defence `Enquiries.ts` already named as owed. Dormant
+until `TURNSTILE_SECRET_KEY` / `NEXT_PUBLIC_TURNSTILE_SITE_KEY` are set, same pattern as SMTP:
+the studio gets a working form guarded by the honeypot and rate limits alone until Cloudflare
+keys exist, not one that silently rejects every submission. `Turnstile.tsx` renders nothing
+without a site key; `turnstileOk()` in `Enquiries.ts` returns `true` (does not block) without a
+secret key, and also on a network failure reaching Cloudflare — the visitor's connection
+dropping is not the visitor's fault, and the honeypot/rate limits are still standing guard
+either way. `appearance="interaction-only"`: most visitors see nothing at all.
+- **Verified end to end using Cloudflare's own published dummy test keys** (documented at
+  `developers.cloudflare.com/turnstile/troubleshooting/testing`, not secrets) — both the
+  accept path (`1x00...AA` site key + matching always-pass secret → `201`) and the reject path
+  (same site key, paired with the always-*fail* secret → `400`, same generic message as the
+  honeypot). The honeypot was re-checked afterward too, since it now shares a hook with
+  Turnstile — still rejects on its own before Turnstile is ever reached.
+- **The CSP built two entries earlier needed one addition**: `https://challenges.cloudflare.com`
+  in `script-src`, `frame-src` and `connect-src` (`next.config.ts`) — Turnstile loads a script
+  and renders its challenge in an iframe from that origin. Present in the policy even while the
+  studio's keys are unset, since the widget renders nothing without a site key regardless.
+- **Not yet done: the privacy page doesn't mention Turnstile.** It currently names the Google
+  Maps embed as the site's only third-party content, which stops being true the moment the
+  studio's Cloudflare keys are added. Update it then, not now — the disclosure should describe
+  what's actually live, and Turnstile isn't yet.
+
 **Enquiries reach the studio through the panel only — the studio declined email,
 2026-09-17.** For this site, "persist and deliver" means *saved and visible under Inbox →
 Enquiries*. Two consequences, accepted: someone must check the panel at least every 10 days,

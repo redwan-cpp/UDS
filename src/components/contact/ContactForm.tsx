@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button, Arrow } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/typography";
+import { Turnstile } from "@/components/contact/Turnstile";
 import type { EnquiryTopic } from "@/types/content";
 
 /**
@@ -54,10 +55,13 @@ const LABEL = "block text-meta uppercase text-secondary";
 export function ContactForm({
   topics,
   email,
+  turnstileSiteKey,
 }: {
   topics: EnquiryTopic[];
   /** Offered as a way out if sending fails. */
   email: string;
+  /** Absent until the studio's Cloudflare keys are configured — see Turnstile.tsx. */
+  turnstileSiteKey?: string;
 }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
@@ -123,6 +127,7 @@ export function ContactForm({
           size: text("size"),
           message: text("message"),
           website: text("website"),
+          "cf-turnstile-response": text("cf-turnstile-response"),
         }),
       });
 
@@ -264,6 +269,12 @@ export function ContactForm({
         <label htmlFor="website">Leave this empty</label>
         <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
+
+      {turnstileSiteKey && (
+        <div className="mt-10">
+          <Turnstile siteKey={turnstileSiteKey} />
+        </div>
+      )}
 
       <Button
         type="submit"

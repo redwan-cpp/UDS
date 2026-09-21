@@ -44,6 +44,7 @@ export default async function ContactPage() {
             <ContactForm
               topics={enquiryTopics}
               email={studio.contact.email}
+              turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
             />
           </div>
           <div className="lg:col-span-5">
