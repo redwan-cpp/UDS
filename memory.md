@@ -689,8 +689,17 @@ exemption.** A sixth *client* dependency still needs its own answer.
   - **`<`  is escaped to `<`** in the JSON-LD script tag — `JSON.stringify` does not do
     this on its own, and without it a CMS-entered string containing `</script>` (a tagline, an
     address line) could break out of the tag. Same class of fix as the rich-text HTML escaping.
-  - **Still open:** per-page `CreativeWork`/`Article`/`BreadcrumbList` schema on individual
-    project and news pages — a reasonable next step, scoped separately.
+  - **Per-page `CreativeWork`/`Article`/`BreadcrumbList`, 2026-09-21.** `projectJsonLd` and
+    `articleJsonLd` (`src/lib/share.ts`), rendered on `/projects/[slug]`, `/news/[slug]` and
+    `/knowledge/[slug]` — one `articleJsonLd` for both News and Knowledge, since `toKnowledge`
+    already maps onto the same `NewsItem` shape those pages already share. `CreativeWork` over
+    a more specific architectural type: schema.org has no widely-supported one, and asserting
+    a type crawlers don't reliably parse is worse than the honest generic one they do.
+  - **The per-document SEO override fields are fully wired, not just modelled** — `toSeo`
+    (`src/data/payload.ts`) populates `.seo` on Project/Product/News/Knowledge, and every
+    detail route's `generateMetadata` already passes it through to `pageMetadata`/
+    `articleMetadata`. The 2026-09-17 note here calling this dormant was correct when written
+    and is stale now; confirmed by reading the current code rather than trusting that note.
 - **The favicon was a generic placeholder, not the studio's mark, 2026-09-19.** `favicon.ico`
   (present since Phase 1) was a black-circle-white-triangle icon that predates the studio's mark
   being drawn — confirmed by fetching it directly, not assumed. `scripts/generate-favicon.mjs`

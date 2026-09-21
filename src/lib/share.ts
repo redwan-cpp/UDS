@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import type { MediaAsset, Seo, StudioProfile } from "@/types/content";
+import type { MediaAsset, NewsItem, Project, Seo, StudioProfile } from "@/types/content";
 
 /**
  * The site's own origin.
@@ -247,5 +247,101 @@ export function organizationJsonLd(studio: StudioProfile) {
   return {
     "@context": "https://schema.org",
     "@graph": [organization, website],
+  };
+}
+
+/**
+ * A breadcrumb trail — Home → section → this page.
+ *
+ * Shared by every per-page graph below rather than built inline twice: the
+ * shape schema.org wants (`ListItem` with a 1-based `position`) is easy to
+ * get subtly wrong copying it by hand a second time.
+ */
+function breadcrumbJsonLd(trail: { name: string; path: string }[]) {
+  return {
+    "@type": "BreadcrumbList",
+    itemListElement: trail.map((step, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: step.name,
+      item: absolute(step.path),
+    })),
+  };
+}
+
+/**
+ * A project's own page as structured data — `CreativeWork` plus its
+ * breadcrumb trail, rendered per project page rather than once sitewide.
+ *
+ * `CreativeWork` rather than a more specific architectural type: schema.org
+ * has no widely-supported "ArchitecturalWork," and asserting a type search
+ * engines don't reliably parse is worse than the honest generic one they do.
+ * `creator` links back to the studio's own `@id` from `organizationJsonLd`
+ * rather than repeating its fields, so the two never drift apart.
+ */
+export function projectJsonLd(project: Project) {
+  const url = `/projects/${project.slug}`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        name: project.title,
+        description: project.summary,
+        url: absolute(url),
+        image: project.hero.src ? absolute(project.hero.src) : undefined,
+        creator: { "@id": `${SITE_URL}/#organization` },
+        dateCreated: project.year || undefined,
+        locationCreated: project.location
+          ? { "@type": "Place", name: project.location }
+          : undefined,
+        keywords: project.category.map((c) => c.label).join(", ") || undefined,
+      },
+      breadcrumbJsonLd([
+        { name: "Home", path: "/" },
+        { name: "Projects", path: "/projects" },
+        { name: project.title, path: url },
+      ]),
+    ],
+  };
+}
+
+/**
+ * A news or Knowledge item's own page as structured data — `Article` plus
+ * its breadcrumb trail. One function for both: `toKnowledge` already maps a
+ * Knowledge post onto the same `NewsItem` shape so `/knowledge` can reuse the
+ * news cards and article layout, and the structured data follows the same
+ * reasoning rather than inventing a second, near-identical builder.
+ *
+ * `Article` rather than `NewsArticle`/`BlogPosting`: those are valid schema.org
+ * subtypes, but which one fits depends on editorial judgement per item this
+ * project has no field for (`kind` covers collaborations, events and MoUs too,
+ * not just journalism vs. commentary) — `Article` is the accurate common
+ * parent rather than a guess at a distinction nothing in the CMS records.
+ */
+export function articleJsonLd(
+  item: NewsItem,
+  section: { path: "/news" | "/knowledge"; label: "News" | "Knowledge" },
+) {
+  const url = `${section.path}/${item.slug}`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: item.title,
+        description: item.summary,
+        url: absolute(url),
+        image: item.image.src ? absolute(item.image.src) : undefined,
+        datePublished: item.date || undefined,
+        author: { "@id": `${SITE_URL}/#organization` },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+      },
+      breadcrumbJsonLd([
+        { name: "Home", path: "/" },
+        { name: section.label, path: section.path },
+        { name: item.title, path: url },
+      ]),
+    ],
   };
 }

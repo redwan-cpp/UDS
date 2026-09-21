@@ -14,7 +14,7 @@ import { DemoNotice } from "@/components/hero/PageHero";
 import { formatDate } from "@/lib/labels";
 import { getNews, getNewsBySlug, getNewsSlugs } from "@/data/content.cms";
 import { newsKindLabels } from "@/data/news";
-import { articleMetadata } from "@/lib/share";
+import { articleJsonLd, articleMetadata } from "@/lib/share";
 import { ShareLinks } from "@/components/ui/ShareLinks";
 
 export async function generateStaticParams() {
@@ -57,6 +57,15 @@ export default async function NewsArticlePage({
 
   return (
     <article>
+      {/* Editor-authored, from the item's own fields — not public input. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            articleJsonLd(item, { path: "/news", label: "News" }),
+          ).replace(/</g, "\\u003c"),
+        }}
+      />
       <header className="surface-dark bg-ink pt-32 md:pt-44">
         <Container width="text" className="mx-auto">
           <nav aria-label="Breadcrumb" className="pb-6">

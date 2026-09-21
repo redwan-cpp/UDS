@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { pageMetadata } from "@/lib/share";
+import { pageMetadata, projectJsonLd } from "@/lib/share";
 import { notFound } from "next/navigation";
 
 import { ProjectHero } from "@/components/projects/ProjectHero";
@@ -118,6 +118,14 @@ export default async function ProjectPage({
 
   return (
     <article>
+      {/* Editor-authored, from the studio's own project fields — not public
+          input. Same escaping as the sitewide graph in layout.tsx. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(projectJsonLd(project)).replace(/</g, "\\u003c"),
+        }}
+      />
       <ProjectHero project={project} />
 
       {project.isDemo && (
