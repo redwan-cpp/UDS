@@ -83,7 +83,12 @@ export const getProjects = cache(async (): Promise<Project[]> => {
     depth: 1,
     sort: "order",
   });
-  return docs.map(toProject);
+  // A doc with no slug can't be linked to — building `/projects/${slug}` from
+  // one produces a real, crawlable `/projects/null` or `/projects/undefined`.
+  // Payload's `required: true` only guards the save path, not documents that
+  // predate it or ever got there another way, so this is checked here rather
+  // than trusted from the schema.
+  return docs.filter((d) => Boolean((d as Doc).slug)).map(toProject);
 });
 
 export const getProjectBySlug = cache(
@@ -125,7 +130,9 @@ export const getProjectSlugs = cache(async (): Promise<string[]> => {
     sort: "order",
   });
   return docs
-    .filter((d) => ((d as Doc).description?.length ?? 0) > 0)
+    .filter(
+      (d) => Boolean((d as Doc).slug) && ((d as Doc).description?.length ?? 0) > 0,
+    )
     .map((d) => (d as Doc).slug as string);
 });
 
