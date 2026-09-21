@@ -174,7 +174,10 @@ export default async function RootLayout({
         {/* `<` escaped so no CMS-entered string (name, address line, tagline)
             can close this script tag early — JSON.stringify does not do that
             on its own. Content itself is safe as JSON: every value here is
-            editor-authored through the CMS, not public input. */}
+            editor-authored through the CMS, not public input. `type`
+            deliberately isn't `text/javascript`: a non-JS `type` makes this a
+            data block, never a candidate for execution, and CSP's
+            `script-src` (`next.config.ts`) does not gate it. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

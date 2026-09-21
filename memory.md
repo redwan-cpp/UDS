@@ -2,7 +2,7 @@
 
 ```
 CURRENT PHASE:
-PHASE 3 — BACKEND
+PHASE 4 — SECURITY
 ```
 
 **Phase 2 → 3 gate passed, 2026-09-17** (`process.md` §5). CMS selected and recorded (Payload,
@@ -11,12 +11,48 @@ is not the same as wired" below for the last four that were not. A non-technical
 studio created and published real work unaided on the live site: the project *Rakhalia Krishi
 Bari* and the news post announcing the Redova collaboration.
 
-**Phase 3 is largely built, ahead of its gate:** PostgreSQL in production, the contact form
-stores enquiries in the panel (`34f700f`), and roles are enforced (admin / editor /
-author). The site is also already **deployed** — a BDIX VPS behind Caddy (`deployment.md`) —
-which is Phase 6 work done early because the studio needed a live site; it is recorded, not
-hidden. Open before the Phase 3 → 4 gate: a restore test of the off-site backup, and verifying roles
-and that no secret reaches the browser.
+**Phase 3 → 4 gate passed 2026-09-21, deliberately without both criteria fully met — the
+studio's call, recorded rather than smoothed over.** PostgreSQL in production, the contact form
+stores enquiries in the panel (`34f700f`), and no secret reaches the browser (verified by
+reading every non-`NEXT_PUBLIC_` env reference in the source — all of them stay in
+`payload.config.ts` and collection server code, never in a `"use client"` file). The site is
+also already **deployed** — a BDIX VPS behind Caddy (`deployment.md`) — Phase 6 work done early
+because the studio needed a live site.
+
+**Two items deliberately deferred, not resolved:**
+- **A restore test of the off-site Backblaze backup has not been run.** Nobody has confirmed
+  the backup is actually restorable, only that it's being written. Needs VPS + Backblaze access.
+- **"Roles enforced" is only half true.** `Users.ts` itself is solid — only an admin can create
+  or delete a user, or change a role, and self-promotion is impossible. But `editorAccess`
+  (`collections/fields.ts`), which every content collection uses, only checks "is anyone signed
+  in" — it does not distinguish Editor from Author, so the documented "Author — writes,
+  publishes own work" scoping is not actually enforced anywhere. An Author can edit anything an
+  Editor can. Not urgent while the studio only has editor/admin accounts, but the documented
+  behaviour and the enforced behaviour disagree, and that gap is what's recorded here, not
+  papered over.
+
+**Security headers, 2026-09-21** — the first Phase 4 item (`project-requirement.md` §11):
+CSP, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, `frame-ancestors 'none'`,
+all in `next.config.ts`'s static `headers()`, scoped to the public site only (`/admin` and
+`/api` excluded — Payload's admin UI is not audited against this policy, and breaking the
+studio's only way to manage the site is a worse outcome than a narrower scope for now).
+
+**`script-src` carries `'unsafe-inline'`, and that was not the first attempt or a shortcut.**
+A nonce-based CSP was built first, correctly, and empirically cost every route its static/ISR
+caching the moment a page called `headers()` to read the nonce — confirmed in the build output,
+not assumed. A hash-only policy (no nonce, covering just this site's own fixed inline scripts)
+was built next and shipped through an actual production build into a real browser — and Next's
+own App Router turned out to inject several inline scripts of its own for RSC/streaming payload
+delivery, a different one on every render, with no supported way to disable the mechanism.
+Blocking them broke hydration outright (`React error #412`) on every route tested, not just
+structured data or animation. Given this project's own performance requirements
+(`project-requirement.md` §13) and the amount of recorded effort that has gone into keeping
+routes static (`generateStaticParams` on every `[slug]` route, the image/bundle work throughout
+this file), `'unsafe-inline'` on this one directive is the considered trade, not an oversight —
+every other directive stays strict, including `object-src 'none'` and `frame-ancestors 'none'`.
+Dev mode also carries `'unsafe-eval'` (React's stack-trace reconstruction in Turbopack/HMR —
+"React will never use eval() in production," per its own warning), gated on `NODE_ENV` so
+production stays as strict as it can actually be.
 
 **Enquiries reach the studio through the panel only — the studio declined email,
 2026-09-17.** For this site, "persist and deliver" means *saved and visible under Inbox →

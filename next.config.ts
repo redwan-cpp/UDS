@@ -53,12 +53,94 @@ const nextConfig: NextConfig = {
         value: "public, max-age=86400, stale-while-revalidate=604800",
       },
     ];
+
+    /**
+     * Security headers — Phase 4 (`project-requirement.md` §11). Static,
+     * not middleware: this site's own inline scripts (the motion boot
+     * script, `application/ld+json` structured data) are either fixed or
+     * CSP-exempt by type, so nothing here is genuinely per-request — a
+     * nonce would have forced every route dynamic (verified: it did,
+     * before this was rewritten) for no real gain.
+     *
+     * `script-src` carries `'unsafe-inline'`, and that was not the first
+     * attempt. A hash-only policy (covering just this site's own fixed
+     * boot script) was built, shipped through a real production build, and
+     * loaded in a browser against the actual output — and Next's own App
+     * Router turned out to inject several inline scripts of its own for
+     * RSC/streaming payload delivery, a different one on every render, with
+     * no way to hash them statically and no supported way to turn the
+     * mechanism off. Blocking them didn't just lose structured data or
+     * animation — it broke hydration outright (`React error #412`) on
+     * every route tested. A nonce would cover them, correctly, at the cost
+     * of the dynamic-rendering regression above. Given this app's own
+     * performance requirements (`project-requirement.md` §13) and how much
+     * of this project's effort has gone into keeping routes static/ISR
+     * (`generateStaticParams` on every `[slug]` route, the whole `memory.md`
+     * record of image/bundle work), `'unsafe-inline'` on this one directive
+     * is the deliberate trade, not an oversight — every other directive
+     * below stays strict.
+     *
+     * Scoped to the public site only (`/admin` and `/api` excluded):
+     * Payload's own admin UI is not audited against this policy, and a
+     * strict `frame-ancestors`/`form-action` here could silently break the
+     * panel on something this config has no visibility into. Tightening
+     * the admin surface's headers too is worth doing, but as a checked
+     * follow-up against what the panel actually loads, not a guess that
+     * risks the studio's only way to manage the site.
+     */
+    // React's dev mode uses eval() to reconstruct stack traces across the
+    // Turbopack/HMR boundary — "React will never use eval() in production
+    // mode" per its own warning when this is missing. Dev-only so the
+    // production policy stays as strict as it can actually be.
+    const scriptSrc =
+      process.env.NODE_ENV === "production"
+        ? "script-src 'self' 'unsafe-inline'"
+        : "script-src 'self' 'unsafe-inline' 'unsafe-eval'";
+
+    const csp = [
+      "default-src 'self'",
+      scriptSrc,
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob:",
+      "font-src 'self'",
+      "connect-src 'self'",
+      // The studio's Google Maps embed — StudioMap.tsx — is the only
+      // third-party content on the site, and the privacy page discloses it
+      // as such.
+      "frame-src 'self' https://www.google.com",
+      "frame-ancestors 'none'",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "upgrade-insecure-requests",
+    ].join("; ");
+
+    const security = [
+      { key: "Content-Security-Policy", value: csp },
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "X-Frame-Options", value: "DENY" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      {
+        key: "Permissions-Policy",
+        value:
+          "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+      },
+      // A promise to the browser, not the server: Caddy terminates TLS in
+      // front of this app (`deployment.md` Part 9), but the header still
+      // has to come from the app the browser is actually talking to.
+      {
+        key: "Strict-Transport-Security",
+        value: "max-age=63072000; includeSubDomains; preload",
+      },
+    ];
+
     return [
       { source: "/media/:path*", headers: cached },
       { source: "/brand/:path*", headers: cached },
       { source: "/illustration/:path*", headers: cached },
       { source: "/api/media/file/:path*", headers: cached },
       { source: "/api/videos/file/:path*", headers: cached },
+      { source: "/((?!admin|api).*)", headers: security },
     ];
   },
 
