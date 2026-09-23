@@ -177,18 +177,18 @@ export function LogoStrip({ brands }: { brands: Brand[] }) {
               // sees a mark detach from its owner while dragging the strip.
               className="flex shrink-0 items-center gap-4 pr-12 text-secondary lg:pr-16"
             >
-              <div className="flex min-w-32 flex-col items-center gap-3 text-center">
+              <div className="flex min-w-40 flex-col items-center gap-4 text-center sm:min-w-48">
                 {brand.logo && (
                   <span
                     aria-hidden="true"
-                    className="relative block h-12 w-32 shrink-0"
+                    className="relative block h-16 w-40 shrink-0 sm:h-20 sm:w-48"
                   >
                     <Image
                       src={brand.logo.src}
                       alt=""
                       fill
                       unoptimized
-                      sizes="128px"
+                      sizes="(min-width: 640px) 192px, 160px"
                       className="object-contain"
                     />
                   </span>
