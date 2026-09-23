@@ -39,7 +39,7 @@ Down the left are four groups:
 | **Inbox** | Enquiries — every message sent through the contact form |
 | **Work** | Projects, Portfolio, Products — the studio's output |
 | **Studio** | News, Knowledge, Team, Expertise, Sustainability, Statistics, Collaborators, Careers, Users |
-| **Library** | Media — every photograph and drawing used anywhere on the site |
+| **Library** | Media (photographs and drawings), Videos, and Documents (PDFs) |
 | **Settings** | Categories — the filter labels used across Work |
 
 Beneath them sit three **Globals** — single documents rather than lists:
@@ -67,6 +67,19 @@ The order is always:
 
 If you upload something and then wonder why the site looks unchanged, this is why. Nothing is
 broken; the file is sitting in the library waiting to be used.
+
+### Videos and PDFs
+
+Videos and PDFs work in the same two-step way: put the file in the Library first, then select
+it on the project, news/collaboration, or Knowledge entry where it belongs.
+
+- **Library → Videos** accepts only already-compressed MP4 or WebM files up to 12 MB. Do not
+  upload a camera or phone original; ask a developer to prepare it first.
+- **Library → Documents** accepts PDFs only, up to 12 MB. A PDF downloads when a visitor opens
+  it from the website.
+- On a Project, News/Collaboration, or Knowledge entry, use **Videos** to add footage. On
+  News/Collaboration and Knowledge entries, use **Documents** to add an uploaded PDF or a full
+  `https://` link to an external document.
 
 ---
 
@@ -133,7 +146,7 @@ The longest job in the panel, so it is worth doing in order.
      required"*. If a save fails and you cannot see why, check here first.
    - **Hero** — the main image
    - **Gallery** — at least one image
-4. Optional but useful: Area, Client, Services, Uniqueness, Our concept, Rough work.
+4. Optional but useful: Area, Client, Services, Uniqueness, Our concept, Rough work, Videos.
 5. **Order** controls position — lower numbers first. **Featured** puts it on the homepage.
 6. **SEO** (optional) — a different title, description or share picture for Google and for
    links shared on Facebook and LinkedIn. Leave it blank and the title, summary and hero

@@ -7,6 +7,7 @@ import {
 
 import {
   publishedOnlyAccess,
+  documentLinks,
   isDemoField,
   richParagraphs,
   seoGroup,
@@ -22,9 +23,9 @@ import {
  * visibly breaking. Payload stores it as ISO, which is what the site reads.
  *
  * `documents` covers the MoUs and supporting files these entries often carry.
- * A document is either an uploaded PDF or an external link — never both, and
- * `kind` says which, so the card can label it honestly rather than guessing
- * from the file extension.
+ * A document is either an uploaded PDF or an external link — never both — so
+ * the public page can label the action honestly rather than guessing from a
+ * filename or URL.
  */
 export const News: CollectionConfig = {
   slug: "news",
@@ -94,38 +95,16 @@ export const News: CollectionConfig = {
     { name: "image", type: "upload", relationTo: "media", required: true },
     { name: "gallery", type: "upload", relationTo: "media", hasMany: true },
     {
-      name: "documents",
-      type: "array",
-      labels: { singular: "Document", plural: "Documents" },
-      admin: { description: "MoUs and supporting documentation." },
-      fields: [
-        {
-          type: "row",
-          fields: [
-            { name: "label", type: "text", required: true },
-            {
-              name: "kind",
-              type: "select",
-              required: true,
-              defaultValue: "pdf",
-              options: [
-                { label: "PDF", value: "pdf" },
-                { label: "Link", value: "link" },
-              ],
-            },
-          ],
-        },
-        {
-          name: "href",
-          type: "text",
-          required: true,
-          admin: {
-            description:
-              "A URL, or the path to an uploaded file. Never leave this empty — ruler.md forbids a link that goes nowhere; an unsupplied destination is set as text instead.",
-          },
-        },
-      ],
+      name: "videos",
+      type: "upload",
+      relationTo: "videos",
+      hasMany: true,
+      admin: {
+        description:
+          "Optional short video sequence. Upload web-ready videos in Library → Videos first.",
+      },
     },
+    documentLinks,
     {
       type: "row",
       fields: [

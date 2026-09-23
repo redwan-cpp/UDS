@@ -12,7 +12,7 @@
    rather than machinery — what an enquiry can be about.
    ============================================================================= */
 
-import type { EnquiryTopic } from "@/types/content";
+import type { EnquiryBudget, EnquiryTopic } from "@/types/content";
 
 /**
  * Offered as a single native select. Ordered by how often the studio expects
@@ -28,4 +28,15 @@ export const enquiryTopics: EnquiryTopic[] = [
   { value: "consultation", label: "Consultation — feasibility, design review, second opinion" },
   { value: "collaboration", label: "Collaboration" },
   { value: "press", label: "Press or recruitment" },
+];
+
+/** A native select keeps an estimate quick to answer and easy to skip. */
+export const enquiryBudgets: EnquiryBudget[] = [
+  { value: "", label: "Select a budget range" },
+  { value: "10-25-lakh", label: "10 lakh – 25 lakh" },
+  { value: "25-50-lakh", label: "25 lakh – 50 lakh" },
+  { value: "50-lakh-1-crore", label: "50 lakh – 1 crore" },
+  { value: "1-2-crore", label: "1 crore – 2 crore" },
+  { value: "2-5-crore", label: "2 crore – 5 crore" },
+  { value: "5-crore-plus", label: "5 crore+" },
 ];

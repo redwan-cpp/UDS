@@ -11,6 +11,7 @@ import {
   toRows,
   toSymbol,
   toValues,
+  toVideos,
 } from "./payload";
 
 /**
@@ -37,6 +38,10 @@ import {
 type Doc = any;
 
 function toProject(d: Doc): Project {
+  const gallery = toAssets(d.gallery);
+  const process = toAssets(d.process);
+  const videos = toVideos(d.videos);
+
   return {
     id: String(d.id),
     slug: d.slug,
@@ -66,8 +71,9 @@ function toProject(d: Doc): Project {
     facts: toRows(d.facts).length ? toRows(d.facts) : undefined,
     symbol: toSymbol(d.symbol),
     hero: toAsset(d.hero),
-    gallery: toAssets(d.gallery).length ? toAssets(d.gallery) : undefined,
-    process: toAssets(d.process).length ? toAssets(d.process) : undefined,
+    gallery: gallery.length ? gallery : undefined,
+    process: process.length ? process : undefined,
+    videos: videos.length ? videos : undefined,
     featured: Boolean(d.featured),
     order: d.order ?? 0,
   };

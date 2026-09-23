@@ -6,6 +6,7 @@ import {
 } from "./hooks/revalidate";
 import {
   publishedOnlyAccess,
+  documentLinks,
   isDemoField,
   richParagraphs,
   seoGroup,
@@ -24,9 +25,10 @@ import {
  * feed.
  *
  * It carries the same shape as a news item minus the three fields a written
- * piece has no use for — the counterparty, the event location, and the attached
- * MoU. Sharing that shape is deliberate: it is what lets `/knowledge` reuse the
- * news cards and the article layout without a second set of components.
+ * piece has no use for — the counterparty and event location. Sharing the rest
+ * of the shape, including supporting documents, is deliberate: it lets
+ * `/knowledge` reuse the news cards and article layout without a second set of
+ * components.
  */
 export const Knowledge: CollectionConfig = {
   slug: "knowledge",
@@ -78,6 +80,17 @@ export const Knowledge: CollectionConfig = {
       },
     },
     { name: "gallery", type: "upload", relationTo: "media", hasMany: true },
+    {
+      name: "videos",
+      type: "upload",
+      relationTo: "videos",
+      hasMany: true,
+      admin: {
+        description:
+          "Optional short video sequence. Upload web-ready videos in Library → Videos first.",
+      },
+    },
+    documentLinks,
     {
       type: "row",
       fields: [

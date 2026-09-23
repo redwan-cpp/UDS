@@ -100,7 +100,7 @@ export const Enquiries: CollectionConfig = {
   admin: {
     group: "Inbox",
     useAsTitle: "name",
-    defaultColumns: ["name", "email", "topic", "createdAt"],
+    defaultColumns: ["name", "email", "phone", "budget", "topic", "createdAt"],
     description:
       "Every message sent through the contact form, newest first. This is the only copy: enquiries are deleted automatically after 10 days, read or not.",
   },
@@ -192,6 +192,8 @@ export const Enquiries: CollectionConfig = {
             text: [
               `Name: ${doc.name}`,
               `Email: ${doc.email}`,
+              doc.phone ? `Phone: ${doc.phone}` : "",
+              doc.budget ? `Budget: ${doc.budget}` : "",
               doc.topic ? `Topic: ${doc.topic}` : "",
               doc.area ? `Area: ${doc.area}` : "",
               doc.size ? `Approximate size: ${doc.size} sq ft` : "",
@@ -223,6 +225,8 @@ export const Enquiries: CollectionConfig = {
     {
       type: "row",
       fields: [
+        { name: "phone", type: "text", maxLength: 40 },
+        { name: "budget", type: "text", maxLength: 40 },
         { name: "topic", type: "text", maxLength: 200 },
         { name: "area", type: "text", maxLength: 200 },
         {

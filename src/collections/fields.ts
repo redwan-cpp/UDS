@@ -140,6 +140,54 @@ export const labelValueRows = (
   ],
 });
 
+/** Supporting material for News and Knowledge: a managed PDF or external URL. */
+export const documentLinks: Field = {
+  name: "documents",
+  type: "array",
+  labels: { singular: "Document", plural: "Documents" },
+  admin: {
+    description:
+      "Add an uploaded PDF or an external link. Select one destination for each document.",
+  },
+  fields: [
+    {
+      name: "label",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "kind",
+      type: "select",
+      required: true,
+      defaultValue: "pdf",
+      options: [
+        { label: "Uploaded PDF", value: "pdf" },
+        { label: "External link", value: "link" },
+      ],
+    },
+    {
+      name: "file",
+      type: "upload",
+      // `payload-types.ts` is generated from this config. Until type generation
+      // runs on a machine with enough memory, its CollectionSlug union has not
+      // learned this new collection yet; the runtime value is still exact.
+      relationTo: "documents" as never,
+      admin: {
+        condition: (_, siblingData) => siblingData?.kind === "pdf",
+        description: "Upload the PDF in Library → Documents first.",
+      },
+    },
+    {
+      name: "href",
+      type: "text",
+      admin: {
+        condition: (_, siblingData) => siblingData?.kind === "link",
+        description: "Use a full https:// URL for an external document.",
+      },
+    },
+  ],
+};
+
 /** The URL segment. Unique and indexed, because routes look documents up by it. */
 export const slugField = (routePrefix: string): Field => ({
   name: "slug",

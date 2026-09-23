@@ -159,7 +159,8 @@ Major Projects (four featured; architecture supports n) → Management Team → 
 Latest News → Footer.
 
 **Project detail.** Project Hero → Project Information → Description → Uniqueness → Our
-Concept → Large Gallery → Rough Work / BTS → Project Information summary → Related Projects.
+Concept → Large Gallery → optional video sequence → Rough Work / BTS → Project Information
+summary → Related Projects.
 
 **Portfolio.** Name, image, short description, location, area size. Filters: All /
 Residential / Commercial / Hospitality / Interior / Other. Filtering must be elegant,
@@ -177,7 +178,8 @@ minimal and URL-reflected.
 ecosystem, not an e-commerce catalogue: no prices, no cart, no retail language.
 
 **Collaboration & News.** Items may carry images, MoU documentation, date, organisation,
-description and gallery.
+description, gallery and an optional video sequence. Knowledge entries carry the same optional
+document and video material.
 
 **Sustainability.** Material responsibility, passive design, local context, energy, water,
 adaptive reuse, responsible construction, long-term thinking. **No greenwashing.** Every
@@ -207,7 +209,7 @@ information.
 | Homepage | Studio (hero video, statement, services, closing line) and Site copy (every section heading and page standfirst) |
 | Sustainability | Sustainability |
 | SEO | SEO fields on projects, products, news and Knowledge — title, description, share image, no-index. (Team carries the fields too, but team members have no page of their own for them to apply to.) |
-| Media | Media (alt text required) and Videos |
+| Media | Media (alt text required), Videos, and PDF Documents |
 | Contact information | Studio (email, phones, address, hours, social profiles, map) |
 
 Beyond the list: Careers, Categories, Statistics, Navigation (menu and its hover images),

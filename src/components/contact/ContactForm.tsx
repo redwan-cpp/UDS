@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Arrow } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/typography";
 import { Turnstile } from "@/components/contact/Turnstile";
-import type { EnquiryTopic } from "@/types/content";
+import type { EnquiryBudget, EnquiryTopic } from "@/types/content";
 
 /**
  * The enquiry form.
@@ -17,8 +17,8 @@ import type { EnquiryTopic } from "@/types/content";
  * someone to answer seven screens before they could say hello, which is the
  * wrong trade for the visitor who already knows what they want to write.
  *
- * **Only name and email are required.** Everything else — area, size, topic,
- * the message itself — is optional, which is what keeps a form of six fields
+ * **Only name and email are required.** Everything else — phone, budget, area,
+ * size, topic, and the message itself — is optional, which keeps the form
  * finishable in seconds: a visitor who knows their site fills it all in, and
  * one who does not is never stopped by a question they cannot answer. That is
  * the same problem the old flow solved by giving both its sizing questions a
@@ -29,11 +29,11 @@ import type { EnquiryTopic } from "@/types/content";
  * read `@/data/contact` directly from inside the component, which CLAUDE.md
  * rule 1 rules out — only routes read `src/data/**`.
  *
- * **Submission goes to the `enquiries` collection** (`/api/enquiries`), which
- * saves the enquiry and then emails the studio. The checks here are for the
- * visitor's benefit — instant, specific feedback. The server repeats them and
- * adds the ones a browser cannot be trusted with: length limits, a rate limit,
- * and the hidden `website` field below that only a bot fills in.
+ * **Submission goes to the `enquiries` collection** (`/api/enquiries`), where
+ * the studio reads it in the CMS. The checks here are for the visitor's benefit
+ * — instant, specific feedback. The server repeats them and adds the ones a
+ * browser cannot be trusted with: length limits, a rate limit, and the hidden
+ * `website` field below that only a bot fills in.
  *
  * A failed send keeps everything the visitor typed and names the studio's
  * address as a way out, because the worst outcome for an enquiry form is a
@@ -53,10 +53,12 @@ const FIELD =
 const LABEL = "block text-meta uppercase text-secondary";
 
 export function ContactForm({
+  budgets,
   topics,
   email,
   turnstileSiteKey,
 }: {
+  budgets: EnquiryBudget[];
   topics: EnquiryTopic[];
   /** Offered as a way out if sending fails. */
   email: string;
@@ -123,6 +125,8 @@ export function ContactForm({
           // The label, not the value: "Interior — reworking a space that
           // exists" reads in an inbox; "interior" is a database key.
           topic: topics.find((t) => t.value === topicValue)?.label ?? topicValue,
+          phone: text("phone"),
+          budget: text("budget"),
           area: text("area"),
           size: text("size"),
           message: text("message"),
@@ -206,6 +210,33 @@ export function ContactForm({
           error={errors.email}
           autoComplete="email"
         />
+      </div>
+
+      <div className="mt-10 grid grid-cols-1 gap-x-(--grid-gap) gap-y-10 sm:grid-cols-2">
+        <Field
+          name="phone"
+          label="Phone number"
+          optional
+          inputMode="tel"
+          autoComplete="tel"
+        />
+        <div>
+          <label htmlFor="budget" className={LABEL}>
+            Budget <span className="text-secondary">— optional</span>
+          </label>
+          <select
+            id="budget"
+            name="budget"
+            defaultValue=""
+            className={`${FIELD} mt-3 appearance-none rounded-none`}
+          >
+            {budgets.map((budget) => (
+              <option key={budget.value || "empty"} value={budget.value}>
+                {budget.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Area and size, the two things the old flow asked on screens of their
@@ -329,7 +360,7 @@ function Field({
   multiline?: boolean;
   optional?: boolean;
   autoComplete?: string;
-  inputMode?: "numeric";
+  inputMode?: "numeric" | "tel";
   placeholder?: string;
 }) {
   const errorId = `${name}-error`;

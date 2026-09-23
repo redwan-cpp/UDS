@@ -13,6 +13,7 @@ import { Categories } from "./collections/Categories";
 import { Enquiries } from "./collections/Enquiries";
 import { Careers } from "./collections/Careers";
 import { Expertise } from "./collections/Expertise";
+import { Documents } from "./collections/Documents";
 import { Knowledge } from "./collections/Knowledge";
 import { Media } from "./collections/Media";
 import { News } from "./collections/News";
@@ -112,6 +113,7 @@ export default buildConfig({
     Brands,
     Careers,
     Categories,
+    Documents,
     Media,
     Videos,
     Users,

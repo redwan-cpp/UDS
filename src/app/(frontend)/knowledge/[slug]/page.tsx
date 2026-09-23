@@ -16,6 +16,7 @@ import { getKnowledge, getKnowledgeBySlug, getKnowledgeSlugs } from "@/data/cont
 import { newsKindLabels } from "@/data/news";
 import { articleJsonLd, articleMetadata } from "@/lib/share";
 import { ShareLinks } from "@/components/ui/ShareLinks";
+import { VideoGallery } from "@/components/ui/VideoGallery";
 
 export async function generateStaticParams() {
   return (await getKnowledgeSlugs()).map((slug) => ({ slug }));
@@ -148,24 +149,22 @@ export default async function KnowledgeArticlePage({
                 </Eyebrow>
                 <ul className="flex flex-col">
                   {item.documents.map((doc) => (
-                    <li
-                      key={doc.label}
-                      className="flex items-baseline justify-between gap-6 border-t border-hairline py-3.5"
-                    >
-                      {/* Rendered unlinked, not as href="#". File storage is a
-                          later phase, and a dead link is worse than an honest
-                          one that says so. */}
-                      <span className="text-small">{doc.label}</span>
-                      <span className="shrink-0 text-meta uppercase text-secondary">
-                        Not yet available
-                      </span>
+                    <li key={doc.label}>
+                      <a
+                        href={doc.href}
+                        download={doc.kind === "pdf"}
+                        target={doc.kind === "link" ? "_blank" : undefined}
+                        rel={doc.kind === "link" ? "noreferrer" : undefined}
+                        className="group flex items-baseline justify-between gap-6 border-t border-hairline py-3.5 transition-colors hover:text-accent"
+                      >
+                        <span className="text-small">{doc.label}</span>
+                        <span className="shrink-0 text-meta uppercase text-secondary group-hover:text-accent">
+                          {doc.kind === "pdf" ? "Download PDF" : "Open link"}
+                        </span>
+                      </a>
                     </li>
                   ))}
                 </ul>
-                <p className="mt-4 text-caption text-secondary">
-                  Documents are listed to show the layout. File storage arrives
-                  with the CMS in a later phase.
-                </p>
               </div>
             </Reveal>
           )}
@@ -197,6 +196,8 @@ export default async function KnowledgeArticlePage({
           </Container>
         </Section>
       )}
+
+      <VideoGallery videos={item.videos} title={item.title} />
 
       <Section surface="soft" spacing="standard" labelledBy="more-heading">
         <Container>

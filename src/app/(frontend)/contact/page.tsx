@@ -9,7 +9,7 @@ import { SocialIcon } from "@/components/contact/SocialIcon";
 import { ExternalLink } from "@/components/ui/ExternalLink";
 import { Eyebrow } from "@/components/typography";
 import { getStudio, getCopy } from "@/data/content.cms";
-import { enquiryTopics } from "@/data/contact";
+import { enquiryBudgets, enquiryTopics } from "@/data/contact";
 import { navIndex } from "@/data/navigation";
 
 export const metadata: Metadata = {
@@ -42,6 +42,7 @@ export default async function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <ContactForm
+              budgets={enquiryBudgets}
               topics={enquiryTopics}
               email={studio.contact.email}
               turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}

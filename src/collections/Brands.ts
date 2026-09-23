@@ -11,11 +11,9 @@ import { publishedOnlyAccess, isDemoField, orderField } from "./fields";
  * Collaborators and consultants — the moving strip beneath the figures.
  *
  * `logo` is optional and a collaborator without one shows the name alone. When
- * one is supplied it must be a **monochrome SVG**: marks are painted through a
- * CSS mask over a `currentColor` fill so they take the surface's own colour and
- * lift to the accent on hover. A full-colour logo will be flattened to one
- * tone. That is the site's rule rather than a limitation of the upload — one
- * accent, and it belongs to ink.
+ * one is supplied it is fitted into a fixed mark area. SVG, PNG, WebP and JPG
+ * uploads are all supported, so source files that omit SVG dimensions still
+ * render at a predictable and legible size.
  *
  * `memory.md` is binding here: a real company's mark shipped as proof of a
  * relationship the studio has not documented is a fabrication. Only add a logo
@@ -59,7 +57,7 @@ export const Brands: CollectionConfig = {
       relationTo: "media",
       admin: {
         description:
-          "Monochrome SVG. Painted through a mask so it takes the surface colour — a full-colour logo will be flattened. Leave empty to show the name alone.",
+          "Use a transparent SVG, PNG, WebP, or JPG. The site fits every mark without cropping; leave empty to show the name alone.",
       },
     },
     { type: "row", fields: [orderField, isDemoField] },

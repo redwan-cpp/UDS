@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 import { prefersReducedMotion } from "@/lib/gsap";
@@ -39,11 +40,11 @@ const SPEED = 26;
  * strip degrades to the plain scroller it was, which is a complete way to read
  * the list rather than a lesser one.
  *
- * `Brand.logo` is the CMS field, and it is painted through `.uds-mark` rather
- * than an `<img>` — see that rule for why, but briefly: an SVG inside an
- * `<img>` is a separate document whose `currentColor` resolves to black, which
- * is how the one mark already in this codebase had been invisible on a dark
- * surface since it shipped. As a mask the artwork takes the surface's colour.
+ * `Brand.logo` is fitted inside a fixed mark area. Some SVG uploads have no
+ * intrinsic dimensions, so deriving the rendered width from their metadata
+ * produced `NaNrem` and made the mark disappear. An image box is compatible
+ * with SVG and raster uploads alike, and keeps a very wide logo from taking
+ * over the strip.
  *
  * A collaborator without a logo shows the name alone. The struck-through
  * placeholder plate that used to hold the slot is gone: it was the least
@@ -177,20 +178,19 @@ export function LogoStrip({ brands }: { brands: Brand[] }) {
               className="flex shrink-0 items-center gap-4 pr-12 text-secondary lg:pr-16"
             >
               {brand.logo && (
-                // `.uds-mark`, not `<img>`: an SVG in an `<img>` is a separate
-                // document and its `currentColor` resolves to black, which is
-                // how the one mark already in the content ended up invisible
-                // on a dark surface. As a mask it takes the surface's colour.
                 <span
                   aria-hidden="true"
-                  className="uds-mark block h-7 shrink-0"
-                  style={
-                    {
-                      "--mark": `url(${brand.logo.src})`,
-                      width: `${(brand.logo.width / brand.logo.height) * 1.75}rem`,
-                    } as React.CSSProperties
-                  }
-                />
+                  className="relative block h-10 w-28 shrink-0 sm:h-12 sm:w-32"
+                >
+                  <Image
+                    src={brand.logo.src}
+                    alt=""
+                    fill
+                    unoptimized
+                    sizes="(min-width: 640px) 128px, 112px"
+                    className="object-contain object-left"
+                  />
+                </span>
               )}
               <span className="text-h3 whitespace-nowrap">
                 {brand.name}

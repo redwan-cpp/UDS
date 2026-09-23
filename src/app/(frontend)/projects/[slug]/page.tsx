@@ -11,6 +11,7 @@ import { RelatedProjects } from "@/components/projects/RelatedProjects";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { ViewMore } from "@/components/ui/ViewMore";
+import { VideoGallery } from "@/components/ui/VideoGallery";
 import { Reveal } from "@/components/motion/Reveal";
 import { Eyebrow, Prose, RichText, Statement } from "@/components/typography";
 import type { Paragraph } from "@/types/content";
@@ -153,6 +154,8 @@ export default async function ProjectPage({
           </Container>
         </Section>
       ) : null}
+
+      <VideoGallery videos={project.videos} title={project.title} />
 
       {/* The writing and the information table sit behind one disclosure. The
           hero already answers "what is this" — the long form is for the reader

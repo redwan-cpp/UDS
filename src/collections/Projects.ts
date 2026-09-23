@@ -197,6 +197,16 @@ export const Projects: CollectionConfig = {
       },
     },
     {
+      name: "videos",
+      type: "upload",
+      relationTo: "videos",
+      hasMany: true,
+      admin: {
+        description:
+          "Optional short video sequence. Upload web-ready videos in Library → Videos first.",
+      },
+    },
+    {
       type: "row",
       fields: [
         {

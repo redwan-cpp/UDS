@@ -159,6 +159,7 @@ export interface Project extends ContentBase {
   /** The card image, and the case study's opening image where there is one. */
   hero: MediaAsset;
   gallery?: MediaAsset[];
+  videos?: VideoAsset[];
   /** Rough work / behind the scenes: sketches, drawings, site photography. */
   process?: MediaAsset[];
   featured: boolean;
@@ -253,6 +254,7 @@ export interface NewsItem extends ContentBase {
   body: Paragraph[];
   image: MediaAsset;
   gallery?: MediaAsset[];
+  videos?: VideoAsset[];
   /** MoU or supporting documentation. */
   documents?: { label: string; href: string; kind: "pdf" | "link" }[];
   featured: boolean;
@@ -464,6 +466,12 @@ export interface SectionCopy {
 
 /** One option in the enquiry form's topic select. */
 export interface EnquiryTopic {
+  value: string;
+  label: string;
+}
+
+/** One option in the enquiry form's budget select. */
+export interface EnquiryBudget {
   value: string;
   label: string;
 }

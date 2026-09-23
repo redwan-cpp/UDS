@@ -15,6 +15,7 @@ import type {
   Paragraph,
   RichParagraph,
   Seo,
+  VideoAsset,
 } from "@/types/content";
 
 /**
@@ -50,6 +51,7 @@ type Upload =
       source?: string | null;
       licence?: string | null;
       cropPoint?: { x?: number | null; y?: number | null } | null;
+      mimeType?: string | null;
     }
   | number
   | string
@@ -102,6 +104,23 @@ export function toAsset(value: Upload): MediaAsset {
 /** A list of uploads, with the unpopulated and the empty dropped. */
 export function toAssets(value: Upload[] | null | undefined): MediaAsset[] {
   return (value ?? []).map(toAsset).filter((a) => a.src !== "");
+}
+
+/** Populated video uploads in the content contract the public player accepts. */
+export function toVideos(value: Upload[] | null | undefined): VideoAsset[] {
+  return (value ?? []).flatMap((upload) => {
+    if (!upload || typeof upload !== "object" || !upload.url) return [];
+    if (upload.mimeType !== "video/mp4" && upload.mimeType !== "video/webm") {
+      return [];
+    }
+
+    return [
+      {
+        sources: [{ src: upload.url, type: upload.mimeType }],
+        description: upload.alt ?? undefined,
+      },
+    ];
+  });
 }
 
 /**

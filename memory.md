@@ -31,6 +31,14 @@ because the studio needed a live site.
   behaviour and the enforced behaviour disagree, and that gap is what's recorded here, not
   papered over.
 
+**PDF documents and page video, 2026-09-23** — Projects, News/Collaborations, and Knowledge
+can each select web-ready videos from the CMS library. News/Collaborations and Knowledge also
+support downloadable PDF attachments. PDFs live in a dedicated `Documents` collection rather
+than image `Media`: it accepts only PDFs up to 12 MB, checks extension/MIME type/`%PDF-` file
+signature, refuses remote URL imports, and serves files with attachment and `nosniff` headers.
+External document links must be `https://` URLs. This is both a content-management choice and a
+Phase 4 upload-surface control.
+
 **Security headers, 2026-09-21** — the first Phase 4 item (`project-requirement.md` §11):
 CSP, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, `frame-ancestors 'none'`,
 all in `next.config.ts`'s static `headers()`, scoped to the public site only (`/admin` and

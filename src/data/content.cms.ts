@@ -23,6 +23,7 @@ import {
   toSeo,
   toRows,
   toValues,
+  toVideos,
 } from "./payload";
 import { navigation as staticNavigation } from "./navigation";
 import { studio as seedStudio } from "./studio";
@@ -47,6 +48,34 @@ import * as defaultCopy from "./copy";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Doc = any;
+
+/** Only output a link when a document row has a real public destination. */
+function toDocuments(value: Doc[] | null | undefined) {
+  return (value ?? []).flatMap((document) => {
+    if (typeof document?.label !== "string" || !document.label.trim()) return [];
+
+    const file = document.file;
+    const fileUrl =
+      file && typeof file === "object" && typeof file.url === "string"
+        ? file.url
+        : undefined;
+    const externalUrl =
+      typeof document.href === "string" && /^https:\/\//.test(document.href)
+        ? document.href
+        : undefined;
+    const href = fileUrl ?? externalUrl;
+
+    if (!href) return [];
+
+    return [
+      {
+        label: document.label,
+        href,
+        kind: fileUrl ? "pdf" : document.kind === "pdf" ? "pdf" : "link",
+      } as const,
+    ];
+  });
+}
 
 /**
  * `overrideAccess: false` is what keeps drafts off the public site.
@@ -272,30 +301,33 @@ export const getProductSlugs = cache(async (): Promise<string[]> =>
 
 /* ----------------------------------------------------------------------- news */
 
-const toNews = (d: Doc): NewsItem => ({
-  id: String(d.id),
-  slug: d.slug,
-  isDemo: Boolean(d.isDemo),
-  seo: toSeo(d.seo),
-  title: d.title,
-  kind: d.kind,
-  // Payload stores a real date; the site renders it through `<time datetime>`,
-  // which wants ISO. Sliced to the day because that is the precision the
-  // editor entered — rendering a time nobody chose would be inventing detail.
-  date: typeof d.date === "string" ? d.date.slice(0, 10) : d.date,
-  organisation: d.organisation ?? undefined,
-  location: d.location ?? undefined,
-  summary: d.summary,
-  body: toRichParagraphs(d.body),
-  image: toAsset(d.image),
-  gallery: toAssets(d.gallery).length ? toAssets(d.gallery) : undefined,
-  documents: (d.documents ?? []).map((doc: Doc) => ({
-    label: doc.label,
-    href: doc.href,
-    kind: doc.kind,
-  })),
-  featured: Boolean(d.featured),
-});
+const toNews = (d: Doc): NewsItem => {
+  const gallery = toAssets(d.gallery);
+  const videos = toVideos(d.videos);
+  const documents = toDocuments(d.documents);
+
+  return {
+    id: String(d.id),
+    slug: d.slug,
+    isDemo: Boolean(d.isDemo),
+    seo: toSeo(d.seo),
+    title: d.title,
+    kind: d.kind,
+    // Payload stores a real date; the site renders it through `<time datetime>`,
+    // which wants ISO. Sliced to the day because that is the precision the
+    // editor entered — rendering a time nobody chose would be inventing detail.
+    date: typeof d.date === "string" ? d.date.slice(0, 10) : d.date,
+    organisation: d.organisation ?? undefined,
+    location: d.location ?? undefined,
+    summary: d.summary,
+    body: toRichParagraphs(d.body),
+    image: toAsset(d.image),
+    gallery: gallery.length ? gallery : undefined,
+    videos: videos.length ? videos : undefined,
+    documents: documents.length ? documents : undefined,
+    featured: Boolean(d.featured),
+  };
+};
 
 export const getNews = cache(async (): Promise<NewsItem[]> =>
   (await find("news", { sort: "-date" })).map(toNews),
@@ -335,20 +367,28 @@ export const getNewsSlugs = cache(async (): Promise<string[]> =>
  * that — the Knowledge collection does not ask an editor to choose, since
  * there is nothing to choose between.
  */
-const toKnowledge = (d: Doc): NewsItem => ({
-  id: String(d.id),
-  slug: d.slug,
-  isDemo: Boolean(d.isDemo),
-  seo: toSeo(d.seo),
-  title: d.title,
-  kind: "publication",
-  date: typeof d.date === "string" ? d.date.slice(0, 10) : d.date,
-  summary: d.summary,
-  body: toRichParagraphs(d.body),
-  image: toAsset(d.image),
-  gallery: toAssets(d.gallery).length ? toAssets(d.gallery) : undefined,
-  featured: Boolean(d.featured),
-});
+const toKnowledge = (d: Doc): NewsItem => {
+  const gallery = toAssets(d.gallery);
+  const videos = toVideos(d.videos);
+  const documents = toDocuments(d.documents);
+
+  return {
+    id: String(d.id),
+    slug: d.slug,
+    isDemo: Boolean(d.isDemo),
+    seo: toSeo(d.seo),
+    title: d.title,
+    kind: "publication",
+    date: typeof d.date === "string" ? d.date.slice(0, 10) : d.date,
+    summary: d.summary,
+    body: toRichParagraphs(d.body),
+    image: toAsset(d.image),
+    gallery: gallery.length ? gallery : undefined,
+    videos: videos.length ? videos : undefined,
+    documents: documents.length ? documents : undefined,
+    featured: Boolean(d.featured),
+  };
+};
 
 export const getKnowledge = cache(async (): Promise<NewsItem[]> =>
   (await find("knowledge", { sort: "-date" })).map(toKnowledge),
