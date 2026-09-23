@@ -172,29 +172,29 @@ export function LogoStrip({ brands }: { brands: Brand[] }) {
           {pass.items.map((brand) => (
             <li
               key={`${i}-${brand.id}`}
-              // `text-secondary` on the row, not on the name: the mark paints in
-              // `currentColor`, so setting the colour here is what keeps mark and
-              // name at one weight instead of an ink glyph beside mute type.
+              // The logo and name are one item in the scrolling sequence. They
+              // are stacked rather than separate neighbours so a reader never
+              // sees a mark detach from its owner while dragging the strip.
               className="flex shrink-0 items-center gap-4 pr-12 text-secondary lg:pr-16"
             >
-              {brand.logo && (
-                <span
-                  aria-hidden="true"
-                  className="relative block h-10 w-28 shrink-0 sm:h-12 sm:w-32"
-                >
-                  <Image
-                    src={brand.logo.src}
-                    alt=""
-                    fill
-                    unoptimized
-                    sizes="(min-width: 640px) 128px, 112px"
-                    className="object-contain object-left"
-                  />
-                </span>
-              )}
-              <span className="text-h3 whitespace-nowrap">
-                {brand.name}
-              </span>
+              <div className="flex min-w-32 flex-col items-center gap-3 text-center">
+                {brand.logo && (
+                  <span
+                    aria-hidden="true"
+                    className="relative block h-12 w-32 shrink-0"
+                  >
+                    <Image
+                      src={brand.logo.src}
+                      alt=""
+                      fill
+                      unoptimized
+                      sizes="128px"
+                      className="object-contain"
+                    />
+                  </span>
+                )}
+                <span className="text-h3 whitespace-nowrap">{brand.name}</span>
+              </div>
               {/* The interval mark. A hairline rule rather than a filled dot:
                   structure on this site is carried by rules, and a row of dots
                   travelling past reads as punctuation nobody wrote. */}
