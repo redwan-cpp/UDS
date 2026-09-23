@@ -32,8 +32,12 @@ because the studio needed a live site.
   papered over.
 
 **PDF documents and page video, 2026-09-23** — Projects, News/Collaborations, and Knowledge
-can each select web-ready videos from the CMS library. News/Collaborations and Knowledge also
-support downloadable PDF attachments. PDFs live in a dedicated `Documents` collection rather
+can each select web-ready videos from the CMS library or link a public YouTube, Facebook, or
+direct HTTPS MP4/WebM video. The public player is a centred, controlled playback frame; platform
+embeds retain a `Full video` link, while direct files do not. Arbitrary webpage embeds are
+deliberately rejected: links are parsed into canonical player URLs, validated in the CMS and data
+layer, and CSP permits only YouTube/Facebook frame origins. News/Collaborations and Knowledge
+also support downloadable PDF attachments. PDFs live in a dedicated `Documents` collection rather
 than image `Media`: it accepts only PDFs up to 12 MB, checks extension/MIME type/`%PDF-` file
 signature, refuses remote URL imports, and serves files with attachment and `nosniff` headers.
 External document links must be `https://` URLs. This is both a content-management choice and a

@@ -155,7 +155,11 @@ export default async function ProjectPage({
         </Section>
       ) : null}
 
-      <VideoGallery videos={project.videos} title={project.title} />
+      <VideoGallery
+        videos={project.videos}
+        linkedVideos={project.linkedVideos}
+        title={project.title}
+      />
 
       {/* The writing and the information table sit behind one disclosure. The
           hero already answers "what is this" — the long form is for the reader

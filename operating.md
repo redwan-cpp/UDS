@@ -80,6 +80,10 @@ it on the project, news/collaboration, or Knowledge entry where it belongs.
 - On a Project, News/Collaboration, or Knowledge entry, use **Videos** to add footage. On
   News/Collaboration and Knowledge entries, use **Documents** to add an uploaded PDF or a full
   `https://` link to an external document.
+- On those same entries, **Linked videos** can show a public YouTube or Facebook video inside
+  the page, with a **Full video** button below it. It also accepts a direct `https://` MP4 or
+  WebM file, which plays in the page without that button. Choose the source type first, then
+  paste its public link. Do not use a private or embedding-disabled social video.
 
 ---
 

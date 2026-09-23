@@ -18,6 +18,7 @@ import {
   toAsset,
   toAssets,
   toCategories,
+  toLinkedVideos,
   toParagraphs,
   toRichParagraphs,
   toSeo,
@@ -304,6 +305,7 @@ export const getProductSlugs = cache(async (): Promise<string[]> =>
 const toNews = (d: Doc): NewsItem => {
   const gallery = toAssets(d.gallery);
   const videos = toVideos(d.videos);
+  const linkedVideos = toLinkedVideos(d.linkedVideos);
   const documents = toDocuments(d.documents);
 
   return {
@@ -324,6 +326,7 @@ const toNews = (d: Doc): NewsItem => {
     image: toAsset(d.image),
     gallery: gallery.length ? gallery : undefined,
     videos: videos.length ? videos : undefined,
+    linkedVideos: linkedVideos.length ? linkedVideos : undefined,
     documents: documents.length ? documents : undefined,
     featured: Boolean(d.featured),
   };
@@ -370,6 +373,7 @@ export const getNewsSlugs = cache(async (): Promise<string[]> =>
 const toKnowledge = (d: Doc): NewsItem => {
   const gallery = toAssets(d.gallery);
   const videos = toVideos(d.videos);
+  const linkedVideos = toLinkedVideos(d.linkedVideos);
   const documents = toDocuments(d.documents);
 
   return {
@@ -385,6 +389,7 @@ const toKnowledge = (d: Doc): NewsItem => {
     image: toAsset(d.image),
     gallery: gallery.length ? gallery : undefined,
     videos: videos.length ? videos : undefined,
+    linkedVideos: linkedVideos.length ? linkedVideos : undefined,
     documents: documents.length ? documents : undefined,
     featured: Boolean(d.featured),
   };

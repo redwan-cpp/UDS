@@ -79,6 +79,7 @@ export interface Config {
     brands: Brand;
     careers: Career;
     categories: Category;
+    documents: Document;
     media: Media;
     videos: Video;
     users: User;
@@ -101,6 +102,7 @@ export interface Config {
     brands: BrandsSelect<false> | BrandsSelect<true>;
     careers: CareersSelect<false> | CareersSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    documents: DocumentsSelect<false> | DocumentsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     videos: VideosSelect<false> | VideosSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -161,6 +163,8 @@ export interface Enquiry {
   id: number;
   name: string;
   email: string;
+  phone?: string | null;
+  budget?: string | null;
   topic?: string | null;
   area?: string | null;
   /**
@@ -303,6 +307,27 @@ export interface Project {
    */
   process?: (number | Media)[] | null;
   /**
+   * Optional short video sequence. Upload web-ready videos in Library → Videos first.
+   */
+  videos?: (number | Video)[] | null;
+  /**
+   * Public YouTube, Facebook, or direct HTTPS MP4/WebM links. They play on this page; YouTube and Facebook also show a Full video button.
+   */
+  linkedVideos?:
+    | {
+        /**
+         * What the video shows, for visitors using a screen reader.
+         */
+        label: string;
+        provider: 'youtube' | 'facebook' | 'file';
+        /**
+         * Paste the public video URL. YouTube and Facebook videos must allow embedding.
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * Show on the homepage work band.
    */
   featured?: boolean | null;
@@ -431,6 +456,30 @@ export interface Media {
   };
 }
 /**
+ * Web-ready video only — WebM and MP4, already compressed. Not camera or phone exports.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos".
+ */
+export interface Video {
+  id: number;
+  /**
+   * What the footage shows. The hero video is decorative — the poster image beneath it carries the description — so a single space is a legitimate answer here, but type it on purpose.
+   */
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products".
  */
@@ -551,16 +600,41 @@ export interface News {
   image: number | Media;
   gallery?: (number | Media)[] | null;
   /**
-   * MoUs and supporting documentation.
+   * Optional short video sequence. Upload web-ready videos in Library → Videos first.
+   */
+  videos?: (number | Video)[] | null;
+  /**
+   * Public YouTube, Facebook, or direct HTTPS MP4/WebM links. They play on this page; YouTube and Facebook also show a Full video button.
+   */
+  linkedVideos?:
+    | {
+        /**
+         * What the video shows, for visitors using a screen reader.
+         */
+        label: string;
+        provider: 'youtube' | 'facebook' | 'file';
+        /**
+         * Paste the public video URL. YouTube and Facebook videos must allow embedding.
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Add an uploaded PDF or an external link. Select one destination for each document.
    */
   documents?:
     | {
         label: string;
         kind: 'pdf' | 'link';
         /**
-         * A URL, or the path to an uploaded file. Never leave this empty — ruler.md forbids a link that goes nowhere; an unsupplied destination is set as text instead.
+         * Upload the PDF in Library → Documents first.
          */
-        href: string;
+        file?: (number | null) | Document;
+        /**
+         * Use a full https:// URL for an external document.
+         */
+        href?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -587,6 +661,26 @@ export interface News {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * PDF documents only. Maximum file size: 12 MB.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents".
+ */
+export interface Document {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * Written pieces — the studio's own thinking, rather than announcements. Shown at /knowledge.
@@ -630,6 +724,45 @@ export interface Knowledge {
    */
   image: number | Media;
   gallery?: (number | Media)[] | null;
+  /**
+   * Optional short video sequence. Upload web-ready videos in Library → Videos first.
+   */
+  videos?: (number | Video)[] | null;
+  /**
+   * Public YouTube, Facebook, or direct HTTPS MP4/WebM links. They play on this page; YouTube and Facebook also show a Full video button.
+   */
+  linkedVideos?:
+    | {
+        /**
+         * What the video shows, for visitors using a screen reader.
+         */
+        label: string;
+        provider: 'youtube' | 'facebook' | 'file';
+        /**
+         * Paste the public video URL. YouTube and Facebook videos must allow embedding.
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Add an uploaded PDF or an external link. Select one destination for each document.
+   */
+  documents?:
+    | {
+        label: string;
+        kind: 'pdf' | 'link';
+        /**
+         * Upload the PDF in Library → Documents first.
+         */
+        file?: (number | null) | Document;
+        /**
+         * Use a full https:// URL for an external document.
+         */
+        href?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Lead the Knowledge index with this piece.
    */
@@ -802,7 +935,7 @@ export interface Brand {
    */
   relationship: string;
   /**
-   * Monochrome SVG. Painted through a mask so it takes the surface colour — a full-colour logo will be flattened. Leave empty to show the name alone.
+   * Use a transparent SVG, PNG, WebP, or JPG. The site fits every mark without cropping; leave empty to show the name alone.
    */
   logo?: (number | null) | Media;
   /**
@@ -843,30 +976,6 @@ export interface Career {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * Web-ready video only — WebM and MP4, already compressed. Not camera or phone exports.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "videos".
- */
-export interface Video {
-  id: number;
-  /**
-   * What the footage shows. The hero video is decorative — the poster image beneath it carries the description — so a single space is a legitimate answer here, but type it on purpose.
-   */
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -972,6 +1081,10 @@ export interface PayloadLockedDocument {
         value: number | Category;
       } | null)
     | ({
+        relationTo: 'documents';
+        value: number | Document;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1032,6 +1145,8 @@ export interface PayloadMigration {
 export interface EnquiriesSelect<T extends boolean = true> {
   name?: T;
   email?: T;
+  phone?: T;
+  budget?: T;
   topic?: T;
   area?: T;
   size?: T;
@@ -1096,6 +1211,15 @@ export interface ProjectsSelect<T extends boolean = true> {
   hero?: T;
   gallery?: T;
   process?: T;
+  videos?: T;
+  linkedVideos?:
+    | T
+    | {
+        label?: T;
+        provider?: T;
+        url?: T;
+        id?: T;
+      };
   featured?: T;
   order?: T;
   isDemo?: T;
@@ -1183,11 +1307,21 @@ export interface NewsSelect<T extends boolean = true> {
       };
   image?: T;
   gallery?: T;
+  videos?: T;
+  linkedVideos?:
+    | T
+    | {
+        label?: T;
+        provider?: T;
+        url?: T;
+        id?: T;
+      };
   documents?:
     | T
     | {
         label?: T;
         kind?: T;
+        file?: T;
         href?: T;
         id?: T;
       };
@@ -1223,6 +1357,24 @@ export interface KnowledgeSelect<T extends boolean = true> {
       };
   image?: T;
   gallery?: T;
+  videos?: T;
+  linkedVideos?:
+    | T
+    | {
+        label?: T;
+        provider?: T;
+        url?: T;
+        id?: T;
+      };
+  documents?:
+    | T
+    | {
+        label?: T;
+        kind?: T;
+        file?: T;
+        href?: T;
+        id?: T;
+      };
   featured?: T;
   isDemo?: T;
   seo?:
@@ -1359,6 +1511,23 @@ export interface CategoriesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents_select".
+ */
+export interface DocumentsSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

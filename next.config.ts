@@ -112,12 +112,16 @@ const nextConfig: NextConfig = {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "font-src 'self'",
+      // Direct MP4/WebM links are editor-validated HTTPS media URLs. Their
+      // host is intentionally not fixed: a studio may use its own CDN later
+      // without weakening script, frame, or connection policy.
+      "media-src 'self' https:",
       `connect-src 'self' ${CLOUDFLARE}`,
-      // The studio's Google Maps embed (StudioMap.tsx) and the Turnstile
-      // challenge iframe are the only third-party content on the site —
-      // the privacy page discloses the Maps embed as such and should be
-      // updated to name Turnstile too once it's actually configured.
-      `frame-src 'self' https://www.google.com ${CLOUDFLARE}`,
+      // Maps, Turnstile, and editor-approved public video players are the
+      // only third-party frames. Linked video URLs are validated server-side
+      // into these canonical player origins — arbitrary iframe URLs never
+      // reach this allowlist.
+      `frame-src 'self' https://www.google.com https://www.youtube.com https://www.facebook.com ${CLOUDFLARE}`,
       "frame-ancestors 'none'",
       "object-src 'none'",
       "base-uri 'self'",

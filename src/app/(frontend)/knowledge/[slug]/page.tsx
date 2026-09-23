@@ -197,7 +197,11 @@ export default async function KnowledgeArticlePage({
         </Section>
       )}
 
-      <VideoGallery videos={item.videos} title={item.title} />
+      <VideoGallery
+        videos={item.videos}
+        linkedVideos={item.linkedVideos}
+        title={item.title}
+      />
 
       <Section surface="soft" spacing="standard" labelledBy="more-heading">
         <Container>

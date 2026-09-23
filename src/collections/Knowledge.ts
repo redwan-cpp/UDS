@@ -7,6 +7,7 @@ import {
 import {
   publishedOnlyAccess,
   documentLinks,
+  linkedVideos,
   isDemoField,
   richParagraphs,
   seoGroup,
@@ -90,6 +91,7 @@ export const Knowledge: CollectionConfig = {
           "Optional short video sequence. Upload web-ready videos in Library → Videos first.",
       },
     },
+    linkedVideos,
     documentLinks,
     {
       type: "row",

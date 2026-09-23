@@ -178,8 +178,8 @@ minimal and URL-reflected.
 ecosystem, not an e-commerce catalogue: no prices, no cart, no retail language.
 
 **Collaboration & News.** Items may carry images, MoU documentation, date, organisation,
-description, gallery and an optional video sequence. Knowledge entries carry the same optional
-document and video material.
+description, gallery and an optional uploaded or linked video sequence. Knowledge entries carry
+the same optional document and video material.
 
 **Sustainability.** Material responsibility, passive design, local context, energy, water,
 adaptive reuse, responsible construction, long-term thinking. **No greenwashing.** Every

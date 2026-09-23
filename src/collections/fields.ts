@@ -12,6 +12,8 @@ import {
   UnderlineFeature,
 } from "@payloadcms/richtext-lexical";
 
+import { isLinkedVideoProvider, isSupportedLinkedVideo } from "@/lib/video-links";
+
 /**
  * Field shapes that recur across the collections.
  *
@@ -168,10 +170,7 @@ export const documentLinks: Field = {
     {
       name: "file",
       type: "upload",
-      // `payload-types.ts` is generated from this config. Until type generation
-      // runs on a machine with enough memory, its CollectionSlug union has not
-      // learned this new collection yet; the runtime value is still exact.
-      relationTo: "documents" as never,
+      relationTo: "documents",
       admin: {
         condition: (_, siblingData) => siblingData?.kind === "pdf",
         description: "Upload the PDF in Library → Documents first.",
@@ -183,6 +182,58 @@ export const documentLinks: Field = {
       admin: {
         condition: (_, siblingData) => siblingData?.kind === "link",
         description: "Use a full https:// URL for an external document.",
+      },
+    },
+  ],
+};
+
+/** Public video links that have a safe, known player implementation. */
+export const linkedVideos: Field = {
+  name: "linkedVideos",
+  type: "array",
+  labels: { singular: "Linked video", plural: "Linked videos" },
+  admin: {
+    description:
+      "Public YouTube, Facebook, or direct HTTPS MP4/WebM links. They play on this page; YouTube and Facebook also show a Full video button.",
+  },
+  fields: [
+    {
+      name: "label",
+      type: "text",
+      required: true,
+      admin: { description: "What the video shows, for visitors using a screen reader." },
+    },
+    {
+      name: "provider",
+      type: "select",
+      required: true,
+      defaultValue: "youtube",
+      options: [
+        { label: "YouTube", value: "youtube" },
+        { label: "Facebook", value: "facebook" },
+        { label: "Direct MP4 or WebM file", value: "file" },
+      ],
+    },
+    {
+      name: "url",
+      type: "text",
+      required: true,
+      validate: (value: unknown, { siblingData }: { siblingData: unknown }) => {
+        const row =
+          siblingData && typeof siblingData === "object"
+            ? (siblingData as Record<string, unknown>)
+            : undefined;
+        const provider = row && isLinkedVideoProvider(row.provider) ? row.provider : undefined;
+
+        if (typeof value !== "string" || !provider || !isSupportedLinkedVideo(value, provider)) {
+          return "Use a public HTTPS URL matching the selected video source.";
+        }
+
+        return true;
+      },
+      admin: {
+        description:
+          "Paste the public video URL. YouTube and Facebook videos must allow embedding.",
       },
     },
   ],

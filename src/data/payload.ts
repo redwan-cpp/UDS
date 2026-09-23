@@ -11,12 +11,14 @@ import type { SerializedEditorState } from "lexical";
 
 import type {
   Category,
+  LinkedVideo,
   MediaAsset,
   Paragraph,
   RichParagraph,
   Seo,
   VideoAsset,
 } from "@/types/content";
+import { isLinkedVideoProvider, isSupportedLinkedVideo } from "@/lib/video-links";
 
 /**
  * The seam between Payload and the site.
@@ -120,6 +122,28 @@ export function toVideos(value: Upload[] | null | undefined): VideoAsset[] {
         description: upload.alt ?? undefined,
       },
     ];
+  });
+}
+
+/** External video rows that remain safe even when they bypass CMS validation. */
+export function toLinkedVideos(
+  value:
+    | { label?: unknown; provider?: unknown; url?: unknown }[]
+    | null
+    | undefined,
+): LinkedVideo[] {
+  return (value ?? []).flatMap((video) => {
+    if (
+      typeof video.label !== "string" ||
+      !video.label.trim() ||
+      typeof video.url !== "string" ||
+      !isLinkedVideoProvider(video.provider) ||
+      !isSupportedLinkedVideo(video.url, video.provider)
+    ) {
+      return [];
+    }
+
+    return [{ label: video.label, provider: video.provider, url: video.url }];
   });
 }
 

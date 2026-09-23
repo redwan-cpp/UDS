@@ -47,6 +47,18 @@ export interface VideoAsset {
   licence?: string;
 }
 
+/** The external player types the site can validate and render safely. */
+export type LinkedVideoProvider = "youtube" | "facebook" | "file";
+
+/** A public video hosted elsewhere, displayed beside uploaded CMS video. */
+export interface LinkedVideo {
+  provider: LinkedVideoProvider;
+  /** Public source URL, retained for the “Full video” destination. */
+  url: string;
+  /** Identifies the player for visitors using assistive technology. */
+  label: string;
+}
+
 /* -------------------------------------------------------------------------- */
 /* Shared                                                                      */
 /* -------------------------------------------------------------------------- */
@@ -160,6 +172,7 @@ export interface Project extends ContentBase {
   hero: MediaAsset;
   gallery?: MediaAsset[];
   videos?: VideoAsset[];
+  linkedVideos?: LinkedVideo[];
   /** Rough work / behind the scenes: sketches, drawings, site photography. */
   process?: MediaAsset[];
   featured: boolean;
@@ -255,6 +268,7 @@ export interface NewsItem extends ContentBase {
   image: MediaAsset;
   gallery?: MediaAsset[];
   videos?: VideoAsset[];
+  linkedVideos?: LinkedVideo[];
   /** MoU or supporting documentation. */
   documents?: { label: string; href: string; kind: "pdf" | "link" }[];
   featured: boolean;

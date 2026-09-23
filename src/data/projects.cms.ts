@@ -6,6 +6,7 @@ import {
   toAsset,
   toAssets,
   toCategories,
+  toLinkedVideos,
   toRichParagraphs,
   toSeo,
   toRows,
@@ -41,6 +42,7 @@ function toProject(d: Doc): Project {
   const gallery = toAssets(d.gallery);
   const process = toAssets(d.process);
   const videos = toVideos(d.videos);
+  const linkedVideos = toLinkedVideos(d.linkedVideos);
 
   return {
     id: String(d.id),
@@ -74,6 +76,7 @@ function toProject(d: Doc): Project {
     gallery: gallery.length ? gallery : undefined,
     process: process.length ? process : undefined,
     videos: videos.length ? videos : undefined,
+    linkedVideos: linkedVideos.length ? linkedVideos : undefined,
     featured: Boolean(d.featured),
     order: d.order ?? 0,
   };

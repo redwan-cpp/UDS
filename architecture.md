@@ -310,10 +310,12 @@ design.
 Built: uploads on the server's disk outside the build directory (`MEDIA_DIR`), derivatives cut
 at upload, originals capped at 2560px wide, served through the Next image optimizer with long
 cache headers, and copied off-site to Backblaze by the backup job. Videos are web-ready MP4 or
-WebM files only (12 MB maximum); supporting documents use a separate PDF-only collection (also
-12 MB), validated by filename, MIME type and file signature, with remote URL import disabled
-and attachment download headers. Object storage behind a CDN is still the plan if traffic or the
-media library outgrow one server. The `MediaAsset` type is already shaped for it.
+WebM files only (12 MB maximum), or an editor-validated public YouTube/Facebook/direct-file
+link; external platform players are constrained by CSP to their canonical frame origins.
+Supporting documents use a separate PDF-only collection (also 12 MB), validated by filename,
+MIME type and file signature, with remote URL import disabled and attachment download headers.
+Object storage behind a CDN is still the plan if traffic or the media library outgrow one server.
+The `MediaAsset` type is already shaped for it.
 
 ### 3.5 Contact system — BUILT, EXCEPT THE BOT CHECK
 Validation → rate limit (five per connection per ten minutes) → honeypot → persistence in the

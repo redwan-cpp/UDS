@@ -5,7 +5,7 @@ import {
   revalidateCollectionDelete,
 } from "./hooks/revalidate";
 
-import { publishedOnlyAccess, richParagraphs, seoGroup } from "./fields";
+import { linkedVideos, publishedOnlyAccess, richParagraphs, seoGroup } from "./fields";
 
 /**
  * Major Projects — the publication-grade case study.
@@ -206,6 +206,7 @@ export const Projects: CollectionConfig = {
           "Optional short video sequence. Upload web-ready videos in Library → Videos first.",
       },
     },
+    linkedVideos,
     {
       type: "row",
       fields: [
