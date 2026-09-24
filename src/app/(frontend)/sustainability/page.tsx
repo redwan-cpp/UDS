@@ -7,7 +7,7 @@ import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Media } from "@/components/ui/Media";
 import { Reveal } from "@/components/motion/Reveal";
-import { Statement, Eyebrow } from "@/components/typography";
+import { Statement } from "@/components/typography";
 import { getSustainabilityPrinciples, getCopy } from "@/data/content.cms";
 import { navIndex } from "@/data/navigation";
 
@@ -117,17 +117,6 @@ export default async function SustainabilityPage() {
             ))}
           </ul>
 
-          <Reveal className="mt-14 border-l border-accent pl-5">
-            <Eyebrow as="h2" className="text-accent">
-              A note on what is not here
-            </Eyebrow>
-            <p className="mt-3 max-w-[60ch] text-small text-secondary">
-              There are no percentages, ratings or certifications on this page.
-              A sustainability claim is only worth making if it can be
-              evidenced, and the studio has not yet supplied that evidence.
-              Placeholder numbers here would be greenwashing with extra steps.
-            </p>
-          </Reveal>
         </Container>
       </Section>
     </>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
@@ -136,31 +136,42 @@ export function SmoothScroll() {
     };
   }, []);
 
-  useEffect(() => {
-    const lenis = lenisRef.current;
-    if (!lenis) return;
-
+  useLayoutEffect(() => {
     const wasPop = poppedRef.current;
     poppedRef.current = false;
     const hasHash = Boolean(window.location.hash);
+    const lenis = lenisRef.current;
 
     // Back, forward, or a link carrying a fragment: something else — history
     // restoration or the anchor — owns where this page belongs, and it may not
     // have applied it yet. Take a frame, then adopt whatever it decided.
     if (wasPop || hasHash) {
       const frame = window.requestAnimationFrame(() => {
-        lenis.scrollTo(window.scrollY, { immediate: true, force: true });
+        lenis?.scrollTo(window.scrollY, { immediate: true, force: true });
         ScrollTrigger.refresh();
       });
       return () => window.cancelAnimationFrame(frame);
     }
 
-    // An ordinary link: the new page starts at the top. Set that outright
-    // rather than reading `window.scrollY` and adopting it — the value there
-    // is exactly what may already have been overwritten by Lenis's own
-    // carried-over target, so reading it is reading the bug.
-    lenis.scrollTo(0, { immediate: true, force: true });
-    ScrollTrigger.refresh();
+    // An ordinary link always starts at the top. This has to run before paint
+    // *and* once more after the router's own scroll-restoration work: Next and
+    // Lenis schedule independently, so a single reset could be overwritten by
+    // either one on slower devices. The second pass only occurs on navigation,
+    // never while scrolling, and keeps browser-native scrolling correct when
+    // reduced motion means Lenis is not constructed.
+    const reset = () => {
+      window.scrollTo(0, 0);
+      lenis?.scrollTo(0, { immediate: true, force: true });
+    };
+    reset();
+    const firstFrame = window.requestAnimationFrame(() => {
+      reset();
+      window.requestAnimationFrame(() => {
+        reset();
+        ScrollTrigger.refresh();
+      });
+    });
+    return () => window.cancelAnimationFrame(firstFrame);
   }, [pathname]);
 
   return null;
