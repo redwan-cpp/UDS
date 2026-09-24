@@ -228,7 +228,7 @@ export function ContactForm({
             id="budget"
             name="budget"
             defaultValue=""
-            className={`${FIELD} mt-3 appearance-none rounded-none`}
+            className={`${FIELD} uds-select mt-3 appearance-none rounded-none`}
           >
             {budgets.map((budget) => (
               <option key={budget.value || "empty"} value={budget.value}>
@@ -273,7 +273,7 @@ export function ContactForm({
           id="topic"
           name="topic"
           defaultValue={topics[0]?.value}
-          className={`${FIELD} mt-3 appearance-none rounded-none`}
+          className={`${FIELD} uds-select mt-3 appearance-none rounded-none`}
         >
           {topics.map((topic) => (
             <option key={topic.value} value={topic.value}>

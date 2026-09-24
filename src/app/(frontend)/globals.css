@@ -326,6 +326,19 @@
     color: var(--color-on-accent);
   }
 
+  /* Native select menus are drawn by the browser, but Chromium on Windows can
+     otherwise combine a dark OS popup with this light form's ink text. Asking
+     for the light native control palette keeps the list readable while
+     preserving native keyboard and touch behaviour. */
+  .uds-select {
+    color-scheme: light;
+  }
+
+  .uds-select option {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+  }
+
   /* Reduced motion: render the final state, do not merely animate faster. */
   @media (prefers-reduced-motion: reduce) {
     *,
