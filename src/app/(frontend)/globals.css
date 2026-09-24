@@ -80,6 +80,14 @@
   --text-h1--letter-spacing: -0.035em;
   --text-h1--font-weight: 500;
 
+  /* Long CMS-authored article and project titles need a distinct cap from a
+     short page title. They remain display-led, but no longer consume an entire
+     desktop viewport before the reader reaches the work. */
+  --text-detail-title: clamp(2.25rem, min(4.5vw, 8vh), 4rem);
+  --text-detail-title--line-height: 0.96;
+  --text-detail-title--letter-spacing: -0.03em;
+  --text-detail-title--font-weight: 500;
+
   --text-h2: clamp(1.75rem, 3.6vw, 3.25rem);
   --text-h2--line-height: 1;
   --text-h2--letter-spacing: -0.03em;

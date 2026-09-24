@@ -57,7 +57,7 @@ export function ProjectHero({ project }: { project: Project }) {
             <RevealText
               as="h1"
               text={project.title}
-              className="text-h1"
+              className="text-detail-title"
               immediate
               stagger={0.07}
             />

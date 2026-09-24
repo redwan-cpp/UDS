@@ -41,9 +41,12 @@ const DRAG_DAMPING = 0.35;
 export function ProjectSlideshow({
   images,
   title,
+  fullBleed = false,
 }: {
   images: MediaAsset[];
   title: string;
+  /** Let the plate reach the viewport edge while controls retain a safe gutter. */
+  fullBleed?: boolean;
 }) {
   const [active, setActive] = useState(0);
   const [dragging, setDragging] = useState(false);
@@ -198,7 +201,7 @@ export function ProjectSlideshow({
                 asset={image}
                 ratio="wide"
                 priority={i === 0}
-                sizes="(min-width: 1024px) 90vw, 100vw"
+                sizes="100vw"
               />
             </div>
           );
@@ -240,7 +243,11 @@ export function ProjectSlideshow({
       </div>
 
       {/* The rule: index left, credit centre, controls right. */}
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+      <div
+        className={`mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 ${
+          fullBleed ? "px-(--gutter)" : ""
+        }`}
+      >
         <p className="flex items-baseline gap-2 text-meta uppercase text-secondary">
           <span data-numeric className="text-accent">
             {String(active + 1).padStart(2, "0")}
@@ -276,7 +283,7 @@ export function ProjectSlideshow({
       {/* Thumbnails. Every plate reachable in one action rather than by
           pressing "next" four times. */}
       {count > 1 && (
-        <ul className="mt-6 flex flex-wrap gap-3">
+        <ul className={`mt-6 flex flex-wrap gap-3 ${fullBleed ? "px-(--gutter)" : ""}`}>
           {images.map((image, i) => {
             const isActive = i === active;
             return (

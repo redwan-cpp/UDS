@@ -101,7 +101,7 @@ export default async function NewsArticlePage({
             <RevealText
               as="h1"
               text={item.title}
-              className="text-h1 text-balance"
+              className="text-detail-title text-balance"
               immediate
               stagger={0.05}
             />

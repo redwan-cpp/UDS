@@ -151,10 +151,11 @@ export default async function ProjectPage({
           opens the disclosure below. */}
       {project.gallery?.length ? (
         <Section surface="dark" spacing="standard">
-          <Container>
+          <Container width="full" bleed>
             <ProjectSlideshow
               images={project.gallery}
               title={`${project.title} — gallery`}
+              fullBleed
             />
           </Container>
         </Section>
