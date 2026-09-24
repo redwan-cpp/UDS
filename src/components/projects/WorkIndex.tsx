@@ -139,7 +139,7 @@ function WorkEntry({ item }: { item: Project }) {
   return (
     <article className="border-t border-hairline pt-5">
       {documented ? (
-        <Link href={`/projects/${item.slug}`} className="group block">
+        <Link href={`/projects/${item.slug}`} scroll className="group block">
           {body}
         </Link>
       ) : (

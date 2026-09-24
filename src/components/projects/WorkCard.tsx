@@ -40,6 +40,7 @@ export function WorkCard({
     <article>
       <Link
         href={`/projects/${project.slug}`}
+        scroll
         aria-label={`${project.title} — ${project.summary}`}
         className="group relative block overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >

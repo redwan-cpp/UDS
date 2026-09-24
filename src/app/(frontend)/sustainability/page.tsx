@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { pageMetadata } from "@/lib/share";
 
-import { PageHero, DemoNotice } from "@/components/hero/PageHero";
+import { PageHero } from "@/components/hero/PageHero";
 import { Section } from "@/components/ui/Section";
 import { Container } from "@/components/ui/Container";
 import { Media } from "@/components/ui/Media";
@@ -29,13 +29,6 @@ export default async function SustainabilityPage() {
         eyebrow={heroCopy["/sustainability"].eyebrow}
         title={heroCopy["/sustainability"].title}
         intro={heroCopy["/sustainability"].intro}
-        aside={
-          <DemoNotice>
-            These themes are placeholders. The studio&rsquo;s actual practice,
-            and any figure or certification, is deliberately absent rather than
-            invented.
-          </DemoNotice>
-        }
       />
 
       <Section surface="light" spacing="pivotal">

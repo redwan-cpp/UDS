@@ -514,6 +514,12 @@ export interface Product {
     text?: string | null;
     id?: string | null;
   }[];
+  variations?:
+    | {
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
   materials: {
     value: string;
     id?: string | null;
@@ -522,6 +528,24 @@ export interface Product {
     value: string;
     id?: string | null;
   }[];
+  /**
+   * Add an uploaded PDF or an external link. Select one destination for each document.
+   */
+  documents?:
+    | {
+        label: string;
+        kind: 'pdf' | 'link';
+        /**
+         * Upload the PDF in Library → Documents first.
+         */
+        file?: (number | null) | Document;
+        /**
+         * Use a full https:// URL for an external document.
+         */
+        href?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Order is meaningful — it is the order these appear on the page.
    */
@@ -1251,6 +1275,12 @@ export interface ProductsSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
+  variations?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
   materials?:
     | T
     | {
@@ -1261,6 +1291,15 @@ export interface ProductsSelect<T extends boolean = true> {
     | T
     | {
         value?: T;
+        id?: T;
+      };
+  documents?:
+    | T
+    | {
+        label?: T;
+        kind?: T;
+        file?: T;
+        href?: T;
         id?: T;
       };
   specs?:

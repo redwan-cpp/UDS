@@ -8,6 +8,7 @@ import {
 import {
   publishedOnlyAccess,
   isDemoField,
+  documentLinks,
   labelValueRows,
   orderField,
   richParagraphs,
@@ -70,11 +71,16 @@ export const Products: CollectionConfig = {
       admin: { description: "One line, sits under the title." },
     },
     richParagraphs("description", { required: true }),
+    stringList("variations", {
+      singular: "Variation",
+      plural: "Variations",
+    }),
     stringList("materials", {
       singular: "Material",
       plural: "Materials",
       required: true,
     }),
+    documentLinks,
     stringList("applications", {
       singular: "Application",
       plural: "Applications",

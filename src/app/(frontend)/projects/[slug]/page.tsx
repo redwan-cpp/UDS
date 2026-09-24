@@ -116,6 +116,11 @@ export default async function ProjectPage({
   if (!project || !project.description?.length) notFound();
 
   const related = await getRelatedProjects(slug, 3);
+  const remainingDescription = project.description.slice(1);
+  const hasMoreWriting =
+    remainingDescription.length > 0 ||
+    Boolean(project.uniqueness?.length) ||
+    Boolean(project.concept?.length);
 
   return (
     <article>
@@ -179,14 +184,18 @@ export default async function ProjectPage({
           ) : null}
 
           <div className="pt-16 md:pt-20">
-            <ViewMore label="View more" openLabel="View less">
-              <div className="flex flex-col gap-20 md:gap-28">
-                <Narrative
-                  eyebrow={sectionCopy["project.description"].eyebrow}
-                  heading="The project"
-                  paragraphs={project.description}
-                  lead
-                />
+            <Narrative
+              eyebrow={sectionCopy["project.description"].eyebrow}
+              heading="The project"
+              paragraphs={[project.description[0]]}
+              lead
+            />
+            {hasMoreWriting ? (
+              <ViewMore label="View more" openLabel="View less" className="mt-12">
+                <div className="flex flex-col gap-20 md:gap-28">
+                  {remainingDescription.length > 0 ? (
+                    <Prose paragraphs={remainingDescription} />
+                  ) : null}
                 <Narrative
                   eyebrow={sectionCopy["project.uniqueness"].eyebrow}
                   heading="What makes it particular"
@@ -197,8 +206,9 @@ export default async function ProjectPage({
                   heading="Where it started"
                   paragraphs={project.concept}
                 />
-              </div>
-            </ViewMore>
+                </div>
+              </ViewMore>
+            ) : null}
           </div>
         </Container>
       </Section>

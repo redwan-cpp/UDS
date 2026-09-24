@@ -41,7 +41,7 @@ export function ProjectCard({
 }) {
   return (
     <article className="border-t border-hairline pt-5">
-      <Link href={`/projects/${project.slug}`} className="group block">
+      <Link href={`/projects/${project.slug}`} scroll className="group block">
         <div className="flex items-center justify-between gap-4 pb-5">
           <span data-numeric className="text-meta uppercase text-accent">
             {String(index).padStart(2, "0")}

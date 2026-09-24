@@ -28,6 +28,7 @@ const products: Product[] = [
       "The studio designs and specifies doors for its own projects and for others: solid timber, veneered core, steel-framed glazed leaves, and pivot sets where the opening is too large for hinges to behave.",
       "Every leaf is drawn full size before it is made. Ironmongery is selected at the same time as the leaf rather than after it, so the handle height, the lock case and the reveal are one decision instead of three.",
     ],
+    variations: [],
     materials: [
       "Solid European oak",
       "Veneered engineered core",
@@ -69,6 +70,7 @@ const products: Product[] = [
       "The studio produces fabrication drawings for these elements itself rather than delegating them, because the fold line and the fixing centres change how the finished piece looks far more than the material specification does.",
       "Work ranges from single balustrade panels to full facade screens, in mild steel, stainless, aluminium and copper, with mill, patinated, powder-coated and anodised finishes.",
     ],
+    variations: [],
     materials: [
       "Mild steel, blackened or powder-coated",
       "Stainless steel, brushed or bead-blasted",

@@ -99,6 +99,24 @@ export default async function ProductPage({
               )}
 
               <div className="mt-10 flex flex-col gap-8">
+                {product.variations.length > 0 ? (
+                  <div>
+                    <Eyebrow as="h2" className="pb-4">
+                      Variation
+                    </Eyebrow>
+                    <ul className="flex flex-col">
+                      {product.variations.map((variation) => (
+                        <li
+                          key={variation}
+                          className="border-t border-hairline py-3 text-small last:border-b"
+                        >
+                          {variation}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
                 <div>
                   <Eyebrow as="h2" className="pb-4">
                     Materials
@@ -113,6 +131,24 @@ export default async function ProductPage({
                       </li>
                     ))}
                   </ul>
+                  {product.documents && product.documents.length > 0 ? (
+                    <ul className="mt-6 flex flex-col border-t border-hairline">
+                      {product.documents.map((doc) => (
+                        <li key={doc.label} className="border-b border-hairline">
+                          <a
+                            href={doc.href}
+                            download={doc.kind === "pdf"}
+                            target={doc.kind === "link" ? "_blank" : undefined}
+                            rel={doc.kind === "link" ? "noopener noreferrer" : undefined}
+                            className="group flex min-h-11 items-center justify-between gap-4 py-3 text-small transition-colors duration-[var(--dur-fast)] hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                          >
+                            {doc.label}
+                            <Arrow className="shrink-0 transition-transform duration-[var(--dur-base)] group-hover:translate-x-1 motion-reduce:transition-none" />
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </div>
 
                 <div>

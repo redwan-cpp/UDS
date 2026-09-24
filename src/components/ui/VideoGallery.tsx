@@ -26,9 +26,9 @@ export function VideoGallery({ title, videos, linkedVideos }: VideoGalleryProps)
 
   return (
     <Section surface="dark" spacing="standard" label={`${title} videos`}>
-      <Container width="text" className="mx-auto">
+      <Container>
         <Reveal>
-          <Eyebrow as="h2">Moving image</Eyebrow>
+          <Eyebrow as="h2">Videos</Eyebrow>
         </Reveal>
         <ul className="mt-8 flex flex-col gap-14">
           {videos?.map((video) => (

@@ -1,6 +1,4 @@
 "use client";
-
-import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 import { prefersReducedMotion } from "@/lib/gsap";
@@ -183,13 +181,16 @@ export function LogoStrip({ brands }: { brands: Brand[] }) {
                     aria-hidden="true"
                     className="relative block h-16 w-40 shrink-0 sm:h-20 sm:w-48"
                   >
-                    <Image
+                    {/* SVG logos do not benefit from raster optimisation. A
+                        native image element also avoids the browser-specific
+                        `fill` sizing path that made some phone logos vanish. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
                       src={brand.logo.src}
                       alt=""
-                      fill
-                      unoptimized
-                      sizes="(min-width: 640px) 192px, 160px"
-                      className="object-contain"
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 h-full w-full object-contain"
                     />
                   </span>
                 )}

@@ -658,6 +658,41 @@ Now open **`https://yourdomain.com`** in a browser.
 >
 > **If you see a Caddy error page**, the app is not answering. `sudo systemctl status uthan`.
 
+### 9.1 Cloudflare protection — enable after HTTPS is working
+
+Cloudflare sits in front of the VPS and absorbs common bot and DDoS traffic before it reaches
+the server. The application is already prepared for this: Turnstile is wired into the contact
+form, but remains inactive until its two keys are supplied. This step needs access to the
+domain's DNS account and a Cloudflare account; it cannot be completed from the codebase alone.
+
+1. Add the domain to Cloudflare's Free plan. Copy the two nameservers it gives you.
+2. At the domain registrar, replace the current nameservers with those Cloudflare nameservers.
+   Do not delete the existing DNS records while doing this.
+3. In Cloudflare DNS, create or confirm `A` records for `@` and `www` pointing to the VPS IPv4.
+   Turn the cloud icon **orange** for both records — grey means traffic bypasses Cloudflare.
+4. In **SSL/TLS**, select **Full (strict)**. Caddy's existing certificate is what makes strict
+   verification possible; never select Flexible, which makes the public edge secure while the
+   connection back to the server is not.
+5. In **Security → Bots**, enable Bot Fight Mode. In **Security → WAF**, use the managed rules
+   and add a challenge rule for an unexpected sustained request burst. Start with Cloudflare's
+   managed rules rather than blocking countries or browsers by guesswork.
+6. In **Turnstile**, create a widget for this domain, then add these lines to `/srv/uthan/.env`:
+
+   ```
+   TURNSTILE_SECRET_KEY=the-secret-key-from-cloudflare
+   NEXT_PUBLIC_TURNSTILE_SITE_KEY=the-site-key-from-cloudflare
+   ```
+
+   Restart the service with `sudo systemctl restart uthan`, submit one real contact enquiry,
+   and confirm it appears in **Inbox → Enquiries**. The widget is interaction-only, so most
+   genuine visitors will not see a challenge.
+
+> Cloudflare protects requests that use the domain. For protection against a direct attack on
+> the VPS IP, restrict ports 80 and 443 to Cloudflare's published IP ranges in the server
+> firewall, then test both the public site and certificate renewal. Cloudflare changes those
+> ranges occasionally, so automate the allowlist update or keep it as a separately maintained
+> operations task — do not freeze a copied list in this repository.
+
 ---
 
 ## PART 10 — After it is live

@@ -236,7 +236,11 @@ export interface Product extends ContentBase {
   /** One line, sits under the title. */
   summary: string;
   description: Paragraph[];
+  /** Optional product options, shown before Materials. */
+  variations: string[];
   materials: string[];
+  /** Catalogues, finish schedules, or other downloadable product documents. */
+  documents?: { label: string; href: string; kind: "pdf" | "link" }[];
   applications: string[];
   specs: ProductSpec[];
   hero: MediaAsset;
