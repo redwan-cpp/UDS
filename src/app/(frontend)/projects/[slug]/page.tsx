@@ -87,7 +87,7 @@ function Narrative({
                 trigger (see typography/index.tsx) — only the lead statement
                 still needs its own wrapper here. */}
             <Reveal delay={0.1}>
-              <Statement as="p" className="mb-8">
+              <Statement as="p" className="mb-8 text-detail-statement">
                 <RichText paragraph={paragraphs[0]} />
               </Statement>
             </Reveal>

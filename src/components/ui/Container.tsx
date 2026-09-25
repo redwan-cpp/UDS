@@ -1,9 +1,10 @@
 import type { ElementType, ReactNode } from "react";
 
-type ContainerWidth = "wide" | "text" | "narrow" | "full";
+type ContainerWidth = "wide" | "article" | "text" | "narrow" | "full";
 
 const WIDTHS: Record<ContainerWidth, string> = {
   wide: "max-w-(--container-wide)",
+  article: "max-w-(--container-article)",
   text: "max-w-(--container-text)",
   narrow: "max-w-(--container-narrow)",
   full: "max-w-none",

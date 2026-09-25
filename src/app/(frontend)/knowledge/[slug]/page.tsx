@@ -68,7 +68,7 @@ export default async function KnowledgeArticlePage({
         }}
       />
       <header className="surface-dark bg-ink pt-32 md:pt-44">
-        <Container width="text" className="mx-auto">
+        <Container width="article" className="mx-auto">
           <nav aria-label="Breadcrumb" className="pb-6">
             <Link
               href="/knowledge"
@@ -130,7 +130,7 @@ export default async function KnowledgeArticlePage({
           )}
 
           <Reveal>
-            <Statement as="p" className="text-balance">
+            <Statement as="p" className="text-detail-statement text-balance">
               {item.summary}
             </Statement>
           </Reveal>

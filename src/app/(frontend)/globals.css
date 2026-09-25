@@ -83,10 +83,18 @@
   /* Long CMS-authored article and project titles need a distinct cap from a
      short page title. They remain display-led, but no longer consume an entire
      desktop viewport before the reader reaches the work. */
-  --text-detail-title: clamp(2.25rem, min(4.5vw, 8vh), 4rem);
-  --text-detail-title--line-height: 0.96;
+  --text-detail-title: clamp(2rem, min(3.2vw, 6.5vh), 3.25rem);
+  --text-detail-title--line-height: 1;
   --text-detail-title--letter-spacing: -0.03em;
   --text-detail-title--font-weight: 500;
+
+  /* The long-form opening paragraph is editorial, not a second display
+     headline. Its smaller cap leaves room for the writing without weakening
+     the hierarchy of the case-study title above it. */
+  --text-detail-statement: clamp(1.25rem, 1.8vw, 1.75rem);
+  --text-detail-statement--line-height: 1.45;
+  --text-detail-statement--letter-spacing: -0.012em;
+  --text-detail-statement--font-weight: 300;
 
   --text-h2: clamp(1.75rem, 3.6vw, 3.25rem);
   --text-h2--line-height: 1;
@@ -151,6 +159,7 @@
   --breakpoint-4xl: 120rem; /* 1920 */
 
   --container-wide: 105rem; /* 1680 — default page container */
+  --container-article: 70rem; /* 1120 — long editorial headlines */
   --container-text: 47.5rem; /*  760 — long-form narrative    */
   --container-narrow: 35rem; /*  560 — forms, single column   */
 
