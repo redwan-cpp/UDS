@@ -49,11 +49,13 @@ export default async function PrivacyPage() {
               legal commitments on the studio&rsquo;s behalf.
             </p>
             <p className="mt-3 text-body text-secondary">
-              One thing it will have to cover: the contact page embeds a Google
-              Map, and individual Project, Knowledge, or News pages may embed
-              public YouTube or Facebook videos. Those pages are not cookie-free
-              even though the rest of the site may be. Whether that needs a
-              consent prompt depends on where the studio&rsquo;s visitors are.
+              One thing it will have to cover: the contact page uses Cloudflare
+              Turnstile to help protect the enquiry form from automated
+              submissions and embeds a Google Map. Individual Project, Knowledge,
+              or News pages may embed public YouTube or Facebook videos. Those
+              pages are not cookie-free even though the rest of the site may be.
+              Whether that needs a consent prompt depends on where the studio&rsquo;s
+              visitors are.
             </p>
           </div>
 
@@ -64,6 +66,7 @@ export default async function PrivacyPage() {
                 "No analytics and no tracking pixels.",
                 "Fonts are self-hosted, so no request is made to a font provider.",
                 "The contact form saves messages in the studio CMS for 10 days, then deletes them automatically.",
+                "The contact form uses Cloudflare Turnstile to help distinguish people from automated submissions. Cloudflare receives the request information needed to provide that service.",
                 "Only a first-visit flag is kept, in your browser's session storage.",
                 "The contact page embeds a Google Map, and an entry with a linked YouTube or Facebook video embeds that provider's player. A linked direct video also contacts its file host. Opening any of these can let that provider receive your IP address and, for platform players, set cookies.",
               ].map((line) => (

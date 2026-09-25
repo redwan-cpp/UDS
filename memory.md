@@ -91,14 +91,10 @@ either way. `appearance="interaction-only"`: most visitors see nothing at all.
   in `script-src`, `frame-src` and `connect-src` (`next.config.ts`) — Turnstile loads a script
   and renders its challenge in an iframe from that origin. Present in the policy even while the
   studio's keys are unset, since the widget renders nothing without a site key regardless.
-- **Not yet done: the privacy page doesn't mention Turnstile.** It currently names the Google
-  Maps embed as the site's only third-party content, which stops being true the moment the
-  studio's Cloudflare keys are added. Update it then, not now — the disclosure should describe
-  what's actually live, and Turnstile isn't yet.
-- **Live check, 2026-09-25:** `/contact` still served neither the Turnstile script nor widget.
-  Creating keys in Cloudflare is not enough: both variables must be added to `/srv/uthan/.env`,
-  followed by a rebuild and service restart. Do not update the privacy page until a live check
-  sees the widget.
+- **Live check, 2026-09-25:** `/contact` serves Cloudflare&rsquo;s Turnstile script and widget after
+  both variables were added to `/srv/uthan/.env`, rebuilt, and restarted. Its required privacy
+  disclosure is in the non-policy factual list on `/privacy`; the full legal policy still awaits
+  the studio&rsquo;s approved wording.
 
 **Dependency audit, 2026-09-25** — `npm audit --omit=dev --audit-level=high` reports six
 moderate advisories with no available fix. They are `esbuild <=0.24.2`, pulled through
