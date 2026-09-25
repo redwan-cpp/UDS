@@ -14,6 +14,10 @@ import {
 
 import { isLinkedVideoProvider, isSupportedLinkedVideo } from "@/lib/video-links";
 
+// Most collections are shared studio records. Keep this re-export here so
+// their existing field imports continue to read as one contract.
+export { publishedOnlyAccess } from "./access";
+
 /**
  * Field shapes that recur across the collections.
  *
@@ -302,35 +306,4 @@ export const seoGroup: Field = {
       admin: { description: "Ask search engines not to index this page." },
     },
   ],
-};
-
-type AccessArgs = { req: { user?: { role?: string } | null } };
-
-/** Read by anyone, written by signed-in editors, deleted only by an admin. */
-export const editorAccess = {
-  read: () => true,
-  create: ({ req }: AccessArgs) => Boolean(req.user),
-  update: ({ req }: AccessArgs) => Boolean(req.user),
-  delete: ({ req }: AccessArgs) => req.user?.role === "admin",
-};
-
-/**
- * The same, for a collection with drafts — where `read: () => true` is a leak.
- *
- * Payload's draft support does not restrict reads on its own. With public read
- * access, an unpublished document is served to anyone who asks, and not only
- * when they ask for it: measured against a draft project, the title and full
- * body came back from `/api/projects` with no query parameter, no cookie and
- * no token, and again through GraphQL. For a studio drafting a case study on an
- * unannounced building, "saved but not published" has to mean private, and it
- * did not.
- *
- * A signed-in user still sees everything, which is what the admin panel needs.
- * Everyone else gets a filter rather than a boolean: only published documents
- * exist as far as the public API is concerned.
- */
-export const publishedOnlyAccess = {
-  ...editorAccess,
-  read: ({ req }: AccessArgs) =>
-    req.user ? true : { _status: { equals: "published" } },
 };

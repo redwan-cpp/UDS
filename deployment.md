@@ -683,9 +683,17 @@ domain's DNS account and a Cloudflare account; it cannot be completed from the c
    NEXT_PUBLIC_TURNSTILE_SITE_KEY=the-site-key-from-cloudflare
    ```
 
-   Restart the service with `sudo systemctl restart uthan`, submit one real contact enquiry,
-   and confirm it appears in **Inbox → Enquiries**. The widget is interaction-only, so most
-   genuine visitors will not see a challenge.
+   Build and restart the service, then submit one real contact enquiry and confirm it appears in
+   **Inbox → Enquiries**:
+
+   ```bash
+   npm run build
+   sudo systemctl restart uthan
+   ```
+
+   `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is included in the statically rendered Contact page, so a
+   restart alone cannot add the widget to an already-built site. The widget is interaction-only,
+   so most genuine visitors will not see a challenge.
 
 > Cloudflare protects requests that use the domain. For protection against a direct attack on
 > the VPS IP, restrict ports 80 and 443 to Cloudflare's published IP ranges in the server
@@ -1005,7 +1013,7 @@ script inside an uploaded SVG.
 ## Environment variables
 
 All of these live in `/srv/uthan/.env`, read by systemd through `EnvironmentFile`. The first
-four are required; the last three turn on email.
+four are required; the next two turn on Turnstile; the last three turn on email.
 
 | Variable | Example | What breaks without it |
 |---|---|---|
@@ -1013,6 +1021,8 @@ four are required; the last three turn on email.
 | `DATABASE_URI` | `postgres://uthan:PASSWORD@localhost:5432/uthan` | No content. It also **selects the driver** — a `postgres://` URL switches the app from SQLite to PostgreSQL |
 | `NEXT_PUBLIC_SERVER_URL` | `https://uthandesignstudio.com` | Social share cards lose their image, and the CSRF allowlist is empty so admin login fails from a browser |
 | `MEDIA_DIR` | `/srv/uthan/media` | Uploads land inside the build output and are deleted on the next deploy |
+| `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile secret key | Turnstile stays dormant; the honeypot and rate limits still protect contact submissions |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key | The browser receives no Turnstile widget |
 | `SMTP_USER` | `studio.account@gmail.com` | No email is sent. Enquiries are still saved to the panel; notifications and password-reset emails are written to the server log instead |
 | `SMTP_PASS` | 16-character Google app password | As above |
 | `ENQUIRY_TO` | `info@uthandesignstudio.com` | Optional. Where enquiry notifications go; defaults to `SMTP_USER` |

@@ -19,17 +19,17 @@ reading every non-`NEXT_PUBLIC_` env reference in the source — all of them sta
 also already **deployed** — a BDIX VPS behind Caddy (`deployment.md`) — Phase 6 work done early
 because the studio needed a live site.
 
-**Two items deliberately deferred, not resolved:**
+**One item deliberately deferred, not resolved:**
 - **A restore test of the off-site Backblaze backup has not been run.** Nobody has confirmed
   the backup is actually restorable, only that it's being written. Needs VPS + Backblaze access.
-- **"Roles enforced" is only half true.** `Users.ts` itself is solid — only an admin can create
-  or delete a user, or change a role, and self-promotion is impossible. But `editorAccess`
-  (`collections/fields.ts`), which every content collection uses, only checks "is anyone signed
-  in" — it does not distinguish Editor from Author, so the documented "Author — writes,
-  publishes own work" scoping is not actually enforced anywhere. An Author can edit anything an
-  Editor can. Not urgent while the studio only has editor/admin accounts, but the documented
-  behaviour and the enforced behaviour disagree, and that gap is what's recorded here, not
-  papered over.
+
+**Roles are enforced, 2026-09-25.** Admins manage people; Editors manage all studio content;
+Authors can create and publish only News and Knowledge entries stamped with their own account.
+They cannot access the Inbox, shared CMS records, other authors' drafts, or alter existing
+library assets. Authors may create library uploads while writing, but only staff can edit those
+shared records. Existing articles have no author until an Editor assigns one, so an Author cannot
+edit a legacy article accidentally. The ownership predicates and server-side stamp are exercised
+by `npm run test:security`.
 
 **PDF documents and page video, 2026-09-23** — Projects, News/Collaborations, and Knowledge
 can each select web-ready videos from the CMS library or link a public YouTube, Facebook, or
@@ -42,6 +42,13 @@ than image `Media`: it accepts only PDFs up to 12 MB, checks extension/MIME type
 signature, refuses remote URL imports, and serves files with attachment and `nosniff` headers.
 External document links must be `https://` URLs. This is both a content-management choice and a
 Phase 4 upload-surface control.
+
+**Upload hardening, 2026-09-25** — Media accepts JPEG, PNG, WebP, AVIF and SVG only; Videos
+accept MP4 and WebM only; Documents accept PDFs only. Each collection rejects a mismatch between
+filename extension and claimed MIME type and refuses files over 12 MB before processing. Payload
+then independently identifies the byte signature and validates SVG/PDF content. The hostile-file
+suite (`npm run test:security`) proves rejection of an executable renamed as an image, event-
+handler SVG, false PDF, image renamed as a video, a mismatched extension and an oversized video.
 
 **Security headers, 2026-09-21** — the first Phase 4 item (`project-requirement.md` §11):
 CSP, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, `frame-ancestors 'none'`,
@@ -88,6 +95,17 @@ either way. `appearance="interaction-only"`: most visitors see nothing at all.
   Maps embed as the site's only third-party content, which stops being true the moment the
   studio's Cloudflare keys are added. Update it then, not now — the disclosure should describe
   what's actually live, and Turnstile isn't yet.
+- **Live check, 2026-09-25:** `/contact` still served neither the Turnstile script nor widget.
+  Creating keys in Cloudflare is not enough: both variables must be added to `/srv/uthan/.env`,
+  followed by a rebuild and service restart. Do not update the privacy page until a live check
+  sees the widget.
+
+**Dependency audit, 2026-09-25** — `npm audit --omit=dev --audit-level=high` reports six
+moderate advisories with no available fix. They are `esbuild <=0.24.2`, pulled through
+Payload's database adapters → `drizzle-kit` → `@esbuild-kit/*`; the advisory is a development
+server request/read issue, not an endpoint exposed by the production Next/Payload server. It is
+recorded rather than suppressed: re-run the audit on every Payload/Drizzle upgrade and take the
+upstream fix when one becomes available.
 
 **Enquiries reach the studio through the panel only — the studio declined email,
 2026-09-17.** For this site, "persist and deliver" means *saved and visible under Inbox →

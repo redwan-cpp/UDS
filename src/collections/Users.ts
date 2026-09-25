@@ -1,5 +1,7 @@
 import type { CollectionConfig } from "payload";
 
+import { canEditContent } from "./access";
+
 /**
  * Editors of the site.
  *
@@ -22,11 +24,12 @@ export const Users: CollectionConfig = {
     group: "Studio",
   },
   access: {
-    // Only an admin manages people. Everyone signed in can read the list, so
-    // "last edited by" can render a name rather than an id.
+    // Only staff see the people list. Authors do not need it: their articles
+    // are stamped with the signed-in account server-side, not chosen from a
+    // relationship picker that could point at somebody else.
     create: ({ req }) => req.user?.role === "admin",
     delete: ({ req }) => req.user?.role === "admin",
-    read: ({ req }) => Boolean(req.user),
+    read: canEditContent,
     // An admin edits anyone; anyone else edits only themselves.
     update: ({ req }) =>
       req.user?.role === "admin" ? true : { id: { equals: req.user?.id } },

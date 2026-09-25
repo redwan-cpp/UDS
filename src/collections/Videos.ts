@@ -2,7 +2,9 @@ import path from "path";
 
 import type { CollectionConfig } from "payload";
 
+import { canCreateContent, canEditContent } from "./access";
 import { revalidateMedia } from "./hooks/revalidate";
+import { VIDEO_UPLOAD_TYPES, validateUploadDeclaration } from "./upload-validation";
 
 /**
  * Web-ready video. Separate from `Media`, and deliberately not clever.
@@ -37,16 +39,11 @@ export const Videos: CollectionConfig = {
     afterChange: [revalidateMedia],
     beforeValidate: [
       ({ req, data }) => {
-        const size = req.file?.size;
-        if (size && size > MAX_BYTES) {
-          throw new Error(
-            `That file is ${(size / 1024 / 1024).toFixed(1)}MB, and the limit is ` +
-              `${MAX_BYTES / 1024 / 1024}MB. This collection takes web-ready video only — ` +
-              `run it through scripts/transcode-hero.mjs first, or ask a developer to. ` +
-              `Uploading a camera export directly would make the homepage unusable on a ` +
-              `slow connection.`,
-          );
-        }
+        const file = req.file;
+        if (!file) return data;
+
+        const error = validateUploadDeclaration(file, VIDEO_UPLOAD_TYPES, MAX_BYTES, "Video");
+        if (error) throw new Error(error);
         return data;
       },
     ],
@@ -58,8 +55,8 @@ export const Videos: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
+    create: canCreateContent,
+    update: canEditContent,
     delete: ({ req }) => req.user?.role === "admin",
   },
   upload: {
@@ -68,7 +65,7 @@ export const Videos: CollectionConfig = {
       : path.resolve(process.cwd(), "media/video"),
     // VP9 in WebM, H.264 in MP4 — the two the hero element offers, in that
     // order. Anything else the browser would have to be lucky to decode.
-    mimeTypes: ["video/webm", "video/mp4"],
+    mimeTypes: Object.keys(VIDEO_UPLOAD_TYPES),
   },
   fields: [
     {

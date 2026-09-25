@@ -2,7 +2,12 @@ import path from "path";
 
 import type { CollectionBeforeOperationHook, CollectionConfig } from "payload";
 
+import { canCreateContent, canEditContent } from "./access";
 import { revalidateMedia } from "./hooks/revalidate";
+import { IMAGE_UPLOAD_TYPES, validateUploadDeclaration } from "./upload-validation";
+
+/** Large enough for a polished plate, small enough to protect image processing. */
+const MAX_BYTES = 12 * 1024 * 1024;
 
 /**
  * Strip the boilerplate design tools wrap around an SVG, before validation.
@@ -77,13 +82,23 @@ export const Media: CollectionConfig = {
   slug: "media",
   hooks: {
     beforeOperation: [normaliseSvgUpload],
+    beforeValidate: [
+      ({ req, data }) => {
+        const file = req.file;
+        if (!file) return data;
+
+        const error = validateUploadDeclaration(file, IMAGE_UPLOAD_TYPES, MAX_BYTES, "Image");
+        if (error) throw new Error(error);
+        return data;
+      },
+    ],
     afterChange: [revalidateMedia],
   },
   admin: { group: "Library" },
   access: {
     read: () => true,
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
+    create: canCreateContent,
+    update: canEditContent,
     delete: ({ req }) => req.user?.role === "admin",
   },
   upload: {
@@ -104,7 +119,9 @@ export const Media: CollectionConfig = {
     // CLAUDE.md) — an uploaded 30MB original should never be publicly
     // fetchable at full size.
     staticDir: process.env.MEDIA_DIR || path.resolve(process.cwd(), "media"),
-    mimeTypes: ["image/*"],
+    // Payload detects the actual byte signature and sanitises SVG content;
+    // this exact allow-list decides which detected formats the studio accepts.
+    mimeTypes: Object.keys(IMAGE_UPLOAD_TYPES),
     // Payload defaults this to true whenever `imageSizes` is set, adding its
     // own focal-point picker. Turned off because the site never used it —
     // only the `cropPoint` field below, which the site's own accessor exposes

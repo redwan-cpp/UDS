@@ -1,6 +1,8 @@
 import type { CollectionConfig } from "payload";
 import { APIError } from "payload";
 
+import { canEditContent } from "./access";
+
 /**
  * Enquiries from the contact form.
  *
@@ -107,9 +109,11 @@ export const Enquiries: CollectionConfig = {
   defaultSort: "-createdAt",
   access: {
     create: () => true,
-    read: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    // Enquiries contain personal contact details. An Author can work on their
+    // own articles but must never gain access to the studio inbox.
+    read: canEditContent,
+    update: canEditContent,
+    delete: canEditContent,
   },
   hooks: {
     beforeOperation: [

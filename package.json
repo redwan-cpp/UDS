@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "payload": "payload",
     "generate:types": "payload generate:types",
-    "generate:importmap": "payload generate:importmap"
+    "generate:importmap": "payload generate:importmap",
+    "test:security": "node --experimental-strip-types scripts/verify-upload-security.mts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.90.0",

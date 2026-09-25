@@ -524,10 +524,6 @@ export interface Product {
     value: string;
     id?: string | null;
   }[];
-  applications: {
-    value: string;
-    id?: string | null;
-  }[];
   /**
    * Add an uploaded PDF or an external link. Select one destination for each document.
    */
@@ -546,6 +542,10 @@ export interface Product {
         id?: string | null;
       }[]
     | null;
+  applications: {
+    value: string;
+    id?: string | null;
+  }[];
   /**
    * Order is meaningful — it is the order these appear on the page.
    */
@@ -581,6 +581,26 @@ export interface Product {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * PDF documents only. Maximum file size: 12 MB.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "documents".
+ */
+export interface Document {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "news".
  */
@@ -593,6 +613,10 @@ export interface News {
   slug: string;
   kind: 'collaboration' | 'event' | 'mou' | 'announcement' | 'award' | 'publication';
   date: string;
+  /**
+   * The staff member responsible for this entry.
+   */
+  author?: (number | null) | User;
   /**
    * The other party, where there is one.
    */
@@ -687,24 +711,35 @@ export interface News {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * PDF documents only. Maximum file size: 12 MB.
- *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "documents".
+ * via the `definition` "users".
  */
-export interface Document {
+export interface User {
   id: number;
+  /**
+   * Shown against the work this person publishes.
+   */
+  name: string;
+  role: 'editor' | 'author' | 'admin';
   updatedAt: string;
   createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
 }
 /**
  * Written pieces — the studio's own thinking, rather than announcements. Shown at /knowledge.
@@ -719,6 +754,10 @@ export interface Knowledge {
    * The URL segment: /knowledge/<slug>.
    */
   slug: string;
+  /**
+   * The staff member responsible for this entry.
+   */
+  author?: (number | null) | User;
   date: string;
   /**
    * One line. Used on cards, in the index, and as the description on the card someone sees when this is shared to Facebook or LinkedIn.
@@ -1003,37 +1042,6 @@ export interface Career {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  /**
-   * Shown against the work this person publishes.
-   */
-  name: string;
-  role: 'editor' | 'author' | 'admin';
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  resetPasswordRequestedAt?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -1287,12 +1295,6 @@ export interface ProductsSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
-  applications?:
-    | T
-    | {
-        value?: T;
-        id?: T;
-      };
   documents?:
     | T
     | {
@@ -1300,6 +1302,12 @@ export interface ProductsSelect<T extends boolean = true> {
         kind?: T;
         file?: T;
         href?: T;
+        id?: T;
+      };
+  applications?:
+    | T
+    | {
+        value?: T;
         id?: T;
       };
   specs?:
@@ -1334,6 +1342,7 @@ export interface NewsSelect<T extends boolean = true> {
   slug?: T;
   kind?: T;
   date?: T;
+  author?: T;
   organisation?: T;
   location?: T;
   summary?: T;
@@ -1385,6 +1394,7 @@ export interface NewsSelect<T extends boolean = true> {
 export interface KnowledgeSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  author?: T;
   date?: T;
   summary?: T;
   body?:

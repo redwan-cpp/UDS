@@ -2,7 +2,12 @@ import path from "path";
 
 import type { CollectionConfig } from "payload";
 
+import { canCreateContent, canEditContent } from "./access";
 import { revalidateMedia } from "./hooks/revalidate";
+import {
+  DOCUMENT_UPLOAD_TYPES,
+  validateUploadDeclaration,
+} from "./upload-validation";
 
 /** PDF uploads are intentionally limited to the same practical size as video. */
 const MAX_BYTES = 12 * 1024 * 1024;
@@ -27,21 +32,18 @@ export const Documents: CollectionConfig = {
         const file = req.file;
         if (!file) return data;
 
-        const filename = file.name.toLowerCase();
+        const declarationError = validateUploadDeclaration(
+          file,
+          DOCUMENT_UPLOAD_TYPES,
+          MAX_BYTES,
+          "PDF",
+        );
         const startsWithPdf =
           file.data.subarray(0, PDF_SIGNATURE.length).toString("ascii") ===
           PDF_SIGNATURE;
 
-        if (
-          file.mimetype !== "application/pdf" ||
-          !filename.endsWith(".pdf") ||
-          !startsWithPdf
-        ) {
+        if (declarationError || !startsWithPdf) {
           throw new Error("Documents must be valid PDF files.");
-        }
-
-        if (file.size > MAX_BYTES) {
-          throw new Error("PDF files must be 12 MB or smaller.");
         }
 
         return data;
@@ -56,15 +58,15 @@ export const Documents: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
+    create: canCreateContent,
+    update: canEditContent,
     delete: ({ req }) => req.user?.role === "admin",
   },
   upload: {
     staticDir: process.env.MEDIA_DIR
       ? path.join(process.env.MEDIA_DIR, "document")
       : path.resolve(process.cwd(), "media/document"),
-    mimeTypes: ["application/pdf"],
+    mimeTypes: Object.keys(DOCUMENT_UPLOAD_TYPES),
     pasteURL: false,
     modifyResponseHeaders: ({ headers }) => {
       headers.set("Content-Disposition", "attachment");

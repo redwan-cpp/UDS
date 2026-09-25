@@ -5,7 +5,6 @@ import {
   revalidateCollectionDelete,
 } from "./hooks/revalidate";
 import {
-  publishedOnlyAccess,
   documentLinks,
   linkedVideos,
   isDemoField,
@@ -13,6 +12,7 @@ import {
   seoGroup,
   slugField,
 } from "./fields";
+import { authoredByField, authoredContentAccess, stampAuthor } from "./access";
 
 /**
  * Knowledge — the studio's own writing.
@@ -35,6 +35,7 @@ export const Knowledge: CollectionConfig = {
   slug: "knowledge",
   versions: { drafts: { autosave: { interval: 800 } } },
   hooks: {
+    beforeChange: [stampAuthor],
     afterChange: [revalidateCollection("knowledge")],
     afterDelete: [revalidateCollectionDelete("knowledge")],
   },
@@ -45,7 +46,7 @@ export const Knowledge: CollectionConfig = {
     description:
       "Written pieces — the studio's own thinking, rather than announcements. Shown at /knowledge.",
   },
-  access: publishedOnlyAccess,
+  access: authoredContentAccess,
   fields: [
     {
       type: "row",
@@ -54,6 +55,7 @@ export const Knowledge: CollectionConfig = {
         slugField("/knowledge"),
       ],
     },
+    authoredByField(),
     {
       name: "date",
       type: "date",

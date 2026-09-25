@@ -6,7 +6,6 @@ import {
 } from "./hooks/revalidate";
 
 import {
-  publishedOnlyAccess,
   documentLinks,
   linkedVideos,
   isDemoField,
@@ -14,6 +13,7 @@ import {
   seoGroup,
   slugField,
 } from "./fields";
+import { authoredByField, authoredContentAccess, stampAuthor } from "./access";
 
 /**
  * Collaboration and news.
@@ -31,6 +31,7 @@ import {
 export const News: CollectionConfig = {
   slug: "news",
   hooks: {
+    beforeChange: [stampAuthor],
     afterChange: [revalidateCollection("news")],
     afterDelete: [revalidateCollectionDelete("news")],
   },
@@ -45,7 +46,7 @@ export const News: CollectionConfig = {
     defaultColumns: ["title", "kind", "date", "featured"],
     group: "Studio",
   },
-  access: publishedOnlyAccess,
+  access: authoredContentAccess,
   fields: [
     {
       type: "row",
@@ -75,6 +76,7 @@ export const News: CollectionConfig = {
         },
       ],
     },
+    authoredByField(),
     {
       type: "row",
       fields: [
