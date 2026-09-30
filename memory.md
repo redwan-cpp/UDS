@@ -96,12 +96,14 @@ either way. `appearance="interaction-only"`: most visitors see nothing at all.
   disclosure is in the non-policy factual list on `/privacy`; the full legal policy still awaits
   the studio&rsquo;s approved wording.
 
-**Dependency audit, 2026-09-25** — `npm audit --omit=dev --audit-level=high` reports six
-moderate advisories with no available fix. They are `esbuild <=0.24.2`, pulled through
-Payload's database adapters → `drizzle-kit` → `@esbuild-kit/*`; the advisory is a development
-server request/read issue, not an endpoint exposed by the production Next/Payload server. It is
-recorded rather than suppressed: re-run the audit on every Payload/Drizzle upgrade and take the
-upstream fix when one becomes available.
+**Dependency audit, 2026-09-30** — the locked tree overrides `undici` to `7.30.0` and
+`nodemailer` to `10.0.12`, removing the one high-severity and the Nodemailer findings reported
+by `npm audit`. `npm audit --omit=dev --audit-level=high` now exits cleanly. Six moderate
+`esbuild <=0.24.2` advisories remain with no upstream fix, pulled through Payload's database
+adapters → `drizzle-kit` → `@esbuild-kit/*`; the advisory is a development-server request/read
+issue, not an endpoint exposed by the production Next/Payload server. It is recorded rather than
+suppressed: re-run the audit on every Payload/Drizzle upgrade and take the upstream fix when one
+becomes available.
 
 **Enquiries reach the studio through the panel only — the studio declined email,
 2026-09-17.** For this site, "persist and deliver" means *saved and visible under Inbox →
@@ -149,6 +151,10 @@ it deliberately and say why — reversing something in this file is a decision, 
   uses (hover rule-draw, accent lift on the numeral) instead of a second, static `<dl>` —
   two places showing the same numbers two different ways read as an inconsistency, not a
   variation worth keeping.
+- **The About page portrait is managed in the CMS** (`Studio → Words → About page`). It is an
+  optional Media upload: until the studio selects one, the existing curated image stays on the
+  public page, so adding the field cannot create a broken or empty plate. The route receives the
+  typed asset from `getStudio`, never a raw CMS document.
 - Its own **Collaborators section is gone**, not just relabelled. `BrandIndex` and
   `BrandsSection` were left orphaned by that removal and have since been deleted.
   `brands.ts` and `LogoMarquee` have **not** — an earlier note here claiming they were

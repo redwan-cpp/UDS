@@ -214,6 +214,7 @@ export const getStudio = cache(async (): Promise<StudioProfile> => {
   ].filter((s): s is { src: string; type: string } => Boolean(s.src));
   const poster = d.hero?.poster ? toAsset(d.hero.poster) : undefined;
   const hero = sources.length ? { sources, poster } : undefined;
+  const aboutImage = toAsset(d.about?.image);
 
   return {
     name: d.name ?? "",
@@ -230,6 +231,7 @@ export const getStudio = cache(async (): Promise<StudioProfile> => {
     about: {
       statement: toParagraphs(d.about?.statement),
       body: toParagraphs(d.about?.body),
+      image: aboutImage.src ? aboutImage : undefined,
     },
     contact: {
       email: d.contact?.email ?? "",

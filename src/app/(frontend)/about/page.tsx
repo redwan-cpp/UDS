@@ -70,11 +70,14 @@ export default async function AboutPage() {
             <div className="lg:col-span-5 lg:col-start-8">
               <Reveal variant="curtain">
                 <Media
-                  asset={img(
-                    "about",
-                    2,
-                    "Studio interior with drawings and models on a working table",
-                  )}
+                  asset={
+                    studio.about.image ??
+                    img(
+                      "about",
+                      2,
+                      "Studio interior with drawings and models on a working table",
+                    )
+                  }
                   ratio="tall"
                   revealMedia
                   sizes="(min-width: 1024px) 40vw, 100vw"

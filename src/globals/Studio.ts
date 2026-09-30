@@ -148,6 +148,15 @@ export const Studio: GlobalConfig = {
                   required: true,
                   description: "The read beneath it.",
                 }),
+                {
+                  name: "image",
+                  type: "upload",
+                  relationTo: "media",
+                  admin: {
+                    description:
+                      "Optional. The portrait image beside the About page text. Leave empty to keep the current studio image.",
+                  },
+                },
               ],
             },
             {

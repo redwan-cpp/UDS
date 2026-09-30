@@ -396,6 +396,8 @@ export interface StudioProfile {
     /** Display scale. Short — one line, not a paragraph. */
     statement: string[];
     body: string[];
+    /** Optional portrait image beside the About page text. */
+    image?: MediaAsset;
   };
   contact: {
     email: string;

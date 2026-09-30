@@ -1797,6 +1797,10 @@ export interface Studio {
       text: string;
       id?: string | null;
     }[];
+    /**
+     * Optional. The portrait image beside the About page text. Leave empty to keep the current studio image.
+     */
+    image?: (number | null) | Media;
   };
   /**
    * The homepage's closing line, immediately before the footer. Kept apart from the statement because it does a different job: those introduce the studio, this closes the page.
@@ -2009,6 +2013,7 @@ export interface StudioSelect<T extends boolean = true> {
               text?: T;
               id?: T;
             };
+        image?: T;
       };
   closing?: T;
   contact?:

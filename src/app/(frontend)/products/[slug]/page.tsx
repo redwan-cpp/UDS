@@ -132,19 +132,20 @@ export default async function ProductPage({
                     ))}
                   </ul>
                   {product.documents && product.documents.length > 0 ? (
-                    <ul className="mt-6 flex flex-col border-t border-hairline">
+                    <ul className="mt-6 flex flex-wrap gap-3">
                       {product.documents.map((doc) => (
-                        <li key={doc.label} className="border-b border-hairline">
-                          <a
+                        <li key={doc.label}>
+                          <ButtonLink
                             href={doc.href}
+                            variant="primary"
                             download={doc.kind === "pdf"}
                             target={doc.kind === "link" ? "_blank" : undefined}
                             rel={doc.kind === "link" ? "noopener noreferrer" : undefined}
-                            className="group flex min-h-11 items-center justify-between gap-4 py-3 text-small transition-colors duration-[var(--dur-fast)] hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                            prefetch={false}
                           >
                             {doc.label}
-                            <Arrow className="shrink-0 transition-transform duration-[var(--dur-base)] group-hover:translate-x-1 motion-reduce:transition-none" />
-                          </a>
+                            <Arrow />
+                          </ButtonLink>
                         </li>
                       ))}
                     </ul>

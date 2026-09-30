@@ -2,6 +2,11 @@ import type { NextConfig } from "next";
 import { withPayload } from "@payloadcms/next/withPayload";
 
 const nextConfig: NextConfig = {
+  // The response does not need to identify the framework or CMS. Removing
+  // this low-value fingerprint gives an attacker one less clue about the
+  // stack before any request reaches an application surface.
+  poweredByHeader: false,
+
   /**
    * A self-contained server bundle, for the VPS.
    *
