@@ -15,6 +15,7 @@ import {
   getCopy,
 } from "@/data/content.cms";
 
+export const revalidate = 60;
 
 export const metadata: Metadata = pageMetadata({
   title: "Projects",

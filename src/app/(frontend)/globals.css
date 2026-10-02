@@ -556,10 +556,24 @@
   }
 
   /* A lazy image's own load state, independent of the reveal system above.
-     `Media` stamps this while a non-priority image hasn't finished loading;
-     same safety as the reveal contract, so a JS failure or reduced motion
-     leaves the image visible immediately rather than stuck at opacity 0. */
-  .js-motion [data-media-loading] {
+     `Media` keeps a neutral frame visible while a non-priority image is
+     loading. The image fades over it after load, so a slow request never reads
+     as an empty or broken space. Without `.js-motion`, the final image remains
+     visible immediately if JavaScript is unavailable or motion is reduced. */
+  .media-placeholder {
+    opacity: 0;
+    background-position: center;
+    background-size: cover;
+    filter: blur(12px);
+    transform: scale(1.04);
+    transition: opacity var(--dur-slow) var(--ease-out-soft);
+  }
+
+  .js-motion [data-media-loading] .media-placeholder {
+    opacity: 1;
+  }
+
+  .js-motion [data-media-loading] > img {
     opacity: 0;
   }
 

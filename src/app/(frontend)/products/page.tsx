@@ -11,6 +11,7 @@ import { ProductCard } from "@/components/products/ProductCard";
 import { navIndex } from "@/data/navigation";
 import { getProducts, getCategoryFilters, getCopy } from "@/data/content.cms";
 
+export const revalidate = 60;
 
 export const metadata: Metadata = pageMetadata({
   title: "Products",

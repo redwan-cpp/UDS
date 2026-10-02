@@ -13,6 +13,7 @@ import type {
   Category,
   LinkedVideo,
   MediaAsset,
+  MediaSource,
   Paragraph,
   RichParagraph,
   Seo,
@@ -54,11 +55,22 @@ type Upload =
       licence?: string | null;
       cropPoint?: { x?: number | null; y?: number | null } | null;
       mimeType?: string | null;
+      sizes?: {
+        thumbnail?: UploadSize | null;
+        card?: UploadSize | null;
+        wide?: UploadSize | null;
+      } | null;
     }
   | number
   | string
   | null
   | undefined;
+
+type UploadSize = {
+  url?: string | null;
+  width?: number | null;
+  height?: number | null;
+};
 
 /**
  * The empty asset.
@@ -82,11 +94,19 @@ export function toAsset(value: Upload): MediaAsset {
   if (!value || typeof value === "number" || typeof value === "string") {
     return NO_ASSET;
   }
+  const sources = {
+    thumbnail: toMediaSource(value.sizes?.thumbnail),
+    card: toMediaSource(value.sizes?.card),
+    wide: toMediaSource(value.sizes?.wide),
+  };
+  const hasSources = Object.values(sources).some(Boolean);
+
   return {
     src: value.url ?? "",
     alt: value.alt ?? "",
     width: value.width ?? 0,
     height: value.height ?? 0,
+    ...(hasSources ? { sources } : {}),
     caption: value.caption ?? undefined,
     credit: value.credit ?? undefined,
     source: value.source ?? undefined,
@@ -101,6 +121,11 @@ export function toAsset(value: Upload): MediaAsset {
         ? { x: value.cropPoint.x, y: value.cropPoint.y }
         : undefined,
   };
+}
+
+function toMediaSource(value: UploadSize | null | undefined): MediaSource | undefined {
+  if (!value?.url || !value.width || !value.height) return undefined;
+  return { src: value.url, width: value.width, height: value.height };
 }
 
 /** A list of uploads, with the unpopulated and the empty dropped. */

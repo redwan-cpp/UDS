@@ -121,8 +121,28 @@ export function Media({
     };
   }, [priority]);
 
+  const hasSources = Boolean(asset.sources && Object.values(asset.sources).some(Boolean));
+  const derivativeLoader = ({ width }: { width: number }) => {
+    const sources = [asset.sources?.thumbnail, asset.sources?.card, asset.sources?.wide]
+      .filter((source): source is NonNullable<typeof source> => Boolean(source))
+      .sort((a, b) => a.width - b.width);
+    const source = sources.find((candidate) => candidate.width >= width) ?? sources[sources.length - 1];
+    return source?.src ?? asset.src;
+  };
+  const placeholderStyle = asset.sources?.thumbnail?.src
+    ? { backgroundImage: `url("${asset.sources.thumbnail.src}")` }
+    : undefined;
+
   return (
-    <div className={`relative overflow-hidden bg-ink-soft ${RATIOS[ratio]} ${className}`}>
+    <div
+      className={`relative overflow-hidden bg-ink-soft ${RATIOS[ratio]} ${className}`}
+      {...(!priority && !loaded ? { "data-media-loading": "" } : {})}
+    >
+      <span
+        aria-hidden="true"
+        className="media-placeholder absolute inset-0 bg-ink-soft"
+        style={placeholderStyle}
+      />
       <Image
         ref={imgRef}
         src={asset.src}
@@ -132,9 +152,9 @@ export function Media({
         sizes={sizes}
         priority={priority}
         loading={priority ? undefined : "lazy"}
+        {...(hasSources ? { loader: derivativeLoader } : {})}
         style={{ objectPosition: focal }}
         {...(revealMedia ? { "data-reveal-media": "" } : {})}
-        {...(!priority && !loaded ? { "data-media-loading": "" } : {})}
         className={[
           "h-full w-full object-cover transition-opacity duration-[var(--dur-slow)] ease-out-soft motion-reduce:transition-none",
           // `.hover-zoom` gates the effect behind a fine pointer, promotes the

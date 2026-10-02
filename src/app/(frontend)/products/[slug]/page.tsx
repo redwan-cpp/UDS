@@ -16,6 +16,8 @@ import {
   getProducts,
 } from "@/data/content.cms";
 
+export const revalidate = 60;
+
 /**
  * Statically rendered per product line, the same as every project and news
  * entry — individually crawlable and cacheable rather than a fragment of a

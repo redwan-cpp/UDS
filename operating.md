@@ -210,7 +210,7 @@ Four things run on it:
 | **Caddy** | Answers the internet on 80/443, handles HTTPS, passes requests inward |
 | **The app** (`uthan.service`) | Next.js + the Payload CMS, on port 3000, localhost only |
 | **PostgreSQL** | The database, localhost only |
-| **cron** | Nightly backups, monthly cache clear |
+| **cron** | Nightly backups |
 
 Connect with `ssh uthan@160.25.226.194`. Your SSH key has to be on the server for this to
 work — if you have not done that yet, do it before you need it in an emergency.
@@ -287,9 +287,9 @@ undoes edits made in the panel.
 The build takes several minutes and a lot of memory. `screen` keeps it running if your
 connection drops; reattach with `screen -r deploy`.
 
-Expect images to load slowly for the first few minutes afterwards: the build clears the
-resized-image cache, and each photograph is re-optimised the first time someone asks for it.
-It settles on its own.
+The resized-image cache is retained between deploys, so existing image responses remain
+warm. A first request for a newly uploaded image can still do work while its upload-time
+derivatives are being prepared.
 
 The full technical runbook — how the server was built, every decision, and what to check when
 something breaks — is `deployment.md` in the code repository.

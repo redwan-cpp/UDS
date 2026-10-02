@@ -23,6 +23,8 @@ import {
   getRelatedProjects,
 } from "@/data/projects.cms";
 
+export const revalidate = 60;
+
 /**
  * Statically rendered per project so every case study is individually
  * crawlable and cacheable. In Phase 2 this reads the CMS instead; the shape of

@@ -775,30 +775,19 @@ ls -lh /srv/backups
 
 > **You should see** two files, a `.sql.gz` and a `.tar.gz`, both a real size.
 
-Schedule it nightly, plus a monthly image-cache clear, without opening an editor:
+Schedule the backup nightly without opening an editor:
 
 ```bash
 cat << 'EOF' | crontab -
 0 3 * * * /srv/uthan/backup.sh >> /srv/backups/backup.log 2>&1
-0 4 1 * * rm -rf /srv/uthan/.next/cache/images/* && sudo systemctl restart uthan >> /srv/backups/backup.log 2>&1
 EOF
 crontab -l
 ```
 
-> The second line clears the optimised-image cache monthly. Next generates a file per image
-> per size and it grows without limit — but that cache is also what makes image loads fast, so
-> clearing it means the next few visitors after the 1st of each month get a slower first load
-> while it rebuilds. `sudo systemctl restart uthan` needs to run without a password prompt for
-> this to work unattended:
->
-> ```bash
-> echo "uthan ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart uthan" | sudo tee /etc/sudoers.d/uthan-restart
-> sudo chmod 440 /etc/sudoers.d/uthan-restart
-> ```
->
-> This grants passwordless `sudo` for exactly that one command, not a blanket exemption.
-> Verify with `sudo -n systemctl restart uthan` — it should succeed silently, no password
-> prompt.
+> Keep the optimised-image cache between deploys. It is what makes repeat image loads fast,
+> and the CMS generates upload-time derivatives for new images. If disk monitoring later
+> requires a size limit, add an age- or size-aware cleanup that preserves recent entries
+> instead of clearing the directory on a calendar.
 
 ### 10.4 Copy backups off the server — automatically, from the server itself
 
@@ -1068,8 +1057,8 @@ photograph including its derivatives, that is **around 3,500 more images**.
 
 The number that grows faster than it looks is the file *count* — 18 source
 photographs already produce 304 files once Payload's three sizes and Next's
-optimiser cache are counted. That is why the monthly cache-clearing cron in
-Part 10.3 is maintenance rather than housekeeping.
+optimiser cache are counted. The optimiser cache is retained because it removes
+repeat processing work; monitor disk use before introducing a size-aware cleanup.
 
 **Transfer, 500 GB.** A page carrying 3 MB of photography at 50,000 views is
 about 150 GB. Comfortable for a studio site.
