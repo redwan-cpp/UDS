@@ -51,6 +51,22 @@ interface MediaProps {
 }
 
 /**
+ * Use the largest upload-time derivative that can satisfy the requested
+ * display width. The full viewer uses this too: a viewport-sized image does
+ * not need the original camera file to look sharp, and avoiding that file is
+ * the difference between a quick open and waiting on several megabytes.
+ */
+export function mediaDerivativeLoader(asset: MediaAsset) {
+  return ({ width }: { width: number }) => {
+    const sources = [asset.sources?.thumbnail, asset.sources?.card, asset.sources?.wide]
+      .filter((source): source is NonNullable<typeof source> => Boolean(source))
+      .sort((a, b) => a.width - b.width);
+    const source = sources.find((candidate) => candidate.width >= width) ?? sources[sources.length - 1];
+    return source?.src ?? asset.src;
+  };
+}
+
+/**
  * Every image on the site goes through here.
  *
  * Dimensions come from the asset, so aspect ratio is reserved before load and
@@ -122,13 +138,6 @@ export function Media({
   }, [priority]);
 
   const hasSources = Boolean(asset.sources && Object.values(asset.sources).some(Boolean));
-  const derivativeLoader = ({ width }: { width: number }) => {
-    const sources = [asset.sources?.thumbnail, asset.sources?.card, asset.sources?.wide]
-      .filter((source): source is NonNullable<typeof source> => Boolean(source))
-      .sort((a, b) => a.width - b.width);
-    const source = sources.find((candidate) => candidate.width >= width) ?? sources[sources.length - 1];
-    return source?.src ?? asset.src;
-  };
   const placeholderStyle = asset.sources?.thumbnail?.src
     ? { backgroundImage: `url("${asset.sources.thumbnail.src}")` }
     : undefined;
@@ -152,7 +161,7 @@ export function Media({
         sizes={sizes}
         priority={priority}
         loading={priority ? undefined : "lazy"}
-        {...(hasSources ? { loader: derivativeLoader } : {})}
+        {...(hasSources ? { loader: mediaDerivativeLoader(asset) } : {})}
         style={{ objectPosition: focal }}
         {...(revealMedia ? { "data-reveal-media": "" } : {})}
         className={[

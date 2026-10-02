@@ -5,6 +5,7 @@ import type { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 
 import { Arrow, CloseIcon } from "@/components/ui/Button";
+import { mediaDerivativeLoader } from "@/components/ui/Media";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import type { MediaAsset } from "@/types/content";
@@ -144,6 +145,9 @@ export function Lightbox({
           width={image.width}
           height={image.height}
           sizes="90vw"
+          {...(image.sources
+            ? { loader: mediaDerivativeLoader(image) }
+            : {})}
           className="max-h-full w-auto max-w-full object-contain [animation:uds-rise_var(--dur-slow)_var(--ease-out-soft)]"
         />
 
