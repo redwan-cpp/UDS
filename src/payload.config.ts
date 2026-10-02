@@ -2,7 +2,10 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import { postgresAdapter } from "@payloadcms/db-postgres";
-import { nodemailerAdapter } from "@payloadcms/email-nodemailer";
+import {
+  nodemailerAdapter,
+  type NodemailerAdapterArgs,
+} from "@payloadcms/email-nodemailer";
 import { sqliteAdapter } from "@payloadcms/db-sqlite";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { buildConfig } from "payload";
@@ -141,6 +144,8 @@ export default buildConfig({
       ? nodemailerAdapter({
           defaultFromAddress: process.env.SMTP_USER,
           defaultFromName: "Uthan Design Studio website",
+          // The installed Nodemailer type omits `auth` from its SMTP options,
+          // although the adapter and Nodemailer accept it at runtime.
           transportOptions: {
             host: process.env.SMTP_HOST || "smtp.gmail.com",
             port: Number(process.env.SMTP_PORT || 465),
@@ -149,7 +154,7 @@ export default buildConfig({
               user: process.env.SMTP_USER,
               pass: process.env.SMTP_PASS,
             },
-          },
+          } as NonNullable<NodemailerAdapterArgs["transportOptions"]>,
         })
       : undefined,
 
