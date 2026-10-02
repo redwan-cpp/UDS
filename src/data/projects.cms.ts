@@ -2,7 +2,6 @@ import { cache } from "react";
 
 import type { Project } from "@/types/content";
 import {
-  client,
   toAsset,
   toAssets,
   toCategories,
@@ -14,6 +13,7 @@ import {
   toValues,
   toVideos,
 } from "./payload";
+import { findCMS } from "./cms-cache";
 
 /**
  * Projects, read from the CMS.
@@ -83,9 +83,7 @@ function toProject(d: Doc): Project {
 }
 
 export const getProjects = cache(async (): Promise<Project[]> => {
-  const payload = await client();
-  const { docs } = await payload.find({
-    collection: "projects",
+  const docs = await findCMS("projects", {
     // Drafts stay in the panel — see the note on `find` in content.cms.ts.
     overrideAccess: false,
     limit: 200,
@@ -102,9 +100,7 @@ export const getProjects = cache(async (): Promise<Project[]> => {
 
 export const getProjectBySlug = cache(
   async (slug: string): Promise<Project | undefined> => {
-    const payload = await client();
-    const { docs } = await payload.find({
-      collection: "projects",
+    const docs = await findCMS("projects", {
       // Drafts stay in the panel — see the note on `find` in content.cms.ts.
       overrideAccess: false,
       where: { slug: { equals: slug } },
@@ -129,9 +125,7 @@ export const getProjectBySlug = cache(
  * fetch the entire library to throw it away.
  */
 export const getProjectSlugs = cache(async (): Promise<string[]> => {
-  const payload = await client();
-  const { docs } = await payload.find({
-    collection: "projects",
+  const docs = await findCMS("projects", {
     // Drafts stay in the panel — see the note on `find` in content.cms.ts.
     overrideAccess: false,
     limit: 200,

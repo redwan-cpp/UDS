@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
@@ -52,6 +52,7 @@ import type {
  */
 function invalidateSite() {
   try {
+    revalidateTag("uds-cms-content", "max");
     revalidatePath("/", "layout");
   } catch {
     // No Next request context — a script, a migration, a build step.

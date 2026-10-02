@@ -14,7 +14,6 @@ import type {
   TeamMember,
 } from "@/types/content";
 import {
-  client,
   toAsset,
   toAssets,
   toCategories,
@@ -29,6 +28,7 @@ import {
 import { navigation as staticNavigation } from "./navigation";
 import { studio as seedStudio } from "./studio";
 import * as defaultCopy from "./copy";
+import { findCMS, findGlobalCMS } from "./cms-cache";
 
 /**
  * The rest of the content, read from the CMS.
@@ -91,14 +91,7 @@ function toDocuments(value: Doc[] | null | undefined) {
  * same `_status` filter into each accessor and missing one.
  */
 const find = async (collection: string, opts: Record<string, unknown> = {}) => {
-  const payload = await client();
-  const { docs } = await payload.find({
-    collection: collection as never,
-    limit: 300,
-    depth: 1,
-    overrideAccess: false,
-    ...opts,
-  });
+  const docs = await findCMS(collection, opts);
   return docs as Doc[];
 };
 
@@ -163,12 +156,7 @@ export const getVisibleCategorySlugs = cache(
  * that was never seeded still has a working menu rather than an empty overlay.
  */
 export const getNavigation = cache(async (): Promise<NavItem[]> => {
-  const payload = await client();
-  const d: Doc = await payload.findGlobal({
-    slug: "navigation",
-    depth: 1,
-    overrideAccess: false,
-  });
+  const d: Doc = await findGlobalCMS("navigation", { depth: 1 });
   const items: Doc[] = d.items ?? [];
   if (items.length === 0) return staticNavigation;
 
@@ -200,8 +188,7 @@ export const getNavigation = cache(async (): Promise<NavItem[]> => {
  * for the studio's own name is worse than one showing what the seed put there.
  */
 export const getStudio = cache(async (): Promise<StudioProfile> => {
-  const payload = await client();
-  const d: Doc = await payload.findGlobal({ slug: "studio", depth: 1 });
+  const d: Doc = await findGlobalCMS("studio", { depth: 1 });
 
   // Any uploaded video replaces the shipped clip. This used to require WebM,
   // MP4 and poster together and silently fell back otherwise — the studio
@@ -542,8 +529,7 @@ const mergeLabels = <T extends Record<string, string>>(
  * breaking a page. Indices still come from the defaults and the menu.
  */
 export const getCopy = cache(async () => {
-  const payload = await client();
-  const d: Doc = await payload.findGlobal({ slug: "copy", depth: 0 });
+  const d: Doc = await findGlobalCMS("copy", { depth: 0 });
   const heroes: Doc[] = d.heroes ?? [];
   const sections: Doc[] = d.sections ?? [];
   return {
